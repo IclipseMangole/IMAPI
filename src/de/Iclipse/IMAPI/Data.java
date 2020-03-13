@@ -4,6 +4,7 @@ import de.Iclipse.IMAPI.Functions.Tablist;
 import de.Iclipse.IMAPI.Util.Command.IMCommand;
 import de.Iclipse.IMAPI.Util.Dispatching.Dispatcher;
 import de.Iclipse.IMAPI.Util.Dispatching.Language;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
@@ -20,6 +21,8 @@ public class Data {
     public static String highlight;
     public static String warning;
     public static Tablist tablist;
+    public static HashMap<Player, Long> onlinetime;
+    public static HashMap<Player, Integer> blocks;
 
 
     public static Plugin instance;

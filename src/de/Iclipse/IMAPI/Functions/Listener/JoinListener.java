@@ -1,5 +1,6 @@
 package de.Iclipse.IMAPI.Functions.Listener;
 
+import de.Iclipse.IMAPI.Data;
 import de.Iclipse.IMAPI.Functions.MySQL.MySQL_User;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -28,5 +29,7 @@ public class JoinListener implements Listener {
                 dsp.send(entry, "join.message", p.getDisplayName());
             }
         });
+        Data.onlinetime.put(p, System.currentTimeMillis());
+        Data.blocks.put(p, MySQL_User.getBlocksPlaced(p.getUniqueId()));
     }
 }

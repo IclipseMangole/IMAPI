@@ -22,13 +22,13 @@ public class MySQL_User {
 
 
     public static void createUserTable(){
-        MySQL.update("CREATE TABLE IF NOT EXISTS user (uuid VARCHAR(60), points INT(10), onlinetime INT(15), firstJoin DATETIME, lastseen BIGINT, lang VARCHAR(10))");
+        MySQL.update("CREATE TABLE IF NOT EXISTS user (uuid VARCHAR(60), points INT(10), onlinetime INT(15), firstJoin DATETIME, lastseen BIGINT, lang VARCHAR(10), blocks INT(10))");
     }
 
     public static void createUser(UUID uuid) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date time = Date.from(Instant.now());
-        MySQL.update("INSERT INTO `user` VALUES ('" + uuid.toString() + "', 0, 0, '" + sdf.format(time) + "', -1, 'EN')");
+        MySQL.update("INSERT INTO `user` VALUES ('" + uuid.toString() + "', 0, 0, '" + sdf.format(time) + "', -1, 'EN', 0)");
     }
 
     public static void deleteUser(UUID uuid) {
@@ -185,6 +185,22 @@ public class MySQL_User {
 
     public static void setLanguage(UUID uuid, Language lang){
         MySQL.update("UPDATE user SET lang = '" + lang.getShortcut() + "' WHERE uuid = '" + uuid + "'");
+    }
+
+    public static int getBlocksPlaced(UUID uuid){
+        try{
+            ResultSet rs = MySQL.querry("SELECT blocks FROM user WHERE uuid = '" + uuid + "'");
+            while(rs.next()) {
+                return rs.getInt("blocks");
+            }
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+        return -1;
+    }
+
+    public static void setBlocksPlaced(UUID uuid, int blocks){
+        MySQL.update("UPDATE user SET blocks = '" + blocks + "' WHERE uuid = '" + uuid + "'");
     }
 
 

@@ -5,9 +5,7 @@ import de.Iclipse.IMAPI.Functions.Commands.cmd_color;
 import de.Iclipse.IMAPI.Functions.Commands.cmd_help;
 import de.Iclipse.IMAPI.Functions.Commands.cmd_lang;
 import de.Iclipse.IMAPI.Functions.Commands.cmd_restart;
-import de.Iclipse.IMAPI.Functions.Listener.ChatListener;
-import de.Iclipse.IMAPI.Functions.Listener.Completer;
-import de.Iclipse.IMAPI.Functions.Listener.JoinListener;
+import de.Iclipse.IMAPI.Functions.Listener.*;
 import de.Iclipse.IMAPI.Functions.MySQL.MySQL;
 import de.Iclipse.IMAPI.Functions.MySQL.MySQL_User;
 import de.Iclipse.IMAPI.Functions.Tablist;
@@ -39,6 +37,7 @@ public class IMAPI extends JavaPlugin {
         MySQL.connect();
         loadResourceBundles();
         dsp = new Dispatcher(this);
+        saveCounters();
     }
 
     @Override
@@ -48,6 +47,10 @@ public class IMAPI extends JavaPlugin {
         registerCommands();
         createTables();
         tablist = new Tablist();
+        initCounters();
+        blocks = new HashMap<>();
+        onlinetime = new HashMap<>();
+
     }
 
     @Override
@@ -59,6 +62,8 @@ public class IMAPI extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new JoinListener(), this);
         Bukkit.getPluginManager().registerEvents(new Completer(), this);
         Bukkit.getPluginManager().registerEvents(new ChatListener(), this);
+        Bukkit.getPluginManager().registerEvents(new BlockListener(), this);
+        Bukkit.getPluginManager().registerEvents(new QuitListener(), this);
     }
 
     public void registerCommands(){
@@ -83,6 +88,30 @@ public class IMAPI extends JavaPlugin {
 
     public void createTables(){
         MySQL_User.createUserTable();
+    }
+
+    public void initCounters(){
+        if(Bukkit.getOnlinePlayers().size() > 0){
+            Bukkit.getOnlinePlayers().forEach(entry ->{
+                onlinetime.put(entry, System.currentTimeMillis());
+            });
+            Bukkit.getOnlinePlayers().forEach(entry ->{
+                blocks.put(entry, MySQL_User.getBlocksPlaced(entry.getUniqueId()));
+            });
+        }
+    }
+
+    public static void saveCounters(){
+        if(onlinetime.size() > 0){
+            onlinetime.forEach((p, start) ->{
+                MySQL_User.setOnlinetime(p.getUniqueId(),MySQL_User.getOnlinetime(p.getUniqueId()) +  (System.currentTimeMillis() - start));
+            });
+        }
+        if(blocks.size() > 0){
+            blocks.forEach((p, b)->{
+                MySQL_User.setBlocksPlaced(p.getUniqueId(), b);
+            });
+        }
     }
 
     public static void loadResourceBundles(){
