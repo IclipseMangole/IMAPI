@@ -22,17 +22,18 @@ public class MySQL_User {
 
 
     public static void createUserTable(){
-        MySQL.update("CREATE TABLE IF NOT EXISTS user (uuid VARCHAR(60), points INT(10), onlinetime INT(15), firstJoin DATETIME, lastseen BIGINT, lang VARCHAR(10), blocks INT(10))");
+        MySQL.update("CREATE TABLE IF NOT EXISTS user (uuid VARCHAR(60), points INT(10), onlinetime INT(15), firstJoin DATETIME, lastseen BIGINT, lang VARCHAR(10), blocks INT(10), newsread DATETIME)");
     }
 
     public static void createUser(UUID uuid) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date time = Date.from(Instant.now());
-        MySQL.update("INSERT INTO `user` VALUES ('" + uuid.toString() + "', 0, 0, '" + sdf.format(time) + "', -1, 'EN', 0)");
+        MySQL.update("INSERT INTO `user` VALUES ('" + uuid.toString() + "', 0, 0, '" + sdf.format(time) + "', -1, 'EN', 0, '" + sdf.format(time) + "')");
+        System.out.println("INSERT INTO `user` VALUES ('" + uuid.toString() + "', 0, 0, '" + sdf.format(time) + "', -1, 'EN', 0, '" + sdf.format(time) + "')");
     }
 
     public static void deleteUser(UUID uuid) {
-        MySQL.update("DELETE * WHERE uuid = '" + uuid + "'");
+        MySQL.update("DELETE FROM user WHERE uuid = '" + uuid + "'");
     }
 
     public static boolean isUserExists(UUID uuid) {
@@ -85,7 +86,7 @@ public class MySQL_User {
     }
 
     public static void setOnlinetime(UUID uuid, long onlinetime) {
-        MySQL.update("UPDATE user SET online = " + onlinetime);
+        MySQL.update("UPDATE user SET onlinetime = " + onlinetime);
     }
 
     public static int getOnlinetime(UUID uuid) {
@@ -201,6 +202,24 @@ public class MySQL_User {
 
     public static void setBlocksPlaced(UUID uuid, int blocks){
         MySQL.update("UPDATE user SET blocks = '" + blocks + "' WHERE uuid = '" + uuid + "'");
+    }
+
+    public static LocalDateTime getLastNewsRead(UUID uuid) {
+        ResultSet rs = MySQL.querry("SELECT  newsread FROM user WHERE uuid = '" + uuid.toString() + "'");
+        try {
+            while (rs.next()) {
+                return LocalDateTime.of(rs.getDate("newsread").toLocalDate(), rs.getTime("newsread").toLocalTime());
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static void updateLastNewsRead(UUID uuid){
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date time = Date.from(Instant.now());
+        MySQL.update("UPDATE user SET newsread = '" + sdf.format(time) + "' WHERE uuid = '" + uuid + "'");
     }
 
 

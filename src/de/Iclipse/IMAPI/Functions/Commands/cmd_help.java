@@ -29,19 +29,19 @@ public class cmd_help {
     public void execute(CommandSender sender, String plugin, String pageString){
         int commandsPerPage = 7;
         if(plugin == null){
-            ArrayList<Plugin> implugins = new ArrayList<>();
+            ArrayList<String> implugins = new ArrayList<>();
             Data.commands.forEach((cmd, pl) ->{
                 if(!implugins.contains(pl)) implugins.add(pl);
             });
             final String[] message = {Data.prefix + "Plugins: "};
             implugins.forEach(entry ->{
-                message[0] = message[0] + Data.textcolor + entry.getName() + ", ";
+                message[0] = message[0] + Data.textcolor + entry + ", ";
             });
             sender.sendMessage(message);
         }else{
             final boolean[] contains = new boolean[1];
             Data.commands.forEach((cmd, pl) ->{
-                if(pl.getName().equals(plugin)){
+                if(pl.equals(plugin)){
                     contains[0] = true;
                 }
             });
@@ -53,7 +53,7 @@ public class cmd_help {
                 System.out.println(page);
                 ArrayList<IMCommand> permittedCmds = new ArrayList<>();
                 Data.commands.forEach((cmd, pl) -> {
-                    if (pl.getName().equals(plugin)) {
+                    if (pl.equals(plugin)) {
                         for (String permission : cmd.permissions()) {
                             if (!sender.hasPermission(permission)) {
                                 return;

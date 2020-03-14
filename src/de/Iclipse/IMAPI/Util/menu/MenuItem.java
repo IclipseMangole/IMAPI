@@ -1,7 +1,7 @@
 package de.Iclipse.IMAPI.Util.menu;
 
 import org.bukkit.Material;
-import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -140,8 +140,7 @@ public abstract class MenuItem {
     /**
      * Called when a player clicks this menu item
      *
-     * @param event The clicking player
+     * @param player The clicking player
      */
-    public abstract void onClick(InventoryClickEvent event);
-
+    public abstract void onClick(Player player);
 }

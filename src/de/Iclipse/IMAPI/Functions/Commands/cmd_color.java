@@ -16,7 +16,8 @@ public class cmd_color {
             aliases = {"colour"},
             permissions = "im.cmd.color",
             description = "color.description",
-            usage = "color.usage"
+            usage = "color.usage",
+            maxArgs = 0
     )
 
     public void execute(CommandSender sender) {

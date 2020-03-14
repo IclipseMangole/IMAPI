@@ -89,7 +89,7 @@ public class PopupMenuAPI implements Listener {
                 } else {
                     int index = event.getRawSlot();
                     if (index < inventory.getSize()) {
-                        menu.selectMenuItem(event, index);
+                        menu.selectMenuItem(player, index);
                     } else {
                         // If they want to mess with their inventory they don't need to do so in a menu
                         if (menu.exitOnClickOutside()) {

@@ -4,7 +4,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
@@ -109,15 +108,14 @@ public class PopupMenu implements InventoryHolder {
         return removeMenuItem(y * 9 + x);
     }
 
-    /*/**
+    /**
      * Removes an existing menu item from a menu at the specified slot index, if
      * you are more comfortable with Minecraft inventory slot indices. This can
      * be used to create dynamic menus, however beware that if you change a menu
      * it will change for all viewers. You should use the PopupMenuAPI.cloneMenu
      * method if you want a copy of a menu that can be safely changed.
      *
-     * @param x The column position starting from 0 at the left
-     * @param y The row position starting from 0 at the top
+     *
      * @return True, if there was a menu item to remove
      */
     public boolean removeMenuItem(int index) {
@@ -130,10 +128,10 @@ public class PopupMenu implements InventoryHolder {
         return true;
     }
 
-    protected void selectMenuItem(InventoryClickEvent event, int index) {
+    protected void selectMenuItem(Player player, int index) {
         if (items.containsKey(index)) {
             MenuItem item = items.get(index);
-            item.onClick(event);
+            item.onClick(player);
         }
     }
 
@@ -154,7 +152,7 @@ public class PopupMenu implements InventoryHolder {
      */
     public void openMenu(Player player) {
         if (getInventory().getViewers().contains(player)) {
-            throw new IllegalArgumentException(player.getName() + " is already viewing this");
+            throw new IllegalArgumentException(player.getName() + " is already viewing " +getInventory().toString());
         }
         player.openInventory(getInventory());
     }

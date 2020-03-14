@@ -12,10 +12,10 @@ import java.util.HashMap;
 
 public class Data {
     public static String symbol = "§8 » §7";
-    public static String prefix = "§5IM " + symbol;
+    public static String prefix = "§5IM" + symbol;
     public static Language defaultLang = Language.DE;
     public static Dispatcher dsp;
-    public static HashMap<IMCommand, Plugin> commands;
+    public static HashMap<IMCommand, String> commands;
     public static HashMap<IMCommand, HashMap<Integer, ArrayList<String>>> completions;
     public static String textcolor;
     public static String highlight;

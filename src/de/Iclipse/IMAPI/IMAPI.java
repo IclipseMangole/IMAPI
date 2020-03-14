@@ -7,6 +7,7 @@ import de.Iclipse.IMAPI.Functions.Commands.cmd_lang;
 import de.Iclipse.IMAPI.Functions.Commands.cmd_restart;
 import de.Iclipse.IMAPI.Functions.Listener.*;
 import de.Iclipse.IMAPI.Functions.MySQL.MySQL;
+import de.Iclipse.IMAPI.Functions.MySQL.MySQL_News;
 import de.Iclipse.IMAPI.Functions.MySQL.MySQL_User;
 import de.Iclipse.IMAPI.Functions.Tablist;
 import de.Iclipse.IMAPI.Util.Command.BukkitCommand;
@@ -37,7 +38,6 @@ public class IMAPI extends JavaPlugin {
         MySQL.connect();
         loadResourceBundles();
         dsp = new Dispatcher(this);
-        saveCounters();
     }
 
     @Override
@@ -56,6 +56,7 @@ public class IMAPI extends JavaPlugin {
     @Override
     public void onDisable() {
         super.onDisable();
+        saveCounters();
     }
 
     public void registerListener(){
@@ -88,6 +89,7 @@ public class IMAPI extends JavaPlugin {
 
     public void createTables(){
         MySQL_User.createUserTable();
+        MySQL_News.createNewsTable();
     }
 
     public void initCounters(){
@@ -156,7 +158,9 @@ public class IMAPI extends JavaPlugin {
         Method[] methods = functionClass.getDeclaredMethods();
         for (Method method : methods) {
             if (method.isAnnotationPresent(IMCommand.class))
-                registerCommand(function, method, plugin);
+                registerCommand(function,
+                        method,
+                        plugin);
         }
 
         if (function instanceof Listener) {
@@ -171,7 +175,7 @@ public class IMAPI extends JavaPlugin {
         IMCommand cmd = method.getAnnotation(IMCommand.class);
 
         if (cmd.parent().length == 0) {
-            commands.put(cmd, plugin);
+            commands.put(cmd, plugin.getName());
             BukkitCommand tBukkitCommand = new BukkitCommand(plugin, function, method, cmd);
             tBukkitCommand.register();
             commandMap.put(tBukkitCommand.getName(), tBukkitCommand);
