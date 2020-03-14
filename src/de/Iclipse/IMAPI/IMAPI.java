@@ -158,9 +158,7 @@ public class IMAPI extends JavaPlugin {
         Method[] methods = functionClass.getDeclaredMethods();
         for (Method method : methods) {
             if (method.isAnnotationPresent(IMCommand.class))
-                registerCommand(function,
-                        method,
-                        plugin);
+                registerCommand(function, method, plugin);
         }
 
         if (function instanceof Listener) {

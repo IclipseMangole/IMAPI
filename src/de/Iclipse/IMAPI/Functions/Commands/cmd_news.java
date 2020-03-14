@@ -28,18 +28,6 @@ public class cmd_news implements Listener {
         new NewsMenu(p);
     }
 
-    @IMCommand(
-            name = "cancel",
-            parent = "news",
-            usage = "news.cancel.usage",
-            description = "news.cancel.description",
-            maxArgs = 0,
-            minArgs = 0,
-            noConsole = true,
-            permissions = "im.command.news.write"
-    )
-    public void cancel(Player p) {
-    }
 
     @IMCommand(
             name = "write",
