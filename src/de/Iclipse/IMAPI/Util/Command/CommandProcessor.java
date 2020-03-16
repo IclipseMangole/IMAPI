@@ -3,7 +3,9 @@ package de.Iclipse.IMAPI.Util.Command;
 
 import com.google.common.base.Defaults;
 import com.google.common.base.Joiner;
+import de.Iclipse.IMAPI.Functions.MySQL.MySQL_User;
 import de.Iclipse.IMAPI.Util.TypeUtils;
+import de.Iclipse.IMAPI.Util.UUIDFetcher;
 import de.Iclipse.IMAPI.Util.executor.ThreadExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -99,7 +101,7 @@ public class CommandProcessor<S> {
 
         //Argumentanzahl
         if (command.minArgs() > -1 && args.length - wildcards < command.minArgs() || command.maxArgs() > -1 && args.length - wildcards > command.maxArgs()) {
-            dsp.send((Player) sender, "cmd.usage", command.usage());
+            dsp.send((Player) sender, "cmd.usage", dsp.get(command.usage(), MySQL_User.getLanguage(UUIDFetcher.getUUID(((Player) sender).getName()))));
             return;
         }
 
@@ -119,7 +121,7 @@ public class CommandProcessor<S> {
                 }
                 j++;
             } catch (Exception ex) {
-                dsp.send((Player) sender, "cmd.usage", command.usage());
+                dsp.send((Player) sender, "cmd.usage", dsp.get(command.usage(), MySQL_User.getLanguage(UUIDFetcher.getUUID(((Player) sender).getName()))));
                 return;
             }
         }
@@ -143,7 +145,7 @@ public class CommandProcessor<S> {
             if (result instanceof Boolean) {
                 boolean booleanResult = (boolean) result;
                 if (!booleanResult) {
-                    dsp.send((Player) sender, "cmd.usage", command.usage());
+                    dsp.send((Player) sender, "cmd.usage", dsp.get(command.usage(), MySQL_User.getLanguage(UUIDFetcher.getUUID(((Player) sender).getName()))));
                 }
             }
         } catch (IllegalAccessException | InvocationTargetException e) {

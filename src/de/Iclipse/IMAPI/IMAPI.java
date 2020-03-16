@@ -1,10 +1,7 @@
 package de.Iclipse.IMAPI;
 
 import com.google.common.base.Joiner;
-import de.Iclipse.IMAPI.Functions.Commands.cmd_color;
-import de.Iclipse.IMAPI.Functions.Commands.cmd_help;
-import de.Iclipse.IMAPI.Functions.Commands.cmd_lang;
-import de.Iclipse.IMAPI.Functions.Commands.cmd_restart;
+import de.Iclipse.IMAPI.Functions.Commands.*;
 import de.Iclipse.IMAPI.Functions.Listener.*;
 import de.Iclipse.IMAPI.Functions.MySQL.MySQL;
 import de.Iclipse.IMAPI.Functions.MySQL.MySQL_News;
@@ -14,6 +11,9 @@ import de.Iclipse.IMAPI.Util.Command.BukkitCommand;
 import de.Iclipse.IMAPI.Util.Command.IMCommand;
 import de.Iclipse.IMAPI.Util.Dispatching.Dispatcher;
 import de.Iclipse.IMAPI.Util.Dispatching.Language;
+import de.Iclipse.IMAPI.Util.executor.ThreadExecutor;
+import de.Iclipse.IMAPI.Util.executor.types.BukkitExecutor;
+import de.Iclipse.IMAPI.Util.menu.PopupMenuAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.PluginCommand;
@@ -35,6 +35,7 @@ public class IMAPI extends JavaPlugin {
     public void onLoad() {
         super.onLoad();
         Data.instance = this;
+        ThreadExecutor.setExecutor(new BukkitExecutor());
         MySQL.connect();
         loadResourceBundles();
         dsp = new Dispatcher(this);
@@ -47,9 +48,9 @@ public class IMAPI extends JavaPlugin {
         registerCommands();
         createTables();
         tablist = new Tablist();
-        initCounters();
         blocks = new HashMap<>();
         onlinetime = new HashMap<>();
+        initCounters();
 
     }
 
@@ -65,6 +66,7 @@ public class IMAPI extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new ChatListener(), this);
         Bukkit.getPluginManager().registerEvents(new BlockListener(), this);
         Bukkit.getPluginManager().registerEvents(new QuitListener(), this);
+        Bukkit.getPluginManager().registerEvents(new PopupMenuAPI(), this);
     }
 
     public void registerCommands(){
@@ -74,6 +76,9 @@ public class IMAPI extends JavaPlugin {
         register(new cmd_help(), this);
         register(new cmd_restart(), this);
         register(new cmd_color(), this);
+        register(new cmd_news(), this);
+        register(new cmd_gamemode(), this);
+        register(new cmd_points(), this);
     }
 
     /*

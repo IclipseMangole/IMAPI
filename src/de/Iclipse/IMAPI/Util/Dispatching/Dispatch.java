@@ -42,10 +42,7 @@ public abstract class Dispatch<R> {
             if (prefix) builder.append(Data.prefix.replace("IM", title));
 
 
-            builder.append(MessageFormat.format(
-                    lang.getBundle()
-                            .getString(key)
-                    , args).replaceAll("%r", textcolor)
+            builder.append(MessageFormat.format(lang.getBundle().getString(key), args).replaceAll("%r", textcolor)
                     .replaceAll("%w", warning)
                     .replaceAll("%h", highlight)
                     .replaceAll("%z", "\n" + Data.symbol + " "));
@@ -71,7 +68,7 @@ public abstract class Dispatch<R> {
     public boolean isPlayerNull(R receiver, String player) {
         if (!isUserExists(UUIDFetcher.getUUID(player))) {
             if (receiver instanceof Player) {
-                sendTextMessage(receiver, Data.prefix.replace("IM", title) + get("warning.invalidplayer", getLanguage(((Player) receiver).getUniqueId()), player));
+                sendTextMessage(receiver, Data.prefix.replace("IM", title) + get("warning.invalidplayer", getLanguage(UUIDFetcher.getUUID(((Player) receiver).getName())), player));
                 return true;
             } else {
                 sendTextMessage(receiver, Data.prefix.replace("IM", title) + get("warning.invalidplayer", Data.defaultLang, player));
@@ -79,7 +76,7 @@ public abstract class Dispatch<R> {
             }
         } else {
             if(receiver instanceof Player) {
-                sendTextMessage(receiver, Data.prefix.replace("IM", title) + get("warning.playeroffline", getLanguage(((Player) receiver).getUniqueId()), player));
+                sendTextMessage(receiver, Data.prefix.replace("IM", title) + get("warning.playeroffline", getLanguage(UUIDFetcher.getUUID(((Player) receiver).getName())), player));
                 return false;
             }else{
                 sendTextMessage(receiver, Data.prefix.replace("IM", title) + get("warning.playeroffline", Data.defaultLang, player));
@@ -91,13 +88,13 @@ public abstract class Dispatch<R> {
     public void playerNull(R receiver, String player) {
         if (!isUserExists(UUIDFetcher.getUUID(player))) {
             if (receiver instanceof Player) {
-                sendTextMessage(receiver, Data.prefix.replace("IM", title) + get("warning.invalidplayer", getLanguage(((Player) receiver).getUniqueId()),player));
+                sendTextMessage(receiver, Data.prefix.replace("IM", title) + get("warning.invalidplayer", getLanguage(UUIDFetcher.getUUID(((Player) receiver).getName())),player));
             } else {
                 sendTextMessage(receiver, Data.prefix.replace("IM", title) + get("warning.invalidplayer", Data.defaultLang, player));
             }
         } else {
             if (receiver instanceof Player) {
-                sendTextMessage(receiver, Data.prefix.replace("IM", title) + get("warning.playeroffline", getLanguage(((Player) receiver).getUniqueId()),player));
+                sendTextMessage(receiver, Data.prefix.replace("IM", title) + get("warning.playeroffline", getLanguage(UUIDFetcher.getUUID(((Player) receiver).getName())),player));
             }else{
                 sendTextMessage(receiver, Data.prefix.replace("IM", title) + get("warning.playeroffline", Data.defaultLang,player));
             }
@@ -105,18 +102,18 @@ public abstract class Dispatch<R> {
     }
 
     public void certain(String key, String permission, Object... args) {
-        Bukkit.getOnlinePlayers().stream().filter(R -> R.hasPermission(permission)).forEach(R -> R.sendMessage(Data.prefix.replace("IM", title) + get(key, getLanguage(R.getUniqueId()), args)));
+        Bukkit.getOnlinePlayers().stream().filter(R -> R.hasPermission(permission)).forEach(R -> R.sendMessage(Data.prefix.replace("IM", title) + get(key, getLanguage(UUIDFetcher.getUUID(R.getName())), args)));
     }
 
     public void online(String key, Object... args) {
-        Bukkit.getOnlinePlayers().forEach(R -> R.sendMessage(Data.prefix.replace("IM", title) + get(key, getLanguage(R.getUniqueId()), args)));
+        Bukkit.getOnlinePlayers().forEach(R -> R.sendMessage(Data.prefix.replace("IM", title) + get(key, getLanguage(UUIDFetcher.getUUID(R.getName())), args)));
     }
 
     public void send(R receiver, String key, Object... args) {
         if (receiver instanceof Player) {
-            sendTextMessage(receiver, Data.prefix + get(key, getLanguage(((Player) receiver).getUniqueId()), args));
+            sendTextMessage(receiver, Data.prefix + get(key, getLanguage(UUIDFetcher.getUUID(((Player) receiver).getName())), args));
         } else {
-
+            sendTextMessage(receiver, Data.prefix + get(key, Data.defaultLang, args));
         }
     }
 

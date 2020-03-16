@@ -11,7 +11,6 @@ public enum Language {
         this.shortcut = shortcut;
         this.bundle = bundle;
         this.translation = translation;
-        System.out.println(msgEN);
     }
 
     private String shortcut;

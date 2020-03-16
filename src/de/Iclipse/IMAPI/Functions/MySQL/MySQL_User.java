@@ -1,6 +1,7 @@
 package de.Iclipse.IMAPI.Functions.MySQL;
 
 import de.Iclipse.IMAPI.Util.Dispatching.Language;
+import de.Iclipse.IMAPI.Util.UUIDFetcher;
 import org.bukkit.entity.Player;
 
 import java.sql.ResultSet;
@@ -74,7 +75,7 @@ public class MySQL_User {
     }
 
     public static void setPoints(UUID uuid, int points) {
-        MySQL.update("UPDATE user SET points = " + points);
+        MySQL.update("UPDATE user SET points = " + points + " WHERE uuid = '" + uuid + "'");
     }
 
     public static void addPoints(UUID uuid, int points) {
@@ -86,7 +87,7 @@ public class MySQL_User {
     }
 
     public static void setOnlinetime(UUID uuid, long onlinetime) {
-        MySQL.update("UPDATE user SET onlinetime = " + onlinetime);
+        MySQL.update("UPDATE user SET onlinetime = " + onlinetime + " WHERE uuid = '" + uuid + "'");
     }
 
     public static int getOnlinetime(UUID uuid) {
@@ -116,7 +117,7 @@ public class MySQL_User {
     }
 
     public static LocalDateTime getFirstTime(Player pp) {
-        ResultSet rs = MySQL.querry("SELECT  firstJoin FROM `user` WHERE uuid = '" + pp.getUniqueId().toString() + "'");
+        ResultSet rs = MySQL.querry("SELECT  firstJoin FROM `user` WHERE uuid = '" + UUIDFetcher.getUUID(pp.getName()).toString() + "'");
         try {
             while (rs.next()) {
                 return LocalDateTime.of(rs.getDate("firstJoin").toLocalDate(), rs.getTime("firstJoin").toLocalTime());
@@ -138,7 +139,7 @@ public class MySQL_User {
     }
 
     public static long getLastTime(Player pp) {
-        UUID uuid = pp.getUniqueId();
+        UUID uuid = UUIDFetcher.getUUID(pp.getName());
         try {
             ResultSet rs = MySQL.querry("SELECT lastseen FROM `user` WHERE uuid = '" + uuid + "'");
             while (rs.next()) {
@@ -155,7 +156,7 @@ public class MySQL_User {
     }
 
     public static void setLastTime(Player pp, long time) {
-        UUID uuid = pp.getUniqueId();
+        UUID uuid = UUIDFetcher.getUUID(pp.getName());
         MySQL.update("UPDATE `user` SET lastseen = " + time + " WHERE uuid = '" + uuid + "'");
     }
 

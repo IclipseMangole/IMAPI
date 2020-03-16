@@ -1,6 +1,7 @@
 package de.Iclipse.IMAPI.Functions;
 
 import de.Iclipse.IMAPI.Data;
+import de.Iclipse.IMAPI.Util.UUIDFetcher;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -52,10 +53,9 @@ public class Tablist {
     }
 
 
-    public void setTablist(UUID uuid) {
-        Player p = Bukkit.getPlayer(uuid);
+    public void setTablist(Player p) {
 
-        if (Bukkit.getPlayer(uuid).hasPermission("im.tab.serversettings")) {
+        if (p.hasPermission("im.tab.serversettings")) {
             p.setPlayerListHeader(header + port);
         } else p.setPlayerListHeader(header);
 

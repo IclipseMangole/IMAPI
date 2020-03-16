@@ -19,7 +19,7 @@ public class MySQL_News {
     public static void createNews(String titleDE, String titleEN, String messageDE, String messageEN, UUID uuid){
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date time = Date.from(Instant.now());
-        MySQL.update("INSERT INTO news(NULL, '" + titleDE + "', '" + titleEN + "', '" + messageDE + "', '" + messageEN + "', '" + uuid.toString() + "', '" + sdf.format(time) + "'");
+        MySQL.update("INSERT INTO news (titleDE, titleEN, textDE, textEN, creator, created) VALUES ('" + titleDE + "', '" + titleEN + "', '" + messageDE + "', '" + messageEN + "', '" + uuid.toString() + "', '" + sdf.format(time) + "')");
     }
 
     public static void deleteNews(int id){
@@ -28,7 +28,7 @@ public class MySQL_News {
 
     public static boolean isTitleExists(String title){
         try{
-            ResultSet rs = MySQL.querry("SELECT id FROM user WHERE titleDE = '" + title + "' OR titleEN = '" + title + "'");
+            ResultSet rs = MySQL.querry("SELECT id FROM news WHERE titleDE = '" + title + "' OR titleEN = '" + title + "'");
             return rs.next();
         }catch (SQLException e){
             e.printStackTrace();
@@ -38,7 +38,7 @@ public class MySQL_News {
 
     public static int getID(String title){
         try{
-            ResultSet rs = MySQL.querry("SELECT id FROM user WHERE titleDE = '" + title + "' OR titleEN = '" + title + "'");
+            ResultSet rs = MySQL.querry("SELECT id FROM news WHERE titleDE = '" + title + "' OR titleEN = '" + title + "'");
             while(rs.next()){
                 return rs.getInt("id");
             }
@@ -50,9 +50,9 @@ public class MySQL_News {
 
     public static String getTitle(int id, Language lang){
         try {
-            ResultSet rs = MySQL.querry("SELECT title" + lang.getShortcut() + " from news WHERE id = '" + id + "'");
+            ResultSet rs = MySQL.querry("SELECT title" + lang.getShortcut() + " FROM news WHERE id = '" + id + "'");
             while (rs.next()) {
-                return rs.getString("textDE" + lang.getShortcut());
+                return rs.getString("title" + lang.getShortcut());
             }
         }catch (SQLException e){
             e.printStackTrace();
@@ -63,9 +63,9 @@ public class MySQL_News {
 
     public static String getText(int id, Language lang){
         try {
-            ResultSet rs = MySQL.querry("SELECT text" + lang.getShortcut() + " from news WHERE id = " + id + "");
+            ResultSet rs = MySQL.querry("SELECT text" + lang.getShortcut() + " FROM news WHERE id = " + id + "");
             while (rs.next()) {
-                return rs.getString("textDE" + lang.getShortcut());
+                return rs.getString("text" + lang.getShortcut());
             }
         }catch (SQLException e){
             e.printStackTrace();
@@ -77,7 +77,7 @@ public class MySQL_News {
     public static ArrayList<Integer> getNews(){
         ArrayList<Integer> list = new ArrayList<>();
         try {
-            ResultSet rs = MySQL.querry("SELECT id from news WHERE 1");
+            ResultSet rs = MySQL.querry("SELECT id FROM news WHERE 1 ORDER BY created DESC ");
             while (rs.next()) {
                 list.add(rs.getInt("id"));
             }
@@ -89,7 +89,7 @@ public class MySQL_News {
 
     public static UUID getCreator(int id){
         try {
-            ResultSet rs = MySQL.querry("SELECT creator from news WHERE id = " + id + "");
+            ResultSet rs = MySQL.querry("SELECT creator FROM news WHERE id = " + id + "");
             while (rs.next()) {
                 return UUID.fromString(rs.getString("creator"));
             }
@@ -100,7 +100,7 @@ public class MySQL_News {
     }
 
     public static LocalDateTime getCreated(int id) {
-        ResultSet rs = MySQL.querry("SELECT  created FROM user WHERE id = " + id);
+        ResultSet rs = MySQL.querry("SELECT created FROM news WHERE id = " + id);
         try {
             while (rs.next()) {
                 return LocalDateTime.of(rs.getDate("created").toLocalDate(), rs.getTime("created").toLocalTime());
