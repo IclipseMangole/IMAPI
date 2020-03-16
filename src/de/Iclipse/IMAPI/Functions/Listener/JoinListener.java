@@ -17,12 +17,6 @@ public class JoinListener implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent e){
         Player p = e.getPlayer();
-        if(MySQL_User.isUserExists(UUIDFetcher.getUUID(p.getName()))){
-            dsp.send(p, "join.old", p.getName());
-        }else{
-            MySQL_User.createUser(UUIDFetcher.getUUID(p.getName()));
-            dsp.send(p, "join.new", p.getName());
-        }
         tablist.setPlayer(e.getPlayer());
         tablist.setTablist(p);
         e.setJoinMessage(null);

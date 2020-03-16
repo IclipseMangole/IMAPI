@@ -6,6 +6,7 @@ import de.Iclipse.IMAPI.Functions.Listener.*;
 import de.Iclipse.IMAPI.Functions.MySQL.MySQL;
 import de.Iclipse.IMAPI.Functions.MySQL.MySQL_News;
 import de.Iclipse.IMAPI.Functions.MySQL.MySQL_User;
+import de.Iclipse.IMAPI.Functions.MySQL.MySQL_UserSettings;
 import de.Iclipse.IMAPI.Functions.Tablist;
 import de.Iclipse.IMAPI.Util.Command.BukkitCommand;
 import de.Iclipse.IMAPI.Util.Command.IMCommand;
@@ -31,19 +32,14 @@ import static de.Iclipse.IMAPI.Data.*;
 import static de.Iclipse.IMAPI.Util.Dispatching.ResourceBundle.*;
 
 public class IMAPI extends JavaPlugin {
+
     @Override
-    public void onLoad() {
-        super.onLoad();
+    public void onEnable() {
         Data.instance = this;
         ThreadExecutor.setExecutor(new BukkitExecutor());
         MySQL.connect();
         loadResourceBundles();
         dsp = new Dispatcher(this);
-    }
-
-    @Override
-    public void onEnable() {
-        super.onEnable();
         registerListener();
         registerCommands();
         createTables();
@@ -58,6 +54,7 @@ public class IMAPI extends JavaPlugin {
     public void onDisable() {
         super.onDisable();
         saveCounters();
+        MySQL.close();
     }
 
     public void registerListener(){
@@ -95,6 +92,7 @@ public class IMAPI extends JavaPlugin {
     public void createTables(){
         MySQL_User.createUserTable();
         MySQL_News.createNewsTable();
+        MySQL_UserSettings.createUserSettingsTable();
     }
 
     public void initCounters(){
