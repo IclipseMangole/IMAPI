@@ -10,7 +10,9 @@ public class MySQL_UserSettings {
     }
 
     public static void createUserSetting(UUID uuid, String key, String value){
-        MySQL.update("INSERT INTO usersettings (uuid, key, value) VALUES ('" + uuid + "', '" + key + "', '" + value + "'");
+        if(isSettingExists(uuid, key)) {
+            MySQL.update("INSERT INTO usersettings (uuid, key, value) VALUES ('" + uuid + "', '" + key + "', '" + value + "'");
+        }
     }
 
     public static void deleteUserSetting(UUID uuid, String key){
