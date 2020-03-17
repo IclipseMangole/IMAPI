@@ -6,22 +6,22 @@ import java.util.UUID;
 
 public class MySQL_UserSettings {
     public static void createUserSettingsTable(){
-        MySQL.update("CREATE TABLE IF NOT EXISTS usersettings (id MEDIUMINT NOT NULL AUTO_INCREMENT, uuid VARCHAR(60), ´key´ VARCHAR(256), ´value´ VARCHAR(256), PRIMARY KEY (id)) )");
+        MySQL.update("CREATE TABLE IF NOT EXISTS usersettings (id MEDIUMINT NOT NULL AUTO_INCREMENT, uuid VARCHAR(60), `key` VARCHAR(256), `value` VARCHAR(256), PRIMARY KEY (id))");
     }
 
     public static void createUserSetting(UUID uuid, String key, String value){
-        if(isSettingExists(uuid, key)) {
-            MySQL.update("INSERT INTO usersettings (uuid, key, value) VALUES ('" + uuid + "', '" + key + "', '" + value + "'");
+        if(!isSettingExists(uuid, key)) {
+            MySQL.update("INSERT INTO usersettings (uuid, `key`, `value`) VALUES ('" + uuid + "', '" + key + "', '" + value + "')");
         }
     }
 
     public static void deleteUserSetting(UUID uuid, String key){
-        MySQL.update("DELETE usersettings WHERE uuid = '" + uuid + "' AND key = '" + key + "'");
+        MySQL.update("DELETE usersettings WHERE uuid = '" + uuid + "' AND `key` = '" + key + "'");
     }
 
     public static int getId(UUID uuid, String key){
         try {
-            ResultSet rs = MySQL.querry("SELECT id FROM usersettings WHERE uuid = '" + uuid + "' AND key = '" + key + "'");
+            ResultSet rs = MySQL.querry("SELECT id FROM usersettings WHERE uuid = '" + uuid + "' AND `key` = '" + key + "'");
             while (rs.next()) {
                 return Integer.parseInt(rs.getString("id"));
             }
@@ -33,7 +33,7 @@ public class MySQL_UserSettings {
 
     public static boolean isSettingExists(UUID uuid, String key){
         try {
-            ResultSet rs = MySQL.querry("SELECT id FROM usersettings WHERE uuid = '" + uuid + "' AND key = '" + key + "'");
+            ResultSet rs = MySQL.querry("SELECT id FROM usersettings WHERE uuid = '" + uuid + "' AND `key` = '" + key + "'");
             return rs.next();
         }catch(SQLException e){
             e.printStackTrace();
@@ -43,9 +43,9 @@ public class MySQL_UserSettings {
 
     public static String getString(UUID uuid, String key){
         try {
-            ResultSet rs = MySQL.querry("SELECT value FROM usersettings WHERE uuid = '" + uuid + "' AND key = '" + key + "'");
+            ResultSet rs = MySQL.querry("SELECT `value` FROM usersettings WHERE uuid = '" + uuid + "' AND `key` = '" + key + "'");
             while (rs.next()) {
-                return rs.getString("value");
+                return rs.getString("`value`");
             }
         }catch(SQLException e){
             e.printStackTrace();
@@ -55,9 +55,9 @@ public class MySQL_UserSettings {
 
     public static int getInt(UUID uuid, String key){
         try {
-            ResultSet rs = MySQL.querry("SELECT value FROM usersettings WHERE uuid = '" + uuid + "' AND key = '" + key + "'");
+            ResultSet rs = MySQL.querry("SELECT `value` FROM usersettings WHERE uuid = '" + uuid + "' AND `key` = '" + key + "'");
             while (rs.next()) {
-                return Integer.parseInt(rs.getString("value"));
+                return Integer.parseInt(rs.getString("`value`"));
             }
         }catch(SQLException e){
             e.printStackTrace();
@@ -67,9 +67,9 @@ public class MySQL_UserSettings {
 
     public static boolean getBoolean(UUID uuid, String key){
         try {
-            ResultSet rs = MySQL.querry("SELECT value FROM usersettings WHERE uuid = '" + uuid + "' AND key = '" + key + "'");
+            ResultSet rs = MySQL.querry("SELECT `value` FROM usersettings WHERE uuid = '" + uuid + "' AND `key` = '" + key + "'");
             while (rs.next()) {
-                return Boolean.parseBoolean(rs.getString("value"));
+                return Boolean.parseBoolean(rs.getString("`value`"));
             }
         }catch(SQLException e){
             e.printStackTrace();
@@ -78,15 +78,15 @@ public class MySQL_UserSettings {
     }
 
     public static void setString(UUID uuid, String key, String value){
-        MySQL.update("UPDATE usersettings SET value = '" + value + "' WHERE uuid = '" + uuid + "' AND key = '" + key + "'");
+        MySQL.update("UPDATE usersettings SET `value` = '" + value + "' WHERE uuid = '" + uuid + "' AND `key` = '" + key + "'");
     }
 
     public static void setInt(UUID uuid, String key, int value){
-        MySQL.update("UPDATE usersettings SET value = '" + value + "' WHERE uuid = '" + uuid + "' AND key = '" + key + "'");
+        MySQL.update("UPDATE usersettings SET `value` = '" + value + "' WHERE uuid = '" + uuid + "' AND `key` = '" + key + "'");
     }
 
     public static void setBoolean(UUID uuid, String key, boolean value){
-        MySQL.update("UPDATE usersettings SET value = '" + value + "' WHERE uuid = '" + uuid + "' AND key = '" + key + "'");
+        MySQL.update("UPDATE usersettings SET `value` = '" + value + "' WHERE uuid = '" + uuid + "' AND `key` = '" + key + "'");
     }
 
 

@@ -19,7 +19,7 @@ public class cmd_gamemode {
             name = "gamemode",
             aliases = {"gm"},
             noConsole = true,
-            permissions = "px.gamemode",
+            permissions = "im.cmd.gamemode",
             minArgs = 0,
             maxArgs = 2,
             usage = "/gamemode (Gamemode) (Player)"

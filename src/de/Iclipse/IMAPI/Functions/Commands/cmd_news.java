@@ -36,7 +36,7 @@ public class cmd_news implements Listener {
             description = "news.description",
             minArgs = 0,
             maxArgs = 0,
-            permissions = "im.command.news",
+            permissions = "im.cmd.news",
             noConsole = true
     )
     public void news(Player p) {
@@ -52,7 +52,7 @@ public class cmd_news implements Listener {
             maxArgs = 0,
             minArgs = 0,
             noConsole = true,
-            permissions = "im.command.news.write"
+            permissions = "im.cmd.news.write"
     )
     public void write(Player p) {
         if(!writers.containsKey(p)) {
@@ -71,7 +71,7 @@ public class cmd_news implements Listener {
             maxArgs = 1,
             minArgs = 1,
             noConsole = true,
-            permissions = "im.command.news.delete"
+            permissions = "im.cmd.news.delete"
 
     )
     public void delete(Player p, String title) {

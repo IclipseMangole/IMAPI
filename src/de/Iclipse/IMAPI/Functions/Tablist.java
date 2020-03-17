@@ -57,15 +57,16 @@ public class Tablist {
 
         if (p.hasPermission("im.tab.serversettings")) {
             p.setPlayerListHeader(header + port);
-        } else p.setPlayerListHeader(header);
-
-        p.setPlayerListFooter(ranks + "\n" + footer);
+            p.setPlayerListFooter(ranks + "\n" + footer);
+        } else{
+            p.setPlayerListHeader(header);
+            p.setPlayerListFooter(ranks);
+        }
     }
 
 
     public void setPlayer(Player p) {
         String team = "";
-        team = "";
         if (p.hasPermission("im.color.admin")) {
             team = "1a";
         } else if (p.hasPermission("im.color.mod")) {
@@ -79,8 +80,8 @@ public class Tablist {
         rankColor.put(p, sb.getTeam(team).getPrefix());
 
         String name = "";
-        name = String.valueOf(sb.getTeam(team).getPrefix()) + p.getName();
-        System.out.println(name);
+        System.out.println("DisplayName: " + p.getDisplayName());
+        name = sb.getTeam(team).getPrefix() + p.getName();
         ChatColor.translateAlternateColorCodes('§', name);
 
         p.setPlayerListName(name);
