@@ -31,7 +31,6 @@ public class NewsMenu extends PopupMenu {
                 MySQL_News.getNews().forEach(news -> {
                     seen[0] = MySQL_User.getLastNewsRead(getUUID(viewer.getName())).isAfter(MySQL_News.getCreated(news));
                     String name;
-                    System.out.println(MySQL_News.getTitle(news, Language.DE) + " seen: " + seen[0]);
                     if (!seen[0]) {
                         name = dsp.get("news.new", MySQL_User.getLanguage(getUUID(viewer.getName())), false) + MySQL_News.getTitle(news, MySQL_User.getLanguage(getUUID(viewer.getName())));
                     } else {

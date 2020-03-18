@@ -23,14 +23,13 @@ public class MySQL_User {
 
 
     public static void createUserTable(){
-        MySQL.update("CREATE TABLE IF NOT EXISTS user (uuid VARCHAR(60), points INT(10), onlinetime INT(15), firstJoin DATETIME, lastseen BIGINT, lang VARCHAR(10), blocks INT(10), newsread DATETIME)");
+        MySQL.update("CREATE TABLE IF NOT EXISTS user (uuid VARCHAR(60), schnitzel INT(10), onlinetime INT(15), firstJoin DATETIME, lastseen BIGINT, lang VARCHAR(10), blocks INT(10), newsread DATETIME)");
     }
 
     public static void createUser(UUID uuid) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date time = Date.from(Instant.now());
         MySQL.update("INSERT INTO `user` VALUES ('" + uuid.toString() + "', 0, 0, '" + sdf.format(time) + "', -1, 'EN', 0, '" + sdf.format(time) + "')");
-        System.out.println("INSERT INTO `user` VALUES ('" + uuid.toString() + "', 0, 0, '" + sdf.format(time) + "', -1, 'EN', 0, '" + sdf.format(time) + "')");
     }
 
     public static void deleteUser(UUID uuid) {
@@ -61,11 +60,11 @@ public class MySQL_User {
         }
     }
 
-    public static int getPoints(UUID uuid) {
+    public static int getSchnitzel(UUID uuid) {
         try {
-            ResultSet rs = MySQL.querry("SELECT points FROM user WHERE uuid = '" + uuid + "'");
+            ResultSet rs = MySQL.querry("SELECT schnitzel FROM user WHERE uuid = '" + uuid + "'");
             while (rs.next()) {
-                return rs.getInt("points");
+                return rs.getInt("schnitzel");
             }
 
         } catch (SQLException e) {
@@ -74,16 +73,16 @@ public class MySQL_User {
         return -1;
     }
 
-    public static void setPoints(UUID uuid, int points) {
-        MySQL.update("UPDATE user SET points = " + points + " WHERE uuid = '" + uuid + "'");
+    public static void setSchnitzel(UUID uuid, int schnitzel) {
+        MySQL.update("UPDATE user SET schnitzel = " + schnitzel + " WHERE uuid = '" + uuid + "'");
     }
 
-    public static void addPoints(UUID uuid, int points) {
-        setPoints(uuid, getPoints(uuid) + points);
+    public static void addSchnitzel(UUID uuid, int schnitzel) {
+        setSchnitzel(uuid, getSchnitzel(uuid) + schnitzel);
     }
 
-    public static void removePoints(UUID uuid, int points) {
-        setPoints(uuid, getPoints(uuid) - points);
+    public static void removeSchnitzel(UUID uuid, int schnitzel) {
+        setSchnitzel(uuid, getSchnitzel(uuid) - schnitzel);
     }
 
     public static void setOnlinetime(UUID uuid, long onlinetime) {

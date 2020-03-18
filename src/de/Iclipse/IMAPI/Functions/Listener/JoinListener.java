@@ -17,14 +17,6 @@ public class JoinListener implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent e){
         Player p = e.getPlayer();
-        tablist.setPlayer(e.getPlayer());
-        tablist.setTablist(p);
-        e.setJoinMessage(null);
-        Bukkit.getOnlinePlayers().forEach(entry ->{
-            if(!entry.equals(p)){
-                dsp.send(entry, "join.message", p.getDisplayName());
-            }
-        });
         Data.onlinetime.put(p, System.currentTimeMillis());
         Data.blocks.put(p, MySQL_User.getBlocksPlaced(getUUID(p.getName())));
     }

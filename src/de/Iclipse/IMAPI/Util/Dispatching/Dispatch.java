@@ -3,7 +3,6 @@ package de.Iclipse.IMAPI.Util.Dispatching;
 import de.Iclipse.IMAPI.Data;
 import de.Iclipse.IMAPI.Util.UUIDFetcher;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.text.MessageFormat;

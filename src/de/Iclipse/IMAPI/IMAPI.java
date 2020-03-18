@@ -7,7 +7,6 @@ import de.Iclipse.IMAPI.Functions.MySQL.MySQL;
 import de.Iclipse.IMAPI.Functions.MySQL.MySQL_News;
 import de.Iclipse.IMAPI.Functions.MySQL.MySQL_User;
 import de.Iclipse.IMAPI.Functions.MySQL.MySQL_UserSettings;
-import de.Iclipse.IMAPI.Functions.Tablist;
 import de.Iclipse.IMAPI.Util.Command.BukkitCommand;
 import de.Iclipse.IMAPI.Util.Command.IMCommand;
 import de.Iclipse.IMAPI.Util.Dispatching.Dispatcher;
@@ -17,8 +16,6 @@ import de.Iclipse.IMAPI.Util.executor.types.BukkitExecutor;
 import de.Iclipse.IMAPI.Util.menu.PopupMenuAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
-import org.bukkit.command.PluginCommand;
-import org.bukkit.command.TabCompleter;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -43,7 +40,6 @@ public class IMAPI extends JavaPlugin {
         registerListener();
         registerCommands();
         createTables();
-        tablist = new Tablist();
         blocks = new HashMap<>();
         onlinetime = new HashMap<>();
         initCounters();
@@ -75,7 +71,7 @@ public class IMAPI extends JavaPlugin {
         register(new cmd_color(), this);
         register(new cmd_news(), this);
         register(new cmd_gamemode(), this);
-        register(new cmd_points(), this);
+        register(new cmd_schnitzel(), this);
     }
 
     /*

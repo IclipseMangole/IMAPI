@@ -45,7 +45,7 @@ public class MySQL_UserSettings {
         try {
             ResultSet rs = MySQL.querry("SELECT `value` FROM usersettings WHERE uuid = '" + uuid + "' AND `key` = '" + key + "'");
             while (rs.next()) {
-                return rs.getString("`value`");
+                return rs.getString("value");
             }
         }catch(SQLException e){
             e.printStackTrace();
@@ -57,7 +57,7 @@ public class MySQL_UserSettings {
         try {
             ResultSet rs = MySQL.querry("SELECT `value` FROM usersettings WHERE uuid = '" + uuid + "' AND `key` = '" + key + "'");
             while (rs.next()) {
-                return Integer.parseInt(rs.getString("`value`"));
+                return Integer.parseInt(rs.getString("value"));
             }
         }catch(SQLException e){
             e.printStackTrace();
@@ -69,7 +69,7 @@ public class MySQL_UserSettings {
         try {
             ResultSet rs = MySQL.querry("SELECT `value` FROM usersettings WHERE uuid = '" + uuid + "' AND `key` = '" + key + "'");
             while (rs.next()) {
-                return Boolean.parseBoolean(rs.getString("`value`"));
+                return Boolean.parseBoolean(rs.getString("value"));
             }
         }catch(SQLException e){
             e.printStackTrace();
