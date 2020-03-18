@@ -1,10 +1,12 @@
 package de.Iclipse.IMAPI.Util.Dispatching;
 
 
-import static de.Iclipse.IMAPI.Util.Dispatching.ResourceBundle.msgEN;
+
+import java.util.ResourceBundle;
+
 
 public enum Language {
-    DE("DE", ResourceBundle.msgDE, "Deutsch"), EN("EN", ResourceBundle.msgEN, "English");
+    DE("DE", de.Iclipse.IMAPI.Util.Dispatching.ResourceBundle.msgDE, "Deutsch"), EN("EN", de.Iclipse.IMAPI.Util.Dispatching.ResourceBundle.msgEN, "English");
 
 
     Language(String shortcut, java.util.ResourceBundle bundle, String translation) {

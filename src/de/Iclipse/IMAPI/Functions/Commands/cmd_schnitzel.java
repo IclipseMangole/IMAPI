@@ -32,7 +32,7 @@ public class cmd_schnitzel {
             sender.sendMessage(builder.toString());
         }else{
             if(sender instanceof Player){
-                dsp.send(sender, "schnitzel.get", MySQL_User.getSchnitzel(UUIDFetcher.getUUID(sender.getName())));
+                dsp.send(sender, "schnitzel.get", "" + MySQL_User.getSchnitzel(UUIDFetcher.getUUID(sender.getName())));
             }else{
                 dsp.send(sender, "cmd.noconsole");
             }
@@ -52,7 +52,7 @@ public class cmd_schnitzel {
     public void add(CommandSender sender, String name, int schnitzel) {
         if (MySQL_User.isUserExists(UUIDFetcher.getUUID(name))) {
             MySQL_User.addSchnitzel(UUIDFetcher.getUUID(name), schnitzel);
-            dsp.send(sender, "schnitzel.add.success", name, schnitzel);
+            dsp.send(sender, "schnitzel.add.success", name, "" + schnitzel);
         } else {
             dsp.send(sender, "schnitzel.notexist");
         }
@@ -71,7 +71,7 @@ public class cmd_schnitzel {
     public void remove(CommandSender sender, String name, int schnitzel) {
         if (MySQL_User.isUserExists(UUIDFetcher.getUUID(name))) {
             MySQL_User.removeSchnitzel(UUIDFetcher.getUUID(name), schnitzel);
-            dsp.send(sender, "schnitzel.remove.success", name, schnitzel);
+            dsp.send(sender, "schnitzel.remove.success", name, "" + schnitzel);
         } else {
             dsp.send(sender, "schnitzel.notexist");
         }
@@ -90,7 +90,7 @@ public class cmd_schnitzel {
     public void set(CommandSender sender, String name, int schnitzel) {
         if (MySQL_User.isUserExists(UUIDFetcher.getUUID(name))) {
             MySQL_User.setSchnitzel(UUIDFetcher.getUUID(name), schnitzel);
-            dsp.send(sender, "schnitzel.set.success", name, schnitzel);
+            dsp.send(sender, "schnitzel.set.success", name, "" + schnitzel);
         } else {
             dsp.send(sender, "schnitzel.notexist");
         }
@@ -108,7 +108,7 @@ public class cmd_schnitzel {
     )
     public void get(CommandSender sender, String name) {
         if (MySQL_User.isUserExists(UUIDFetcher.getUUID(name))) {
-            dsp.send(sender, "schnitzel.get.player", name, MySQL_User.getSchnitzel(UUIDFetcher.getUUID(name)));
+            dsp.send(sender, "schnitzel.get.player", name, "" + MySQL_User.getSchnitzel(UUIDFetcher.getUUID(name)));
         } else {
             dsp.send(sender, "schnitzel.notexist");
         }

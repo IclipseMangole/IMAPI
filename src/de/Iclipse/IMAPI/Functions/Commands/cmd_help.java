@@ -63,7 +63,7 @@ public class cmd_help {
                     }
                 });
                 if (!(Math.ceil((double) permittedCmds.size() / (double) commandsPerPage) < page)) {
-                    dsp.send(sender, "help.header", pageString, Math.ceil((double) permittedCmds.size() / (double) commandsPerPage));
+                    dsp.send(sender, "help.header", pageString, "" + Math.ceil((double) permittedCmds.size() / (double) commandsPerPage));
                     permittedCmds.forEach(entry -> {
                         if(sender instanceof Player){
                         TextComponent component = new TextComponent(prefix + "§5" + dsp.get(entry.usage(), MySQL_User.getLanguage(((Player) sender).getUniqueId())) + ": " + highlight + dsp.get(entry.description(), MySQL_User.getLanguage(((Player) sender).getUniqueId()), false));

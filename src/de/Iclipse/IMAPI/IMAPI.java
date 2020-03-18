@@ -20,13 +20,13 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static de.Iclipse.IMAPI.Data.*;
-import static de.Iclipse.IMAPI.Util.Dispatching.ResourceBundle.*;
+import static de.Iclipse.IMAPI.Util.Dispatching.ResourceBundle.loadResourceBundleDE;
+import static de.Iclipse.IMAPI.Util.Dispatching.ResourceBundle.loadResourceBundleEN;
+import static de.Iclipse.IMAPI.Util.Dispatching.ResourceBundle.msgDE;
+import static de.Iclipse.IMAPI.Util.Dispatching.ResourceBundle.msgEN;
 
 public class IMAPI extends JavaPlugin {
 
@@ -53,7 +53,7 @@ public class IMAPI extends JavaPlugin {
         MySQL.close();
     }
 
-    public void registerListener(){
+    public void registerListener() {
         Bukkit.getPluginManager().registerEvents(new JoinListener(), this);
         Bukkit.getPluginManager().registerEvents(new Completer(), this);
         Bukkit.getPluginManager().registerEvents(new ChatListener(), this);
@@ -62,7 +62,7 @@ public class IMAPI extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new PopupMenuAPI(), this);
     }
 
-    public void registerCommands(){
+    public void registerCommands() {
         commands = new HashMap<>();
         completions = new HashMap<>();
         register(new cmd_lang(), this);
@@ -85,46 +85,47 @@ public class IMAPI extends JavaPlugin {
     }
     */
 
-    public void createTables(){
+    public void createTables() {
         MySQL_User.createUserTable();
         MySQL_News.createNewsTable();
         MySQL_UserSettings.createUserSettingsTable();
     }
 
-    public void initCounters(){
-        if(Bukkit.getOnlinePlayers().size() > 0){
-            Bukkit.getOnlinePlayers().forEach(entry ->{
+    public void initCounters() {
+        if (Bukkit.getOnlinePlayers().size() > 0) {
+            Bukkit.getOnlinePlayers().forEach(entry -> {
                 onlinetime.put(entry, System.currentTimeMillis());
             });
-            Bukkit.getOnlinePlayers().forEach(entry ->{
+            Bukkit.getOnlinePlayers().forEach(entry -> {
                 blocks.put(entry, MySQL_User.getBlocksPlaced(entry.getUniqueId()));
             });
         }
     }
 
-    public static void saveCounters(){
-        if(onlinetime.size() > 0){
-            onlinetime.forEach((p, start) ->{
-                MySQL_User.setOnlinetime(p.getUniqueId(),MySQL_User.getOnlinetime(p.getUniqueId()) +  (System.currentTimeMillis() - start));
+    public static void saveCounters() {
+        if (onlinetime.size() > 0) {
+            onlinetime.forEach((p, start) -> {
+                MySQL_User.setOnlinetime(p.getUniqueId(), MySQL_User.getOnlinetime(p.getUniqueId()) + (System.currentTimeMillis() - start));
             });
         }
-        if(blocks.size() > 0){
-            blocks.forEach((p, b)->{
+        if (blocks.size() > 0) {
+            blocks.forEach((p, b) -> {
                 MySQL_User.setBlocksPlaced(p.getUniqueId(), b);
             });
         }
     }
 
     public static void loadResourceBundles(){
-        loadResourceBundleDE("langDE");
-        loadResourceBundleEN("langEN");
-        Language.DE.setBundle(msgDE);
-        Language.EN.setBundle(msgEN);
-        System.out.println(Data.prefix + "Loaded languages!");
+        try {
+            loadResourceBundleDE("langDE");
+            loadResourceBundleEN("langEN");
+            Language.DE.setBundle(msgDE);
+            Language.EN.setBundle(msgEN);
+            System.out.println(Data.prefix + "Loaded languages!");
+        }catch(MissingResourceException | NullPointerException e){
+            System.out.println("Reload oder Bundle not found!");
+        }
     }
-
-
-
 
 
     public static void register(Class functionClass, JavaPlugin plugin) {
@@ -176,7 +177,6 @@ public class IMAPI extends JavaPlugin {
             BukkitCommand tBukkitCommand = new BukkitCommand(plugin, function, method, cmd);
             tBukkitCommand.register();
             commandMap.put(tBukkitCommand.getName(), tBukkitCommand);
-
 
 
             for (Object[] unavailableSubcommand : unavailableSubcommands) {

@@ -1,6 +1,5 @@
 package de.Iclipse.IMAPI.Util.Dispatching;
 
-
 public class ResourceBundle {
     public static java.util.ResourceBundle msgDE;
     public static java.util.ResourceBundle msgEN;
@@ -12,5 +11,4 @@ public class ResourceBundle {
     public static void loadResourceBundleEN(String file) {
         msgEN = java.util.ResourceBundle.getBundle("i18n." + file);
     }
-
 }
