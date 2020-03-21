@@ -1,7 +1,11 @@
 package de.Iclipse.IMAPI.Functions.Commands;
 
+import de.Iclipse.IMAPI.Functions.MySQL.MySQL_UserSettings;
 import de.Iclipse.IMAPI.Util.Command.IMCommand;
+import de.Iclipse.IMAPI.Util.UUIDFetcher;
 import org.bukkit.entity.Player;
+
+import java.util.UUID;
 
 public class cmd_vanish {
     @IMCommand(
@@ -17,6 +21,16 @@ public class cmd_vanish {
     public void execute(Player p, Integer vanish){
         if(vanish == null){
 
+        }else{
+
         }
+    }
+
+    public void setVanish(Player p, int vanish){
+        MySQL_UserSettings.setInt(UUIDFetcher.getUUID(p.getName()), "vanish", vanish);
+    }
+
+    public int getVanish(UUID uuid){
+        return MySQL_UserSettings.getInt(uuid, "vanish");
     }
 }

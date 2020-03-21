@@ -10,6 +10,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
+import java.util.UUID;
+
 import static de.Iclipse.IMAPI.Data.dsp;
 import static de.Iclipse.IMAPI.Data.tablist;
 import static de.Iclipse.IMAPI.Util.UUIDFetcher.getUUID;
@@ -20,5 +22,11 @@ public class JoinListener implements Listener {
         Player p = e.getPlayer();
         Data.onlinetime.put(p, System.currentTimeMillis());
         Data.blocks.put(p, MySQL_User.getBlocksPlaced(getUUID(p.getName())));
+        createSettings(UUIDFetcher.getUUID(p.getName()));
+        e.setJoinMessage(null);
+    }
+
+    public void createSettings(UUID uuid){
+        MySQL_UserSettings.createUserSetting(uuid, "vanish", "0");
     }
 }

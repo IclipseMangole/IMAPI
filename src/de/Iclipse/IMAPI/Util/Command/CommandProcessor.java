@@ -113,6 +113,12 @@ public class CommandProcessor<S> {
                 if (j < args.length) {
                     if (methodParameters[i] == String.class) {
                         params[i] = args[j];
+                    }else if(methodParameters[i] == String[].class){
+                        String[] array = new String[args.length - (j - 1)];
+                        for(int z = i; z < methodParameters.length; z++){
+                            array[z] = args[j];
+                        }
+                        i = methodParameters.length - 1;
                     } else {
                         params[i] = TypeUtils.convert(methodParameters[i], args[j]);
                     }
