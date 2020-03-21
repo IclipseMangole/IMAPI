@@ -72,6 +72,7 @@ public class IMAPI extends JavaPlugin {
         register(new cmd_news(), this);
         register(new cmd_gamemode(), this);
         register(new cmd_schnitzel(), this);
+        register(new cmd_apireload(), this);
     }
 
     /*
@@ -124,6 +125,7 @@ public class IMAPI extends JavaPlugin {
             System.out.println(Data.prefix + "Loaded languages!");
         }catch(MissingResourceException | NullPointerException e){
             System.out.println("Reload oder Bundle not found!");
+            dispatching = false;
         }
     }
 

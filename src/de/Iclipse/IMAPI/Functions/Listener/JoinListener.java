@@ -8,12 +8,27 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerLoginEvent;
+
+import java.net.Inet4Address;
+import java.net.InetAddress;
 
 import static de.Iclipse.IMAPI.Data.dsp;
 import static de.Iclipse.IMAPI.Data.tablist;
 import static de.Iclipse.IMAPI.Util.UUIDFetcher.getUUID;
 
 public class JoinListener implements Listener {
+    @EventHandler
+    public void onLogin(PlayerLoginEvent e){
+        if(!e.getHostname().equalsIgnoreCase("45.10.24.22:25565")){
+            e.setResult(PlayerLoginEvent.Result.KICK_OTHER);
+            e.setKickMessage(dsp.get( "proxyjoin.blocked", MySQL_User.getLanguage(UUIDFetcher.getUUID(e.getPlayer().getName()))));
+            System.out.println(e.getAddress());
+            System.out.println(e.getHostname());
+            System.out.println(e.getRealAddress());
+        }
+    }
+
     @EventHandler
     public void onJoin(PlayerJoinEvent e){
         Player p = e.getPlayer();

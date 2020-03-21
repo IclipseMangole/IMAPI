@@ -1,12 +1,15 @@
 package de.Iclipse.IMAPI.Functions.Commands;
 
 import de.Iclipse.IMAPI.Data;
+import de.Iclipse.IMAPI.Functions.MySQL.MySQL_User;
 import de.Iclipse.IMAPI.Util.Command.IMCommand;
+import de.Iclipse.IMAPI.Util.UUIDFetcher;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import static de.Iclipse.IMAPI.Data.dsp;
 import static de.Iclipse.IMAPI.Data.prefix;
 
 
@@ -18,11 +21,11 @@ public class cmd_gamemode {
     @IMCommand(
             name = "gamemode",
             aliases = {"gm"},
-            noConsole = true,
             permissions = "im.cmd.gamemode",
             minArgs = 0,
             maxArgs = 2,
-            usage = "/gamemode (Gamemode) (Player)"
+            usage = "gamemode.usage",
+            description = "gamemode.description"
     )
 
     public void execute(CommandSender sender, String[] args) {
@@ -33,9 +36,9 @@ public class cmd_gamemode {
                 } else {
                     ((Player) sender).setGameMode(GameMode.CREATIVE);
                 }
-                sender.sendMessage(prefix + "Dein Gamemode ist nun §3" + ((Player) sender).getGameMode().toString());
+                dsp.send(sender, "gamemode.changed.you", ((Player) sender).getGameMode().toString());
             } else {
-                sender.sendMessage(prefix + "§cDu kannst deinen gamemode nicht ändern!");
+                dsp.send(sender, "cmd.noconsole");
             }
         } else if (args.length == 1) {
             final boolean[] player = {false};
@@ -46,8 +49,8 @@ public class cmd_gamemode {
                     } else {
                         entry.setGameMode(GameMode.CREATIVE);
                     }
-                    entry.sendMessage(prefix + "Dein Gamemode ist nun §3" + entry.getGameMode().toString());
-                    sender.sendMessage(prefix + "Gamemode von §3" + entry.getName() + "§7 wurde erfolgreich zu §3" + ((Player) sender).getGameMode().toString() + "§7 geändert!");
+                    dsp.send(entry, "gamemode.changed.you", entry.getGameMode().toString());
+                    dsp.send(sender, "gamemode.changed.other", entry.getDisplayName(), entry.getGameMode().toString());
                     player[0] = true;
                 }
             });
@@ -62,48 +65,41 @@ public class cmd_gamemode {
                     } else if (args[0].equalsIgnoreCase("3") || args[0].equalsIgnoreCase("spectator")) {
                         ((Player) sender).setGameMode(GameMode.SPECTATOR);
                     } else {
-                        sender.sendMessage(prefix + "Der Gamemode §3" + args[0] + "§7 existiert nicht!");
+                        dsp.send(sender, "gamemode.notexists.mode", args[0]);
                         return;
                     }
-                    sender.sendMessage(prefix + "Dein Gamemode ist nun §3" + ((Player) sender).getGameMode().toString());
+                    dsp.send(sender, "gamemode.notexist", ((Player) sender).getGameMode().toString());
                 } else {
-                    sender.sendMessage(prefix + "§cDu kannst deinen Gamemode nicht ändern!");
+                    dsp.send(sender, "cmd.noconsole");
                 }
             }
-        } else {
+        } else if(args.length == 2){
             final boolean[] player = {false};
             final Player[] p = new Player[1];
             Bukkit.getOnlinePlayers().forEach(entry -> {
                 if (entry.getName().equalsIgnoreCase(args[1])) {
-                    if (entry.getGameMode().equals(GameMode.SPECTATOR) || entry.getGameMode().equals(GameMode.CREATIVE)) {
-                        entry.setGameMode(GameMode.SURVIVAL);
+                    if (args[0].equalsIgnoreCase("0") || args[0].equalsIgnoreCase("survival")) {
+                        ((Player) sender).setGameMode(GameMode.SURVIVAL);
+                    } else if (args[0].equalsIgnoreCase("1") || args[0].equalsIgnoreCase("creative")) {
+                        ((Player) sender).setGameMode(GameMode.CREATIVE);
+                    } else if (args[0].equalsIgnoreCase("2") || args[0].equalsIgnoreCase("adventure")) {
+                        ((Player) sender).setGameMode(GameMode.ADVENTURE);
+                    } else if (args[0].equalsIgnoreCase("3") || args[0].equalsIgnoreCase("spectator")) {
+                        ((Player) sender).setGameMode(GameMode.SPECTATOR);
                     } else {
-                        entry.setGameMode(GameMode.CREATIVE);
+                        dsp.send(sender, "gamemode.notexists.mode", args[0]);
+                        return;
                     }
-                    entry.sendMessage(prefix + "Dein Gamemode ist nun §3" + entry.getGameMode().toString());
-                    sender.sendMessage(prefix + "Gamemode von §3" + entry.getName() + "§7 wurde erfolgreich zu §3" + ((Player) sender).getGameMode().toString() + "§7 geändert!");
-                    player[0] = true;
-                    p[0] = entry;
                 }
             });
             if (player[0] = false) {
-                sender.sendMessage(prefix + "Der Spieler §3" + args[1] + "§7 ist nicht online!");
+                dsp.send(sender, "gamemode.notexists.player", args[1]);
                 return;
             }
-
-            if (args[0].equalsIgnoreCase("0") || args[0].equalsIgnoreCase("survival")) {
-                ((Player) sender).setGameMode(GameMode.SURVIVAL);
-            } else if (args[0].equalsIgnoreCase("1") || args[0].equalsIgnoreCase("creative")) {
-                ((Player) sender).setGameMode(GameMode.CREATIVE);
-            } else if (args[0].equalsIgnoreCase("2") || args[0].equalsIgnoreCase("adventure")) {
-                ((Player) sender).setGameMode(GameMode.ADVENTURE);
-            } else if (args[0].equalsIgnoreCase("3") || args[0].equalsIgnoreCase("spectator")) {
-                ((Player) sender).setGameMode(GameMode.SPECTATOR);
-            } else {
-                sender.sendMessage(prefix + "Der Gamemode §3" + args[0] + "§7 existiert nicht!");
-                return;
-            }
-            sender.sendMessage(prefix + "Gamemode von §3" + p[0].getName() + "§7 wurde erfolgreich zu §3" + ((Player) sender).getGameMode().toString() + "§7 geändert!");
+            dsp.send(Bukkit.getPlayer(args[1]), "gamemode.changed.you", Bukkit.getPlayer(args[1]).getGameMode().toString());
+            dsp.send(sender, "gamemode.changed.other", Bukkit.getPlayer(args[1]).getDisplayName(), Bukkit.getPlayer(args[1]).getGameMode().toString());
+        }else{
+            dsp.send(sender, "gamemode.usage");
         }
 
 

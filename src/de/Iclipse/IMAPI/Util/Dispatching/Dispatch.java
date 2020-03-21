@@ -9,6 +9,7 @@ import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.logging.Logger;
 
+import static de.Iclipse.IMAPI.Data.dispatching;
 import static de.Iclipse.IMAPI.Functions.MySQL.MySQL_User.getLanguage;
 import static de.Iclipse.IMAPI.Functions.MySQL.MySQL_User.isUserExists;
 
@@ -23,9 +24,15 @@ public abstract class Dispatch<R> {
     public Dispatch(String title, Logger logger) {
         this.title = title;
         this.logger = logger;
-        this.textcolor = resDE.getString("color.text");
-        this.highlight = resDE.getString("color.highlight");
-        this.warning = resDE.getString("color.warning");
+        if(dispatching) {
+            this.textcolor = resDE.getString("color.text");
+            this.highlight = resDE.getString("color.highlight");
+            this.warning = resDE.getString("color.warning");
+        }else{
+            this.textcolor = "§7";
+            this.highlight = "§e";
+            this.warning = "§c";
+        }
         Data.textcolor = this.textcolor;
         Data.highlight = this.highlight;
         Data.warning = this.warning;

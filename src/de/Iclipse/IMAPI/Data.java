@@ -23,6 +23,7 @@ public class Data {
     public static Tablist tablist;
     public static HashMap<Player, Long> onlinetime;
     public static HashMap<Player, Integer> blocks;
+    public static boolean dispatching = true;
 
 
     public static Plugin instance;
