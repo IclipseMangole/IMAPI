@@ -2,6 +2,7 @@ package de.Iclipse.IMAPI.Functions.Listener;
 
 import de.Iclipse.IMAPI.Data;
 import de.Iclipse.IMAPI.Functions.MySQL.MySQL_User;
+import de.Iclipse.IMAPI.Functions.MySQL.MySQL_UserSettings;
 import de.Iclipse.IMAPI.Util.UUIDFetcher;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -12,6 +13,8 @@ import org.bukkit.event.player.PlayerLoginEvent;
 
 import java.net.Inet4Address;
 import java.net.InetAddress;
+
+import java.util.UUID;
 
 import static de.Iclipse.IMAPI.Data.dsp;
 import static de.Iclipse.IMAPI.Data.tablist;
@@ -34,5 +37,11 @@ public class JoinListener implements Listener {
         Player p = e.getPlayer();
         Data.onlinetime.put(p, System.currentTimeMillis());
         Data.blocks.put(p, MySQL_User.getBlocksPlaced(getUUID(p.getName())));
+        createSettings(UUIDFetcher.getUUID(p.getName()));
+        e.setJoinMessage(null);
+    }
+
+    public void createSettings(UUID uuid){
+        MySQL_UserSettings.createUserSetting(uuid, "vanish", "0");
     }
 }
