@@ -14,6 +14,16 @@ public class MySQL_UserSettings {
             MySQL.update("INSERT INTO usersettings (uuid, `key`, `value`) VALUES ('" + uuid + "', '" + key + "', '" + value + "')");
         }
     }
+    public static void createUserSetting(UUID uuid, String key, int value){
+        if(!isSettingExists(uuid, key)) {
+            MySQL.update("INSERT INTO usersettings (uuid, `key`, `value`) VALUES ('" + uuid + "', '" + key + "', '" + value + "')");
+        }
+    }
+    public static void createUserSetting(UUID uuid, String key, boolean value){
+        if(!isSettingExists(uuid, key)) {
+            MySQL.update("INSERT INTO usersettings (uuid, `key`, `value`) VALUES ('" + uuid + "', '" + key + "', '" + value + "')");
+        }
+    }
 
     public static void deleteUserSetting(UUID uuid, String key){
         MySQL.update("DELETE usersettings WHERE uuid = '" + uuid + "' AND `key` = '" + key + "'");

@@ -1,6 +1,7 @@
 package de.Iclipse.IMAPI;
 
 import com.google.common.base.Joiner;
+import de.Iclipse.IMAPI.Functions.BungeeChannel;
 import de.Iclipse.IMAPI.Functions.Commands.*;
 import de.Iclipse.IMAPI.Functions.Listener.*;
 import de.Iclipse.IMAPI.Functions.MySQL.MySQL;
@@ -43,7 +44,7 @@ public class IMAPI extends JavaPlugin {
         blocks = new HashMap<>();
         onlinetime = new HashMap<>();
         initCounters();
-
+        registerChannels();
     }
 
     @Override
@@ -73,6 +74,7 @@ public class IMAPI extends JavaPlugin {
         register(new cmd_gamemode(), this);
         register(new cmd_schnitzel(), this);
         register(new cmd_apireload(), this);
+        register(new cmd_vanish(), this);
     }
 
     /*
@@ -127,6 +129,11 @@ public class IMAPI extends JavaPlugin {
             System.out.println("Reload oder Bundle not found!");
             dispatching = false;
         }
+    }
+
+    public void registerChannels(){
+        this.getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
+        this.getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", new BungeeChannel());
     }
 
 

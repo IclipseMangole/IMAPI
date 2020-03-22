@@ -23,10 +23,10 @@ import static de.Iclipse.IMAPI.Util.UUIDFetcher.getUUID;
 
 public class JoinListener implements Listener {
     @EventHandler
-    public void onLogin(PlayerLoginEvent e){
-        if(!e.getHostname().equalsIgnoreCase("45.10.24.22:25565")){
+    public void onLogin(PlayerLoginEvent e) {
+        if (!e.getHostname().equalsIgnoreCase("45.10.24.22:25565")) {
             e.setResult(PlayerLoginEvent.Result.KICK_OTHER);
-            e.setKickMessage(dsp.get( "proxyjoin.blocked", MySQL_User.getLanguage(UUIDFetcher.getUUID(e.getPlayer().getName()))));
+            e.setKickMessage(dsp.get("proxyjoin.blocked", MySQL_User.getLanguage(UUIDFetcher.getUUID(e.getPlayer().getName()))));
             System.out.println(e.getAddress());
             System.out.println(e.getHostname());
             System.out.println(e.getRealAddress());
@@ -34,27 +34,22 @@ public class JoinListener implements Listener {
     }
 
     @EventHandler
-    public void onJoin(PlayerJoinEvent e){
+    public void onJoin(PlayerJoinEvent e) {
         Player p = e.getPlayer();
         Data.onlinetime.put(p, System.currentTimeMillis());
         Data.blocks.put(p, MySQL_User.getBlocksPlaced(getUUID(p.getName())));
         createSettings(UUIDFetcher.getUUID(p.getName()));
         e.setJoinMessage(null);
-        if(MySQL_UserSettings.getInt(UUIDFetcher.getUUID(p.getName()), "vanish") == 1){
-            p.setGameMode(GameMode.CREATIVE);
-            Bukkit.getOnlinePlayers().forEach(entry ->{
+        if (MySQL_UserSettings.getBoolean(UUIDFetcher.getUUID(p.getName()), "vanish")) {
+            Bukkit.getOnlinePlayers().forEach(entry -> {
                 entry.hidePlayer(instance, p);
             });
-        }else if(MySQL_UserSettings.getInt(UUIDFetcher.getUUID(p.getName()), "vanish") == 2){
-            p.setGameMode(GameMode.SPECTATOR);
-            Bukkit.getOnlinePlayers().forEach(entry ->{
-                entry.hidePlayer(instance, p);
-            });
+            dsp.send(p, "vanish.join");
         }
     }
 
 
-    public void createSettings(UUID uuid){
-        MySQL_UserSettings.createUserSetting(uuid, "vanish", "0");
+    public void createSettings(UUID uuid) {
+        MySQL_UserSettings.createUserSetting(uuid, "vanish", false);
     }
 }
