@@ -6,6 +6,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.text.MessageFormat;
+import java.util.List;
 import java.util.MissingResourceException;
 import java.util.logging.Logger;
 
