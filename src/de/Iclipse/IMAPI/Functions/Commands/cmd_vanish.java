@@ -20,7 +20,11 @@ public class cmd_vanish {
     )
     public void execute(Player p, Integer vanish){
         if(vanish == null){
-
+            if(getVanish(UUIDFetcher.getUUID(p.getName())) == 0){
+                setVanish(p, 1);
+            }else{
+                setVanish(p, 0);
+            }
         }else{
 
         }

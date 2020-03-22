@@ -122,7 +122,8 @@ public abstract class MenuItem {
     }
 
     protected ItemStack getItemStack() {
-        ItemStack slot = new ItemStack(getIcon().getType(), getNumber());
+        ItemStack slot = getIcon();
+        slot.setAmount(getNumber());
         ItemMeta meta = slot.getItemMeta();
 
         if (getLore() != null) {
