@@ -5,6 +5,7 @@ import de.Iclipse.IMAPI.Functions.MySQL.MySQL_User;
 import de.Iclipse.IMAPI.Functions.MySQL.MySQL_UserSettings;
 import de.Iclipse.IMAPI.Util.UUIDFetcher;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -17,8 +18,7 @@ import java.net.InetAddress;
 
 import java.util.UUID;
 
-import static de.Iclipse.IMAPI.Data.dsp;
-import static de.Iclipse.IMAPI.Data.tablist;
+import static de.Iclipse.IMAPI.Data.*;
 import static de.Iclipse.IMAPI.Util.UUIDFetcher.getUUID;
 
 public class JoinListener implements Listener {
@@ -40,6 +40,17 @@ public class JoinListener implements Listener {
         Data.blocks.put(p, MySQL_User.getBlocksPlaced(getUUID(p.getName())));
         createSettings(UUIDFetcher.getUUID(p.getName()));
         e.setJoinMessage(null);
+        if(MySQL_UserSettings.getInt(UUIDFetcher.getUUID(p.getName()), "vanish") == 1){
+            p.setGameMode(GameMode.CREATIVE);
+            Bukkit.getOnlinePlayers().forEach(entry ->{
+                entry.hidePlayer(instance, p);
+            });
+        }else if(MySQL_UserSettings.getInt(UUIDFetcher.getUUID(p.getName()), "vanish") == 2){
+            p.setGameMode(GameMode.SPECTATOR);
+            Bukkit.getOnlinePlayers().forEach(entry ->{
+                entry.hidePlayer(instance, p);
+            });
+        }
     }
 
 
