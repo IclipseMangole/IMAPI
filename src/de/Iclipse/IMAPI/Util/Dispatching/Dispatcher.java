@@ -3,6 +3,7 @@ package de.Iclipse.IMAPI.Util.Dispatching;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.List;
 import java.util.logging.Logger;
 
 public class Dispatcher extends Dispatch<CommandSender> {
