@@ -1,7 +1,7 @@
 package de.Iclipse.IMAPI;
 
 import com.google.common.base.Joiner;
-import de.Iclipse.IMAPI.Functions.BungeeChannel;
+import de.Iclipse.IMAPI.Functions.Listener.ChannelListener;
 import de.Iclipse.IMAPI.Functions.Commands.*;
 import de.Iclipse.IMAPI.Functions.Listener.*;
 import de.Iclipse.IMAPI.Functions.MySQL.MySQL;
@@ -17,9 +17,14 @@ import de.Iclipse.IMAPI.Util.executor.types.BukkitExecutor;
 import de.Iclipse.IMAPI.Util.menu.PopupMenuAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.plugin.messaging.PluginMessageListener;
 
+import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.*;
 
@@ -29,7 +34,9 @@ import static de.Iclipse.IMAPI.Util.Dispatching.ResourceBundle.loadResourceBundl
 import static de.Iclipse.IMAPI.Util.Dispatching.ResourceBundle.msgDE;
 import static de.Iclipse.IMAPI.Util.Dispatching.ResourceBundle.msgEN;
 
-public class IMAPI extends JavaPlugin {
+public class IMAPI extends JavaPlugin implements PluginMessageListener {
+
+    public static ChannelListener pml;
 
     @Override
     public void onEnable() {
@@ -75,6 +82,7 @@ public class IMAPI extends JavaPlugin {
         register(new cmd_schnitzel(), this);
         register(new cmd_apireload(), this);
         register(new cmd_vanish(), this);
+        register(new cmd_servers(), this);
     }
 
     /*
@@ -132,8 +140,37 @@ public class IMAPI extends JavaPlugin {
     }
 
     public void registerChannels(){
-        this.getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
-        this.getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", new BungeeChannel());
+        this.getServer().getMessenger().registerOutgoingPluginChannel(this, "im:main");
+        pml = new ChannelListener(this);
+        this.getServer().getMessenger().registerIncomingPluginChannel(this, "im:main",  this);
+        this.getServer().getMessenger().getIncomingChannelRegistrations(this).forEach(entry ->{
+            System.out.println(entry.getChannel());
+            System.out.println(entry.getListener().getClass());
+        });
+    }
+
+    @Override
+    public synchronized void onPluginMessageReceived(String channel, Player player, byte[] message) {
+        System.out.println("Nachricht angekommen!");
+        DataInputStream in = new DataInputStream(new ByteArrayInputStream(message));
+        try {
+            String subchannel = in.readUTF();
+            System.out.println(subchannel);
+
+
+            if (subchannel.equals("GetServers")) {
+                String input = in.readUTF();
+                System.out.println(input);
+                ChannelListener.servers = (ArrayList<String>) Arrays.asList(input.split(", "));
+
+                notifyAll();
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
     }
 
 

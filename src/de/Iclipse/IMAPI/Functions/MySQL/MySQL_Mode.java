@@ -1,6 +1,6 @@
 package de.Iclipse.IMAPI.Functions.MySQL;
 
-import de.Iclipse.IMAPI.Functions.BungeeChannel;
+import de.Iclipse.IMAPI.IMAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -80,7 +80,7 @@ public class MySQL_Mode {
     public static void setServers(String modename, ArrayList<String> list){
         final String[] l = {""};
         list.forEach(entry ->{
-            if(BungeeChannel.getServers().contains(entry)){
+            if(IMAPI.pml.getServers().contains(entry)){
                 l[0] = l[0] + entry + ",";
             }
         });
