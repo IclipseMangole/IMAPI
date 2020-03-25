@@ -10,8 +10,8 @@ import de.Iclipse.IMAPI.Functions.MySQL.MySQL_User;
 import de.Iclipse.IMAPI.Functions.MySQL.MySQL_UserSettings;
 import de.Iclipse.IMAPI.Util.Command.BukkitCommand;
 import de.Iclipse.IMAPI.Util.Command.IMCommand;
+import de.Iclipse.IMAPI.Util.Dispatching.Dispatch;
 import de.Iclipse.IMAPI.Util.Dispatching.Dispatcher;
-import de.Iclipse.IMAPI.Util.Dispatching.Language;
 import de.Iclipse.IMAPI.Util.executor.ThreadExecutor;
 import de.Iclipse.IMAPI.Util.executor.types.BukkitExecutor;
 import de.Iclipse.IMAPI.Util.menu.PopupMenuAPI;
@@ -29,10 +29,6 @@ import java.lang.reflect.Method;
 import java.util.*;
 
 import static de.Iclipse.IMAPI.Data.*;
-import static de.Iclipse.IMAPI.Util.Dispatching.ResourceBundle.loadResourceBundleDE;
-import static de.Iclipse.IMAPI.Util.Dispatching.ResourceBundle.loadResourceBundleEN;
-import static de.Iclipse.IMAPI.Util.Dispatching.ResourceBundle.msgDE;
-import static de.Iclipse.IMAPI.Util.Dispatching.ResourceBundle.msgEN;
 
 public class IMAPI extends JavaPlugin implements PluginMessageListener {
 
@@ -44,7 +40,6 @@ public class IMAPI extends JavaPlugin implements PluginMessageListener {
         ThreadExecutor.setExecutor(new BukkitExecutor());
         MySQL.connect();
         loadResourceBundles();
-        dsp = new Dispatcher(this);
         registerListener();
         registerCommands();
         createTables();
@@ -126,12 +121,14 @@ public class IMAPI extends JavaPlugin implements PluginMessageListener {
         }
     }
 
-    public static void loadResourceBundles(){
+    public void loadResourceBundles(){
         try {
-            loadResourceBundleDE("langDE");
-            loadResourceBundleEN("langEN");
-            Language.DE.setBundle(msgDE);
-            Language.EN.setBundle(msgEN);
+            HashMap<String, ResourceBundle> langs = new HashMap<>();
+            langDE = ResourceBundle.getBundle("i18n.langDE");
+            langEN = ResourceBundle.getBundle("i18n.langEN");
+            langs.put("DE", langDE);
+            langs.put("EN", langEN);
+            dsp = new Dispatcher(this, langs);
             System.out.println(Data.prefix + "Loaded languages!");
         }catch(MissingResourceException | NullPointerException e){
             System.out.println("Reload oder Bundle not found!");

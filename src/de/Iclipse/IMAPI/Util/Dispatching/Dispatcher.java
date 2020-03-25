@@ -3,20 +3,22 @@ package de.Iclipse.IMAPI.Util.Dispatching;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.logging.Logger;
 
 public class Dispatcher extends Dispatch<CommandSender> {
 
     private String title = "";
 
-    public Dispatcher(JavaPlugin plugin) {
-        super(plugin.getName(), plugin.getLogger());
+    public Dispatcher(JavaPlugin plugin, HashMap<String, ResourceBundle> langs) {
+        super(plugin.getName(), plugin.getLogger(), langs);
         title = plugin.getName();
     }
 
-    public Dispatcher(String title, Logger logger) {
-        super(title, logger);
+    public Dispatcher(String title, Logger logger, HashMap<String, ResourceBundle> langs) {
+        super(title, logger, langs);
         this.title = title;
     }
 
@@ -41,12 +43,12 @@ public class Dispatcher extends Dispatch<CommandSender> {
     }
 
     @Override
-    public String get(String key, Language lang,Boolean prefix, String... args) {
+    public String get(String key,ResourceBundle lang,Boolean prefix, String... args) {
         return super.get(key, lang, prefix, args);
     }
 
     @Override
-    public String get(String key, Language lang, String... args) {
+    public String get(String key, ResourceBundle lang, String... args) {
         return get(key, lang, false, args);
     }
 
@@ -74,6 +76,8 @@ public class Dispatcher extends Dispatch<CommandSender> {
     public void logWarning(String message, String... args) {
         super.logWarning(message, args);
     }
+
+
 
     public String getTitle() {
         return title;

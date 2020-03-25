@@ -1,7 +1,5 @@
 package de.Iclipse.IMAPI.Functions.MySQL;
 
-import de.Iclipse.IMAPI.Util.Dispatching.Language;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -48,11 +46,11 @@ public class MySQL_News {
         return -1;
     }
 
-    public static String getTitle(int id, Language lang){
+    public static String getTitle(int id, String lang){
         try {
-            ResultSet rs = MySQL.querry("SELECT title" + lang.getShortcut() + " FROM news WHERE id = '" + id + "'");
+            ResultSet rs = MySQL.querry("SELECT title" + lang + " FROM news WHERE id = '" + id + "'");
             while (rs.next()) {
-                return rs.getString("title" + lang.getShortcut());
+                return rs.getString("title" + lang);
             }
         }catch (SQLException e){
             e.printStackTrace();
@@ -61,11 +59,11 @@ public class MySQL_News {
     }
 
 
-    public static String getText(int id, Language lang){
+    public static String getText(int id, String lang){
         try {
-            ResultSet rs = MySQL.querry("SELECT text" + lang.getShortcut() + " FROM news WHERE id = " + id + "");
+            ResultSet rs = MySQL.querry("SELECT text" + lang + " FROM news WHERE id = " + id + "");
             while (rs.next()) {
-                return rs.getString("text" + lang.getShortcut());
+                return rs.getString("text" + lang);
             }
         }catch (SQLException e){
             e.printStackTrace();
@@ -77,7 +75,7 @@ public class MySQL_News {
     public static ArrayList<Integer> getNews(){
         ArrayList<Integer> list = new ArrayList<>();
         try {
-            ResultSet rs = MySQL.querry("SELECT id FROM news WHERE 1 ORDER BY created DESC ");
+            ResultSet rs = MySQL.querry("SELECT id FROM news WHERE 1 ORDER BY created DESC");
             while (rs.next()) {
                 list.add(rs.getInt("id"));
             }

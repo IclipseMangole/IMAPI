@@ -1,6 +1,5 @@
 package de.Iclipse.IMAPI.Functions.MySQL;
 
-import de.Iclipse.IMAPI.Util.Dispatching.Language;
 import de.Iclipse.IMAPI.Util.UUIDFetcher;
 import org.bukkit.entity.Player;
 
@@ -172,11 +171,11 @@ public class MySQL_User {
         return null;
     }
 
-    public static Language getLanguage(UUID uuid){
+    public static String getLanguage(UUID uuid){
         try{
             ResultSet rs = MySQL.querry("SELECT lang FROM user WHERE uuid = '" + uuid + "'");
             while(rs.next()) {
-                return Language.getLanguage(rs.getString("lang"));
+                return rs.getString("lang");
             }
         }catch (SQLException e){
             e.printStackTrace();
@@ -184,8 +183,8 @@ public class MySQL_User {
         return null;
     }
 
-    public static void setLanguage(UUID uuid, Language lang){
-        MySQL.update("UPDATE user SET lang = '" + lang.getShortcut() + "' WHERE uuid = '" + uuid + "'");
+    public static void setLanguage(UUID uuid, String lang){
+        MySQL.update("UPDATE user SET lang = '" + lang + "' WHERE uuid = '" + uuid + "'");
     }
 
     public static int getBlocksPlaced(UUID uuid){
