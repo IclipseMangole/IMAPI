@@ -128,9 +128,13 @@ public class IMAPI extends JavaPlugin implements PluginMessageListener {
             langEN = ResourceBundle.getBundle("i18n.langEN");
             langs.put("DE", langDE);
             langs.put("EN", langEN);
-            dsp = new Dispatcher(this, langs);
-            System.out.println(Data.prefix + "Loaded languages!");
-        }catch(MissingResourceException | NullPointerException e){
+            dsp = new Dispatcher(this,
+                    langs);
+        } catch(MissingResourceException e){
+            e.printStackTrace();
+            dispatching = false;
+        } catch(NullPointerException e){
+            e.printStackTrace();
             System.out.println("Reload oder Bundle not found!");
             dispatching = false;
         }

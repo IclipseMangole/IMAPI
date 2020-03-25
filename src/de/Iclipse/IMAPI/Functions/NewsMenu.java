@@ -19,7 +19,7 @@ import static de.Iclipse.IMAPI.Util.UUIDFetcher.getUUID;
 public class NewsMenu extends PopupMenu {
     int i = 0;
     public NewsMenu(Player viewer) {
-        super(dsp.get("news.title", MySQL_User.getLanguage(getUUID(viewer.getName()))), 6);
+        super(dsp.get("news.title", viewer), 6);
         ThreadExecutor.executeAsync(() -> {
             final boolean[] seen = new boolean[1];
             if(MySQL_News.getNews().size() > 0) {
@@ -27,7 +27,7 @@ public class NewsMenu extends PopupMenu {
                     seen[0] = MySQL_User.getLastNewsRead(getUUID(viewer.getName())).isAfter(MySQL_News.getCreated(news));
                     String name;
                     if (!seen[0]) {
-                        name = dsp.get("news.new", MySQL_User.getLanguage(getUUID(viewer.getName())), false) + MySQL_News.getTitle(news, MySQL_User.getLanguage(getUUID(viewer.getName())));
+                        name = dsp.get("news.new", viewer) + MySQL_News.getTitle(news, MySQL_User.getLanguage(getUUID(viewer.getName())));
                     } else {
                         name = textcolor + MySQL_News.getTitle(news, MySQL_User.getLanguage(getUUID(viewer.getName())));
                     }
@@ -59,7 +59,7 @@ public class NewsMenu extends PopupMenu {
         return item;
     }
 
-    public static ItemStack book(int news, Language lang){
+    public static ItemStack book(int news, String lang){
         ItemStack item = new ItemStack(Material.WRITTEN_BOOK);
         BookMeta meta = (BookMeta) item.getItemMeta();
         meta.setAuthor(UUIDFetcher.getName(MySQL_News.getCreator(news)));

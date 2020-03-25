@@ -101,7 +101,7 @@ public class CommandProcessor<S> {
 
         //Argumentanzahl
         if (command.minArgs() > -1 && args.length - wildcards < command.minArgs() || command.maxArgs() > -1 && args.length - wildcards > command.maxArgs()) {
-            dsp.send((Player) sender, "cmd.usage", dsp.get(command.usage(), MySQL_User.getLanguage(UUIDFetcher.getUUID(((Player) sender).getName()))));
+            dsp.send((Player) sender, "cmd.usage", dsp.get(command.usage(), (CommandSender) sender));
             return;
         }
 
@@ -129,7 +129,7 @@ public class CommandProcessor<S> {
                 }
                 j++;
             } catch (Exception ex) {
-                dsp.send((Player) sender, "cmd.usage", dsp.get(command.usage(), MySQL_User.getLanguage(UUIDFetcher.getUUID(((Player) sender).getName()))));
+                dsp.send((Player) sender, "cmd.usage", dsp.get(command.usage(), (CommandSender) sender));
                 return;
             }
         }
@@ -153,7 +153,7 @@ public class CommandProcessor<S> {
             if (result instanceof Boolean) {
                 boolean booleanResult = (boolean) result;
                 if (!booleanResult) {
-                    dsp.send((Player) sender, "cmd.usage", dsp.get(command.usage(), MySQL_User.getLanguage(UUIDFetcher.getUUID(((Player) sender).getName()))));
+                    dsp.send((Player) sender, "cmd.usage", dsp.get(command.usage(), (CommandSender) sender));
                 }
             }
         } catch (IllegalAccessException | InvocationTargetException e) {

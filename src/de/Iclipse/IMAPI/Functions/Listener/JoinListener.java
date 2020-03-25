@@ -26,7 +26,7 @@ public class JoinListener implements Listener {
     public void onLogin(PlayerLoginEvent e) {
         if (!e.getHostname().equalsIgnoreCase("45.10.24.22:25565")) {
             e.setResult(PlayerLoginEvent.Result.KICK_OTHER);
-            e.setKickMessage(dsp.get("proxyjoin.blocked", MySQL_User.getLanguage(UUIDFetcher.getUUID(e.getPlayer().getName()))));
+            e.setKickMessage(dsp.get("proxyjoin.blocked", e.getPlayer()));
             System.out.println(e.getAddress());
             System.out.println(e.getHostname());
             System.out.println(e.getRealAddress());

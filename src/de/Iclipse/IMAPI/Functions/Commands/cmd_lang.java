@@ -35,18 +35,17 @@ public class cmd_lang {
             });
             p.spigot().sendMessage(base);
         }else{
-            dsp.getLanguages().forEach((name, bundle)->{
-                if(name.equals(s)){
-                    if(!name.equals(MySQL_User.getLanguage(UUIDFetcher.getUUID(p.getName())))) {
-                        MySQL_User.setLanguage(UUIDFetcher.getUUID(p.getName()), name);
+
+                if(dsp.getLanguages().containsKey(s)){
+                    if(!s.equals(MySQL_User.getLanguage(UUIDFetcher.getUUID(p.getName())))) {
+                        MySQL_User.setLanguage(UUIDFetcher.getUUID(p.getName()), s);
                         dsp.send(p, "lang.changed");
                     }else{
                         dsp.send(p, "lang.same");
                     }
-                    return;
+                }else {
+                    dsp.send(p, "lang.invalid");
                 }
-            });
-            dsp.send(p, "lang.invalid");
         }
     }
 }

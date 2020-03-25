@@ -28,6 +28,14 @@ public abstract class Dispatch<R> {
     public Dispatch(String title, Logger logger, HashMap<String, ResourceBundle> langs) {
         this.title = title;
         this.logger = logger;
+        this.langs = langs;
+        final boolean[] first = {true};
+        langs.forEach((name, bundle) ->{
+            if(first[0]) {
+                defaultLang = bundle;
+                first[0] = false;
+            }
+        });
         if(dispatching) {
             this.textcolor = defaultLang.getString("color.text");
             this.highlight = defaultLang.getString("color.highlight");
@@ -40,10 +48,6 @@ public abstract class Dispatch<R> {
         Data.textcolor = this.textcolor;
         Data.highlight = this.highlight;
         Data.warning = this.warning;
-        this.langs = langs;
-        langs.forEach((name, bundle) ->{
-            defaultLang = bundle;
-        });
     }
 
     public String get(String key, ResourceBundle lang, String... args) {

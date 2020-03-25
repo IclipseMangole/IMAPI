@@ -114,12 +114,6 @@ public class cmd_schnitzel {
 
 
     private void add(CommandSender sender, String command) {
-        Language lang;
-        if(sender instanceof Player){
-            lang = MySQL_User.getLanguage(UUIDFetcher.getUUID(sender.getName()));
-        }else{
-            lang = defaultLang;
-        }
-        builder.append("\n" + Data.symbol + "§e" + dsp.get("schnitzel." + command + ".usage", lang) + "§8: §7 " + dsp.get("schnitzel." + command + ".description", lang) + ChatColor.RESET);
+        builder.append("\n" + Data.symbol + "§e" + dsp.get("schnitzel." + command + ".usage", sender) + "§8: §7 " + dsp.get("schnitzel." + command + ".description", sender) + ChatColor.RESET);
     }
 }
