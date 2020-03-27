@@ -2,7 +2,6 @@ package de.Iclipse.IMAPI;
 
 import de.Iclipse.IMAPI.Util.Command.IMCommand;
 import de.Iclipse.IMAPI.Util.Dispatching.Dispatcher;
-import de.Iclipse.IMAPI.Util.NameTags;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
@@ -24,7 +23,6 @@ public class Data {
     public static HashMap<Player, Long> onlinetime;
     public static HashMap<Player, Integer> blocks;
     public static boolean dispatching = true;
-    public static NameTags nametags;
 
 
     public static Plugin instance;

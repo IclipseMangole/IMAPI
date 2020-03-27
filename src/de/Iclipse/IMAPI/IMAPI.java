@@ -10,9 +10,7 @@ import de.Iclipse.IMAPI.Functions.MySQL.MySQL_User;
 import de.Iclipse.IMAPI.Functions.MySQL.MySQL_UserSettings;
 import de.Iclipse.IMAPI.Util.Command.BukkitCommand;
 import de.Iclipse.IMAPI.Util.Command.IMCommand;
-import de.Iclipse.IMAPI.Util.Dispatching.Dispatch;
 import de.Iclipse.IMAPI.Util.Dispatching.Dispatcher;
-import de.Iclipse.IMAPI.Util.NameTags;
 import de.Iclipse.IMAPI.Util.executor.ThreadExecutor;
 import de.Iclipse.IMAPI.Util.executor.types.BukkitExecutor;
 import de.Iclipse.IMAPI.Util.menu.PopupMenuAPI;
@@ -175,9 +173,6 @@ public class IMAPI extends JavaPlugin implements PluginMessageListener {
 
     }
 
-    public static NameTags getNameTags() {
-        return nametags;
-    }
 
 
 
