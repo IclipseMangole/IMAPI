@@ -1,8 +1,8 @@
 package de.Iclipse.IMAPI;
 
-import de.Iclipse.IMAPI.Functions.Tablist;
 import de.Iclipse.IMAPI.Util.Command.IMCommand;
 import de.Iclipse.IMAPI.Util.Dispatching.Dispatcher;
+import de.Iclipse.IMAPI.Util.NameTags;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
@@ -21,10 +21,10 @@ public class Data {
     public static String textcolor;
     public static String highlight;
     public static String warning;
-    public static Tablist tablist;
     public static HashMap<Player, Long> onlinetime;
     public static HashMap<Player, Integer> blocks;
     public static boolean dispatching = true;
+    public static NameTags nametags;
 
 
     public static Plugin instance;
