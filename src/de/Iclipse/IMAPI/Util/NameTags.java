@@ -1,6 +1,7 @@
 package de.Iclipse.IMAPI.Util;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -136,6 +137,13 @@ public class NameTags {
 
 
     public void updateNameTags() {
+        Bukkit.getOnlinePlayers().forEach(player -> {
+            try {
+                sendPacket(player,  getNMSClass("PacketPlayOutScoreboardTeam").getConstructor().newInstance());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
         teams.forEach(meta -> {
             try {
                 Object packet = getNMSClass("PacketPlayOutScoreboardTeam").getConstructor().newInstance();
@@ -146,7 +154,7 @@ public class NameTags {
                     set(packet, "c", new ChatComponentText(meta.getPrefix()));
                     set(packet, "d", new ChatComponentText(meta.getSuffix()));
                     set(packet, "e", ScoreboardTeamBase.EnumNameTagVisibility.ALWAYS.e);
-                    set(packet, "f", ScoreboardTeamBase.EnumTeamPush.NEVER);
+                    set(packet, "f", ScoreboardTeamBase.EnumTeamPush.NEVER.e);
                     set(packet, "g", EnumChatFormat.RESET);
                     meta.getNames().forEach(s -> {
                         if (Bukkit.getPlayer(s) == null)

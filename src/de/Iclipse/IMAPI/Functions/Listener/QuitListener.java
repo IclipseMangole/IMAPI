@@ -20,14 +20,8 @@ public class QuitListener implements Listener {
         MySQL_User.setOnlinetime(UUIDFetcher.getUUID(p.getName()),MySQL_User.getOnlinetime(UUIDFetcher.getUUID(p.getName())) +  (System.currentTimeMillis() - Data.onlinetime.get(p)));
         MySQL_User.setLastTime(p, System.currentTimeMillis());
         MySQL_User.setBlocksPlaced(UUIDFetcher.getUUID(p.getName()), Data.blocks.get(p));
-        Bukkit.getOnlinePlayers().forEach(entry ->{
-            if(!entry.equals(p)){
-                dsp.send(entry, "quit.message", p.getDisplayName());
-            }
-        });
         nametags.removePlayer(p.getName());
         nametags.deletePlayer(p);
         nametags.updateNameTags();
-        p.setScoreboard(null);
     }
 }
