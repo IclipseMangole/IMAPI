@@ -77,6 +77,7 @@ public class IMAPI extends JavaPlugin implements PluginMessageListener {
         register(new cmd_apireload(), this);
         register(new cmd_vanish(), this);
         register(new cmd_servers(), this);
+        register(new cmd_world(), this);
     }
 
     /*
