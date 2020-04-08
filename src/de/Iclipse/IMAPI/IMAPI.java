@@ -1,7 +1,6 @@
 package de.Iclipse.IMAPI;
 
 import com.google.common.base.Joiner;
-import de.Iclipse.IMAPI.Functions.Listener.ChannelListener;
 import de.Iclipse.IMAPI.Functions.Commands.*;
 import de.Iclipse.IMAPI.Functions.Listener.*;
 import de.Iclipse.IMAPI.Functions.MySQL.MySQL;
@@ -23,8 +22,11 @@ import org.bukkit.plugin.messaging.PluginMessageListener;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.*;
 
 import static de.Iclipse.IMAPI.Data.*;
@@ -33,19 +35,24 @@ public class IMAPI extends JavaPlugin implements PluginMessageListener {
 
     public static ChannelListener pml;
 
+    public static void copyFilesInDirectory(File from, File to) throws IOException {
+        if (!to.exists()) {
+            to.mkdirs();
+        }
+        for (File file : from.listFiles()) {
+            if (file.isDirectory()) {
+                copyFilesInDirectory(file, new File(to.getAbsolutePath() + "/" + file.getName()));
+            } else {
+                File n = new File(to.getAbsolutePath() + "/" + file.getName());
+                Files.copy(file.toPath(), n.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            }
+        }
+    }
+
     @Override
-    public void onEnable() {
+    public void onLoad() {
         Data.instance = this;
         ThreadExecutor.setExecutor(new BukkitExecutor());
-        MySQL.connect();
-        loadResourceBundles();
-        registerListener();
-        registerCommands();
-        createTables();
-        blocks = new HashMap<>();
-        onlinetime = new HashMap<>();
-        initCounters();
-        registerChannels();
     }
 
     @Override
@@ -57,27 +64,22 @@ public class IMAPI extends JavaPlugin implements PluginMessageListener {
 
     public void registerListener() {
         Bukkit.getPluginManager().registerEvents(new JoinListener(), this);
-        Bukkit.getPluginManager().registerEvents(new Completer(), this);
         Bukkit.getPluginManager().registerEvents(new ChatListener(), this);
         Bukkit.getPluginManager().registerEvents(new BlockListener(), this);
         Bukkit.getPluginManager().registerEvents(new QuitListener(), this);
         Bukkit.getPluginManager().registerEvents(new PopupMenuAPI(), this);
     }
 
-    public void registerCommands() {
-        commands = new HashMap<>();
-        completions = new HashMap<>();
-        register(new cmd_lang(), this);
-        register(new cmd_help(), this);
-        register(new cmd_restart(), this);
-        register(new cmd_color(), this);
-        register(new cmd_news(), this);
-        register(new cmd_gamemode(), this);
-        register(new cmd_schnitzel(), this);
-        register(new cmd_apireload(), this);
-        register(new cmd_vanish(), this);
-        register(new cmd_servers(), this);
-        register(new cmd_world(), this);
+    @Override
+    public void onEnable() {
+        MySQL.connect();
+        loadResourceBundles();
+        registerListener();
+        registerCommands();
+        createTables();
+        blocks = new HashMap<>();
+        onlinetime = new HashMap<>();
+        initCounters();
     }
 
     /*
@@ -174,7 +176,21 @@ public class IMAPI extends JavaPlugin implements PluginMessageListener {
 
     }
 
-
+    public void registerCommands() {
+        commands = new HashMap<>();
+        completions = new HashMap<>();
+        register(new cmd_lang(), this);
+        register(new cmd_help(), this);
+        register(new cmd_restart(), this);
+        register(new cmd_color(), this);
+        register(new cmd_news(), this);
+        register(new cmd_gamemode(), this);
+        register(new cmd_schnitzel(), this);
+        register(new cmd_apireload(), this);
+        register(new cmd_vanish(), this);
+        register(new cmd_servers(), this);
+        register(new cmd_chatclear(), this);
+    }
 
 
     public static void register(Class functionClass, JavaPlugin plugin) {

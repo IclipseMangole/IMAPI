@@ -3,3 +3,4 @@ version: Alpha
 main: de.Iclipse.IMAPI.IMAPI
 author: Iclipse
 api-version: 1.15
+load: STARTUP

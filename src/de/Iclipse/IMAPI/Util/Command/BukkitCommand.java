@@ -1,7 +1,6 @@
 package de.Iclipse.IMAPI.Util.Command;
 
 import de.Iclipse.IMAPI.Data;
-import de.Iclipse.IMAPI.Functions.Listener.Completer;
 import org.bukkit.Bukkit;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
@@ -43,7 +42,6 @@ public class BukkitCommand extends Command implements CommandExecutor, TabComple
 
             cmd.setUsage(usage);
             cmd.setExecutor(this);
-            cmd.setTabCompleter(new Completer());
             if (command.aliases().length > 0) {
                 cmd.setAliases(Arrays.asList(command.aliases()));
             }
