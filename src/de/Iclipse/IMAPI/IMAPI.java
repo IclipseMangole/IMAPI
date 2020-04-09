@@ -2,7 +2,10 @@ package de.Iclipse.IMAPI;
 
 import com.google.common.base.Joiner;
 import de.Iclipse.IMAPI.Functions.Commands.*;
-import de.Iclipse.IMAPI.Functions.Listener.*;
+import de.Iclipse.IMAPI.Functions.Listener.BlockListener;
+import de.Iclipse.IMAPI.Functions.Listener.ChatListener;
+import de.Iclipse.IMAPI.Functions.Listener.JoinListener;
+import de.Iclipse.IMAPI.Functions.Listener.QuitListener;
 import de.Iclipse.IMAPI.Functions.MySQL.MySQL;
 import de.Iclipse.IMAPI.Functions.MySQL.MySQL_News;
 import de.Iclipse.IMAPI.Functions.MySQL.MySQL_User;
@@ -15,39 +18,17 @@ import de.Iclipse.IMAPI.Util.executor.types.BukkitExecutor;
 import de.Iclipse.IMAPI.Util.menu.PopupMenuAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
-import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.plugin.messaging.PluginMessageListener;
 
-import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.Method;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
 import java.util.*;
 
 import static de.Iclipse.IMAPI.Data.*;
+import static de.Iclipse.IMAPI.Functions.Scheduler.startScheduler;
+import static de.Iclipse.IMAPI.Functions.Scheduler.stopScheduler;
 
-public class IMAPI extends JavaPlugin implements PluginMessageListener {
-
-    public static ChannelListener pml;
-
-    public static void copyFilesInDirectory(File from, File to) throws IOException {
-        if (!to.exists()) {
-            to.mkdirs();
-        }
-        for (File file : from.listFiles()) {
-            if (file.isDirectory()) {
-                copyFilesInDirectory(file, new File(to.getAbsolutePath() + "/" + file.getName()));
-            } else {
-                File n = new File(to.getAbsolutePath() + "/" + file.getName());
-                Files.copy(file.toPath(), n.toPath(), StandardCopyOption.REPLACE_EXISTING);
-            }
-        }
-    }
+public class IMAPI extends JavaPlugin {
 
     @Override
     public void onLoad() {
@@ -60,6 +41,7 @@ public class IMAPI extends JavaPlugin implements PluginMessageListener {
         super.onDisable();
         saveCounters();
         MySQL.close();
+        stopScheduler();
     }
 
     public void registerListener() {
@@ -80,6 +62,7 @@ public class IMAPI extends JavaPlugin implements PluginMessageListener {
         blocks = new HashMap<>();
         onlinetime = new HashMap<>();
         initCounters();
+        startScheduler();
     }
 
     /*
@@ -142,6 +125,7 @@ public class IMAPI extends JavaPlugin implements PluginMessageListener {
         }
     }
 
+    /*
     public void registerChannels(){
         this.getServer().getMessenger().registerOutgoingPluginChannel(this, "im:main");
         pml = new ChannelListener(this);
@@ -151,6 +135,7 @@ public class IMAPI extends JavaPlugin implements PluginMessageListener {
             System.out.println(entry.getListener().getClass());
         });
     }
+
 
     @Override
     public synchronized void onPluginMessageReceived(String channel, Player player, byte[] message) {
@@ -175,20 +160,21 @@ public class IMAPI extends JavaPlugin implements PluginMessageListener {
 
 
     }
+     */
 
     public void registerCommands() {
         commands = new HashMap<>();
         completions = new HashMap<>();
         register(new cmd_lang(), this);
         register(new cmd_help(), this);
-        register(new cmd_restart(), this);
+        register(new cmd_imrestart(), this);
         register(new cmd_color(), this);
         register(new cmd_news(), this);
         register(new cmd_gamemode(), this);
         register(new cmd_schnitzel(), this);
         register(new cmd_apireload(), this);
         register(new cmd_vanish(), this);
-        register(new cmd_servers(), this);
+        //register(new cmd_servers(), this);
         register(new cmd_chatclear(), this);
     }
 

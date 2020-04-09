@@ -6,22 +6,25 @@ import org.bukkit.command.CommandSender;
 import static de.Iclipse.IMAPI.Data.dsp;
 import static de.Iclipse.IMAPI.Data.restart;
 
-public class cmd_restart {
+public class cmd_imrestart {
     @IMCommand(
-            name = "restart",
+            name = "imrestart",
             permissions = "im.cmd.restart",
-            usage = "restart.usage",
-            description = "restart.description",
-            maxArgs = 2,
+            usage = "imrestart.usage",
+            description = "imrestart.description",
+            maxArgs = 3,
             minArgs = 0
     )
     public void execute(CommandSender sender, Integer i, String s) {
+        String unit;
         if (i == null && s == null) {
+            unit = "seconds";
             restart = 60;
+            i = 60;
         } else if (i != null && s == null) {
             restart = i * 60;
+            unit = "minutes";
         } else {
-            String unit;
             if (s.equalsIgnoreCase("s")) {
                 unit = "seconds";
                 restart = i;
@@ -32,11 +35,11 @@ public class cmd_restart {
                 unit = "hours";
                 restart = i * 60 * 60;
             } else {
-                dsp.send(sender, "restart.wrongunit");
+                dsp.send(sender, "imrestart.wrongunit");
                 return;
             }
 
-            dsp.send(sender, "restart.both", "" + i, dsp.get("unit." + unit, sender));
         }
+        dsp.send(sender, "imrestart.planned", "" + i, dsp.get("unit." + unit, sender));
     }
 }

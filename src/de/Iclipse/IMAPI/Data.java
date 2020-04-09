@@ -24,6 +24,7 @@ public class Data {
     public static HashMap<Player, Integer> blocks;
     public static boolean dispatching = true;
     public static int restart = -1;
+    public static boolean fakerestart = false;
 
 
     public static Plugin instance;
