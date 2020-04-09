@@ -23,6 +23,7 @@ public class Data {
     public static HashMap<Player, Long> onlinetime;
     public static HashMap<Player, Integer> blocks;
     public static boolean dispatching = true;
+    public static int restart = -1;
 
 
     public static Plugin instance;

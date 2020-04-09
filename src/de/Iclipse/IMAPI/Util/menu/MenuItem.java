@@ -26,6 +26,10 @@ public abstract class MenuItem {
         this(text, new ItemStack(Material.PAPER));
     }
 
+    public MenuItem(ItemStack item) {
+        this(item.getItemMeta().getDisplayName(), item);
+    }
+
     /**
      * Create a new menu item with the given title text on mouse over, and using
      * the given MaterialData as its icon

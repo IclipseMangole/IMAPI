@@ -93,6 +93,17 @@ public class PopupMenu implements InventoryHolder {
         return true;
     }
 
+
+    public void fill(Material material) {
+        for (int i = 0; i < rows * 9; i++) {
+            this.addMenuItem(new MenuItem("", new ItemStack(material)) {
+                @Override
+                public void onClick(Player player) {
+                }
+            }, i);
+        }
+    }
+
     /**
      * Removes an existing menu item from a menu at the specified position. This
      * can be used to create dynamic menus, however beware that if you change a
