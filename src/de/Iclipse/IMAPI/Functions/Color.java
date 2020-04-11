@@ -1,4 +1,4 @@
-package de.Iclipse.IMAPI.Functions.Commands;
+package de.Iclipse.IMAPI.Functions;
 
 
 import de.Iclipse.IMAPI.Data;
@@ -9,11 +9,11 @@ import org.bukkit.command.CommandSender;
  * Created by Yannick who could get really angry if somebody steal his code!
  * ~Yannick on 08.06.2019 at 21:17 o´ clock
  */
-public class cmd_color {
+public class Color {
 
     @IMCommand(
-            name = "color",
-            aliases = {"colour"},
+            name = "Color",
+            aliases = {"colour", "colors", "colours"},
             permissions = "im.cmd.color",
             description = "color.description",
             usage = "color.usage",

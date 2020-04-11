@@ -13,8 +13,8 @@ import java.util.ResourceBundle;
 import java.util.logging.Logger;
 
 import static de.Iclipse.IMAPI.Data.dispatching;
-import static de.Iclipse.IMAPI.Functions.MySQL.MySQL_User.getLanguage;
-import static de.Iclipse.IMAPI.Functions.MySQL.MySQL_User.isUserExists;
+import static de.Iclipse.IMAPI.Database.User.getLanguage;
+import static de.Iclipse.IMAPI.Database.User.isUserExists;
 
 public abstract class Dispatch<R> {
     private String title;

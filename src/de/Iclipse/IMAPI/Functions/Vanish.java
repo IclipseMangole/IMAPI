@@ -1,18 +1,18 @@
-package de.Iclipse.IMAPI.Functions.Commands;
+package de.Iclipse.IMAPI.Functions;
 
-import de.Iclipse.IMAPI.Functions.MySQL.MySQL_UserSettings;
+import de.Iclipse.IMAPI.Database.UserSettings;
 import de.Iclipse.IMAPI.Util.Command.IMCommand;
 import de.Iclipse.IMAPI.Util.UUIDFetcher;
 import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 import static de.Iclipse.IMAPI.Data.dsp;
 import static de.Iclipse.IMAPI.Data.instance;
 
-public class cmd_vanish {
+public class Vanish {
     @IMCommand(
             name = "vanish",
             aliases = {"vv"},
@@ -30,22 +30,32 @@ public class cmd_vanish {
                 Bukkit.getOnlinePlayers().forEach(entry ->{
                     entry.hidePlayer(instance, p);
                 });
-            }else{
+            }else {
                 setVanish(p, false);
                 dsp.send(p, "vanish.visible");
-                Bukkit.getOnlinePlayers().forEach(entry ->{
-                    if(!MySQL_UserSettings.getString(UUIDFetcher.getUUID(entry.getName()), "visibility").equals("NOBODY")) {
+                Bukkit.getOnlinePlayers().forEach(entry -> {
+                    if (!UserSettings.getString(UUIDFetcher.getUUID(entry.getName()), "visibility").equals("NOBODY")) {
                         entry.showPlayer(instance, p);
                     }
                 });
             }
     }
 
-    public void setVanish(Player p, boolean vanish){
-        MySQL_UserSettings.setBoolean(UUIDFetcher.getUUID(p.getName()), "vanish", vanish);
+    public static void setVanish(Player p, boolean vanish) {
+        UserSettings.setBoolean(UUIDFetcher.getUUID(p.getName()), "vanish", vanish);
     }
 
-    public boolean isVanish(UUID uuid){
-        return MySQL_UserSettings.getBoolean(uuid, "vanish");
+    public static boolean isVanish(UUID uuid) {
+        return UserSettings.getBoolean(uuid, "vanish");
+    }
+
+    public static ArrayList<Player> getVanishsOnServer() {
+        ArrayList<Player> players = new ArrayList<>();
+        Bukkit.getOnlinePlayers().forEach(entry -> {
+            if (isVanish(entry.getUniqueId())) {
+                players.add(entry);
+            }
+        });
+        return players;
     }
 }

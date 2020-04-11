@@ -1,4 +1,4 @@
-package de.Iclipse.IMAPI.Functions.Listener;
+package de.Iclipse.IMAPI.Listener;
 
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;

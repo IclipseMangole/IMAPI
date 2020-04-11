@@ -1,9 +1,9 @@
-package de.Iclipse.IMAPI.Functions.Commands;
+package de.Iclipse.IMAPI.Functions;
 
 import de.Iclipse.IMAPI.Util.Command.IMCommand;
 import org.bukkit.command.CommandSender;
 
-public class cmd_chatclear {
+public class Chatclear {
     @IMCommand(
             name = "chatclear",
             aliases = {"clear", "cc"},

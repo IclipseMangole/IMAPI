@@ -1,15 +1,15 @@
 package de.Iclipse.IMAPI;
 
 import com.google.common.base.Joiner;
-import de.Iclipse.IMAPI.Functions.Commands.*;
-import de.Iclipse.IMAPI.Functions.Listener.BlockListener;
-import de.Iclipse.IMAPI.Functions.Listener.ChatListener;
-import de.Iclipse.IMAPI.Functions.Listener.JoinListener;
-import de.Iclipse.IMAPI.Functions.Listener.QuitListener;
-import de.Iclipse.IMAPI.Functions.MySQL.MySQL;
-import de.Iclipse.IMAPI.Functions.MySQL.MySQL_News;
-import de.Iclipse.IMAPI.Functions.MySQL.MySQL_User;
-import de.Iclipse.IMAPI.Functions.MySQL.MySQL_UserSettings;
+import de.Iclipse.IMAPI.Database.MySQL;
+import de.Iclipse.IMAPI.Database.User;
+import de.Iclipse.IMAPI.Database.UserSettings;
+import de.Iclipse.IMAPI.Functions.*;
+import de.Iclipse.IMAPI.Functions.News.News;
+import de.Iclipse.IMAPI.Listener.BlockListener;
+import de.Iclipse.IMAPI.Listener.ChatListener;
+import de.Iclipse.IMAPI.Listener.JoinListener;
+import de.Iclipse.IMAPI.Listener.QuitListener;
 import de.Iclipse.IMAPI.Util.Command.BukkitCommand;
 import de.Iclipse.IMAPI.Util.Command.IMCommand;
 import de.Iclipse.IMAPI.Util.Dispatching.Dispatcher;
@@ -21,7 +21,11 @@ import org.bukkit.command.Command;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Method;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.*;
 
 import static de.Iclipse.IMAPI.Data.*;
@@ -77,9 +81,9 @@ public class IMAPI extends JavaPlugin {
     */
 
     public void createTables() {
-        MySQL_User.createUserTable();
-        MySQL_News.createNewsTable();
-        MySQL_UserSettings.createUserSettingsTable();
+        User.createUserTable();
+        de.Iclipse.IMAPI.Database.News.createNewsTable();
+        UserSettings.createUserSettingsTable();
     }
 
     public void initCounters() {
@@ -88,7 +92,7 @@ public class IMAPI extends JavaPlugin {
                 onlinetime.put(entry, System.currentTimeMillis());
             });
             Bukkit.getOnlinePlayers().forEach(entry -> {
-                blocks.put(entry, MySQL_User.getBlocksPlaced(entry.getUniqueId()));
+                blocks.put(entry, User.getBlocksPlaced(entry.getUniqueId()));
             });
         }
     }
@@ -96,12 +100,12 @@ public class IMAPI extends JavaPlugin {
     public static void saveCounters() {
         if (onlinetime.size() > 0) {
             onlinetime.forEach((p, start) -> {
-                MySQL_User.setOnlinetime(p.getUniqueId(), MySQL_User.getOnlinetime(p.getUniqueId()) + (System.currentTimeMillis() - start));
+                User.setOnlinetime(p.getUniqueId(), User.getOnlinetime(p.getUniqueId()) + (System.currentTimeMillis() - start));
             });
         }
         if (blocks.size() > 0) {
             blocks.forEach((p, b) -> {
-                MySQL_User.setBlocksPlaced(p.getUniqueId(), b);
+                User.setBlocksPlaced(p.getUniqueId(), b);
             });
         }
     }
@@ -165,17 +169,16 @@ public class IMAPI extends JavaPlugin {
     public void registerCommands() {
         commands = new HashMap<>();
         completions = new HashMap<>();
-        register(new cmd_lang(), this);
-        register(new cmd_help(), this);
-        register(new cmd_imrestart(), this);
-        register(new cmd_color(), this);
-        register(new cmd_news(), this);
-        register(new cmd_gamemode(), this);
-        register(new cmd_schnitzel(), this);
-        register(new cmd_apireload(), this);
-        register(new cmd_vanish(), this);
+        register(new Language(), this);
+        register(new Help(), this);
+        register(new IMRestart(), this);
+        register(new Color(), this);
+        register(new News(), this);
+        register(new Gamemode(), this);
+        register(new Schnitzel(), this);
+        register(new Vanish(), this);
         //register(new cmd_servers(), this);
-        register(new cmd_chatclear(), this);
+        register(new Chatclear(), this);
     }
 
 
@@ -248,6 +251,20 @@ public class IMAPI extends JavaPlugin {
                 } else {
                     Joiner.on(" ").join(cmd.parent() + " " + cmd.name(), cmd.parent()[0]);
                 }
+            }
+        }
+    }
+
+    public static void copyFilesInDirectory(File from, File to) throws IOException {
+        if (!to.exists()) {
+            to.mkdirs();
+        }
+        for (File file : from.listFiles()) {
+            if (file.isDirectory()) {
+                copyFilesInDirectory(file, new File(to.getAbsolutePath() + "/" + file.getName()));
+            } else {
+                File n = new File(to.getAbsolutePath() + "/" + file.getName());
+                Files.copy(file.toPath(), n.toPath(), StandardCopyOption.REPLACE_EXISTING);
             }
         }
     }

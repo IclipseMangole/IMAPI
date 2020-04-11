@@ -1,16 +1,17 @@
-package de.Iclipse.IMAPI.Functions.Commands;
+package de.Iclipse.IMAPI.Functions;
 
 import de.Iclipse.IMAPI.Data;
-import de.Iclipse.IMAPI.Functions.MySQL.MySQL_User;
+import de.Iclipse.IMAPI.Database.User;
 import de.Iclipse.IMAPI.Util.Command.IMCommand;
 import de.Iclipse.IMAPI.Util.UUIDFetcher;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import static de.Iclipse.IMAPI.Data.*;
+import static de.Iclipse.IMAPI.Data.dsp;
+import static de.Iclipse.IMAPI.Data.prefix;
 
-public class cmd_schnitzel {
+public class Schnitzel {
     StringBuilder builder;
 
     @IMCommand(
@@ -20,7 +21,7 @@ public class cmd_schnitzel {
             permissions = "im.cmd.schnitzel"
     )
     public void execute(CommandSender sender) {
-        if(sender.hasPermission("im.cmd.schnitzel.*")) {
+        if (sender.hasPermission("im.cmd.schnitzel.*")) {
             builder = new StringBuilder();
             builder.append(prefix + "§7§lHilfsübersicht:§r\n");
             add(sender, "add");
@@ -28,9 +29,9 @@ public class cmd_schnitzel {
             add(sender, "set");
             add(sender, "get");
             sender.sendMessage(builder.toString());
-        }else{
-            if(sender instanceof Player){
-                dsp.send(sender, "schnitzel.get", "" + MySQL_User.getSchnitzel(UUIDFetcher.getUUID(sender.getName())));
+        } else {
+            if (sender instanceof Player) {
+                dsp.send(sender, "schnitzel.get", "" + User.getSchnitzel(UUIDFetcher.getUUID(sender.getName())));
             }else{
                 dsp.send(sender, "cmd.noconsole");
             }
@@ -48,8 +49,8 @@ public class cmd_schnitzel {
             permissions = "im.cmd.schnitzel.add"
     )
     public void add(CommandSender sender, String name, int schnitzel) {
-        if (MySQL_User.isUserExists(UUIDFetcher.getUUID(name))) {
-            MySQL_User.addSchnitzel(UUIDFetcher.getUUID(name), schnitzel);
+        if (User.isUserExists(UUIDFetcher.getUUID(name))) {
+            User.addSchnitzel(UUIDFetcher.getUUID(name), schnitzel);
             dsp.send(sender, "schnitzel.add.success", name, "" + schnitzel);
         } else {
             dsp.send(sender, "schnitzel.notexist");
@@ -67,8 +68,8 @@ public class cmd_schnitzel {
             permissions = "im.cmd.schnitzel.remove"
     )
     public void remove(CommandSender sender, String name, int schnitzel) {
-        if (MySQL_User.isUserExists(UUIDFetcher.getUUID(name))) {
-            MySQL_User.removeSchnitzel(UUIDFetcher.getUUID(name), schnitzel);
+        if (User.isUserExists(UUIDFetcher.getUUID(name))) {
+            User.removeSchnitzel(UUIDFetcher.getUUID(name), schnitzel);
             dsp.send(sender, "schnitzel.remove.success", name, "" + schnitzel);
         } else {
             dsp.send(sender, "schnitzel.notexist");
@@ -86,8 +87,8 @@ public class cmd_schnitzel {
             permissions = "im.cmd.schnitzel.set"
     )
     public void set(CommandSender sender, String name, int schnitzel) {
-        if (MySQL_User.isUserExists(UUIDFetcher.getUUID(name))) {
-            MySQL_User.setSchnitzel(UUIDFetcher.getUUID(name), schnitzel);
+        if (User.isUserExists(UUIDFetcher.getUUID(name))) {
+            User.setSchnitzel(UUIDFetcher.getUUID(name), schnitzel);
             dsp.send(sender, "schnitzel.set.success", name, "" + schnitzel);
         } else {
             dsp.send(sender, "schnitzel.notexist");
@@ -105,8 +106,8 @@ public class cmd_schnitzel {
             permissions = "im.cmd.schnitzel.get"
     )
     public void get(CommandSender sender, String name) {
-        if (MySQL_User.isUserExists(UUIDFetcher.getUUID(name))) {
-            dsp.send(sender, "schnitzel.get.player", name, "" + MySQL_User.getSchnitzel(UUIDFetcher.getUUID(name)));
+        if (User.isUserExists(UUIDFetcher.getUUID(name))) {
+            dsp.send(sender, "schnitzel.get.player", name, "" + User.getSchnitzel(UUIDFetcher.getUUID(name)));
         } else {
             dsp.send(sender, "schnitzel.notexist");
         }

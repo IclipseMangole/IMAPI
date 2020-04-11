@@ -1,26 +1,29 @@
-package de.Iclipse.IMAPI.Functions.MySQL;
+package de.Iclipse.IMAPI.Database;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.UUID;
 
-public class MySQL_UserSettings {
-    public static void createUserSettingsTable(){
+public class UserSettings {
+    public static void createUserSettingsTable() {
         MySQL.update("CREATE TABLE IF NOT EXISTS usersettings (id MEDIUMINT NOT NULL AUTO_INCREMENT, uuid VARCHAR(60), `key` VARCHAR(256), `value` VARCHAR(256), PRIMARY KEY (id))");
     }
 
-    public static void createUserSetting(UUID uuid, String key, String value){
-        if(!isSettingExists(uuid, key)) {
+    public static void createUserSetting(UUID uuid, String key, String value) {
+        if (!isSettingExists(uuid, key)) {
             MySQL.update("INSERT INTO usersettings (uuid, `key`, `value`) VALUES ('" + uuid + "', '" + key + "', '" + value + "')");
         }
     }
-    public static void createUserSetting(UUID uuid, String key, int value){
-        if(!isSettingExists(uuid, key)) {
+
+    public static void createUserSetting(UUID uuid, String key, int value) {
+        if (!isSettingExists(uuid, key)) {
             MySQL.update("INSERT INTO usersettings (uuid, `key`, `value`) VALUES ('" + uuid + "', '" + key + "', '" + value + "')");
         }
     }
-    public static void createUserSetting(UUID uuid, String key, boolean value){
-        if(!isSettingExists(uuid, key)) {
+
+    public static void createUserSetting(UUID uuid, String key, boolean value) {
+        if (!isSettingExists(uuid, key)) {
             MySQL.update("INSERT INTO usersettings (uuid, `key`, `value`) VALUES ('" + uuid + "', '" + key + "', '" + value + "')");
         }
     }
@@ -81,21 +84,34 @@ public class MySQL_UserSettings {
             while (rs.next()) {
                 return Boolean.parseBoolean(rs.getString("value"));
             }
-        }catch(SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return false;
     }
 
-    public static void setString(UUID uuid, String key, String value){
+    public static ArrayList<UUID> getArrayList(String key) {
+        ArrayList<UUID> list = new ArrayList<>();
+        try {
+            ResultSet rs = MySQL.querry("SELECT `value` FROM usersettings WHERE `key` = '" + key + "'");
+            while (rs.next()) {
+                list.add(UUID.fromString(rs.getString("value")));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public static void setString(UUID uuid, String key, String value) {
         MySQL.update("UPDATE usersettings SET `value` = '" + value + "' WHERE uuid = '" + uuid + "' AND `key` = '" + key + "'");
     }
 
-    public static void setInt(UUID uuid, String key, int value){
+    public static void setInt(UUID uuid, String key, int value) {
         MySQL.update("UPDATE usersettings SET `value` = '" + value + "' WHERE uuid = '" + uuid + "' AND `key` = '" + key + "'");
     }
 
-    public static void setBoolean(UUID uuid, String key, boolean value){
+    public static void setBoolean(UUID uuid, String key, boolean value) {
         MySQL.update("UPDATE usersettings SET `value` = '" + value + "' WHERE uuid = '" + uuid + "' AND `key` = '" + key + "'");
     }
 

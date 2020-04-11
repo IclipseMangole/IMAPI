@@ -1,7 +1,7 @@
-package de.Iclipse.IMAPI.Functions;
+package de.Iclipse.IMAPI.Functions.News;
 
-import de.Iclipse.IMAPI.Functions.MySQL.MySQL_News;
-import de.Iclipse.IMAPI.Functions.MySQL.MySQL_User;
+import de.Iclipse.IMAPI.Database.News;
+import de.Iclipse.IMAPI.Database.User;
 import de.Iclipse.IMAPI.Util.UUIDFetcher;
 import de.Iclipse.IMAPI.Util.executor.ThreadExecutor;
 import de.Iclipse.IMAPI.Util.menu.MenuItem;
@@ -22,19 +22,19 @@ public class NewsMenu extends PopupMenu {
         super(dsp.get("news.title", viewer), 6);
         ThreadExecutor.executeAsync(() -> {
             final boolean[] seen = new boolean[1];
-            if(MySQL_News.getNews().size() > 0) {
-                MySQL_News.getNews().forEach(news -> {
-                    seen[0] = MySQL_User.getLastNewsRead(getUUID(viewer.getName())).isAfter(MySQL_News.getCreated(news));
+            if (News.getNews().size() > 0) {
+                News.getNews().forEach(news -> {
+                    seen[0] = User.getLastNewsRead(getUUID(viewer.getName())).isAfter(News.getCreated(news));
                     String name;
                     if (!seen[0]) {
-                        name = dsp.get("news.new", viewer) + MySQL_News.getTitle(news, MySQL_User.getLanguage(getUUID(viewer.getName())));
+                        name = dsp.get("news.new", viewer) + News.getTitle(news, User.getLanguage(getUUID(viewer.getName())));
                     } else {
-                        name = textcolor + MySQL_News.getTitle(news, MySQL_User.getLanguage(getUUID(viewer.getName())));
+                        name = textcolor + News.getTitle(news, User.getLanguage(getUUID(viewer.getName())));
                     }
-                    this.addMenuItem(new MenuItem(name, item(seen[0]), "§7vom §e" + MySQL_News.getCreated(news).toLocalDate() + " §7(von §e" + UUIDFetcher.getName(MySQL_News.getCreator(news)) + "§7)") {
+                    this.addMenuItem(new MenuItem(name, item(seen[0]), "§7vom §e" + News.getCreated(news).toLocalDate() + " §7(von §e" + UUIDFetcher.getName(News.getCreator(news)) + "§7)") {
                         @Override
                         public void onClick(Player player) {
-                            viewer.openBook(book(news, MySQL_User.getLanguage(getUUID(viewer.getName()))));
+                            viewer.openBook(book(news, User.getLanguage(getUUID(viewer.getName()))));
                         }
                     }, i++);
                 });
@@ -44,7 +44,7 @@ public class NewsMenu extends PopupMenu {
             }
         }).onDone(() -> {
             openMenu(viewer);
-            MySQL_User.updateLastNewsRead(getUUID(viewer.getName()));
+            User.updateLastNewsRead(getUUID(viewer.getName()));
             i = 0;
         });
     }
@@ -59,12 +59,12 @@ public class NewsMenu extends PopupMenu {
         return item;
     }
 
-    public static ItemStack book(int news, String lang){
+    public static ItemStack book(int news, String lang) {
         ItemStack item = new ItemStack(Material.WRITTEN_BOOK);
         BookMeta meta = (BookMeta) item.getItemMeta();
-        meta.setAuthor(UUIDFetcher.getName(MySQL_News.getCreator(news)));
-        meta.setTitle(MySQL_News.getTitle(news, lang));
-        meta.addPage(ChatColor.translateAlternateColorCodes('$' ,MySQL_News.getText(news, lang)));
+        meta.setAuthor(UUIDFetcher.getName(News.getCreator(news)));
+        meta.setTitle(News.getTitle(news, lang));
+        meta.addPage(ChatColor.translateAlternateColorCodes('$', News.getText(news, lang)));
         item.setItemMeta(meta);
         return item;
     }

@@ -1,7 +1,6 @@
-package de.Iclipse.IMAPI.Functions.Commands;
+package de.Iclipse.IMAPI.Functions;
 
 import de.Iclipse.IMAPI.Data;
-import de.Iclipse.IMAPI.Functions.MySQL.MySQL_User;
 import de.Iclipse.IMAPI.Util.Command.IMCommand;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -14,7 +13,7 @@ import java.util.ArrayList;
 
 import static de.Iclipse.IMAPI.Data.*;
 
-public class cmd_help {
+public class Help {
 
     @IMCommand(
             name = "help",

@@ -3,9 +3,7 @@ package de.Iclipse.IMAPI.Util.Command;
 
 import com.google.common.base.Defaults;
 import com.google.common.base.Joiner;
-import de.Iclipse.IMAPI.Functions.MySQL.MySQL_User;
 import de.Iclipse.IMAPI.Util.TypeUtils;
-import de.Iclipse.IMAPI.Util.UUIDFetcher;
 import de.Iclipse.IMAPI.Util.executor.ThreadExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;

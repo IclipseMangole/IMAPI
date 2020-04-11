@@ -1,4 +1,4 @@
-package de.Iclipse.IMAPI.Functions.Listener;
+package de.Iclipse.IMAPI.Listener;
 
 import de.Iclipse.IMAPI.Data;
 import org.bukkit.entity.Player;

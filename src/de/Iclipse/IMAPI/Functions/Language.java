@@ -1,20 +1,23 @@
-package de.Iclipse.IMAPI.Functions.Commands;
+package de.Iclipse.IMAPI.Functions;
 
-import de.Iclipse.IMAPI.Functions.MySQL.MySQL_User;
+import de.Iclipse.IMAPI.Database.User;
 import de.Iclipse.IMAPI.Util.Command.IMCommand;
 import de.Iclipse.IMAPI.Util.UUIDFetcher;
-import net.md_5.bungee.api.chat.*;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.entity.Player;
 
-import java.util.ResourceBundle;
+import static de.Iclipse.IMAPI.Data.dsp;
+import static de.Iclipse.IMAPI.Data.prefix;
 
-import static de.Iclipse.IMAPI.Data.*;
 
+public class Language {
 
-public class cmd_lang {
-
-    public void registerLang(){
+    public void registerLang() {
     }
+
     @IMCommand(
             name = "lang",
             permissions = "im.cmd.lang",
@@ -34,18 +37,18 @@ public class cmd_lang {
                 base.addExtra(component);
             });
             p.spigot().sendMessage(base);
-        }else{
+        }else {
 
-                if(dsp.getLanguages().containsKey(s)){
-                    if(!s.equals(MySQL_User.getLanguage(UUIDFetcher.getUUID(p.getName())))) {
-                        MySQL_User.setLanguage(UUIDFetcher.getUUID(p.getName()), s);
-                        dsp.send(p, "lang.changed");
-                    }else{
-                        dsp.send(p, "lang.same");
-                    }
-                }else {
-                    dsp.send(p, "lang.invalid");
+            if (dsp.getLanguages().containsKey(s)) {
+                if (!s.equals(User.getLanguage(UUIDFetcher.getUUID(p.getName())))) {
+                    User.setLanguage(UUIDFetcher.getUUID(p.getName()), s);
+                    dsp.send(p, "lang.changed");
+                } else {
+                    dsp.send(p, "lang.same");
                 }
+            } else {
+                dsp.send(p, "lang.invalid");
+            }
         }
     }
 }

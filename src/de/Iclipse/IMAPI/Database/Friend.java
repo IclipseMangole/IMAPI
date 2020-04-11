@@ -1,27 +1,27 @@
-package de.Iclipse.IMAPI.Functions.MySQL;
+package de.Iclipse.IMAPI.Database;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.UUID;
 
-public class MySQL_Friend {
+public class Friend {
 
-    public static void createFriendTable(){
+    public static void createFriendTable() {
         MySQL.update("CREATE TABLE IF NOT EXISTS friend (id MEDIUMINT NOT NULL AUTO_INCREMENT, uuid VARCHAR(64), name VARCHAR(64), frienduuid VARCHAR(64), friendname VARCHAR(64), accepted BOOLEAN, PRIMARY KEY(id))");
     }
 
-    public static void createFriendship(UUID uuid, String name, UUID frienduuid, String friendname){
-        if(!isFriendshipExists(uuid,frienduuid)){
+    public static void createFriendship(UUID uuid, String name, UUID frienduuid, String friendname) {
+        if (!isFriendshipExists(uuid, frienduuid)) {
             MySQL.update("INSERT INTO friend WHERE (uuid, name, frienduuid, friendname, accepted) VALUES ('" + uuid + "', '" + name + "', '" + frienduuid + "', '" + friendname + "', '" + false + "')");
         }
     }
 
-    public static void setFriendshipActive(UUID uuid, UUID frienduuid){
-            MySQL.update("UPDATE friend SET accepted = '" + true + "' WHERE uuid = '" + uuid + "' AND frienduuid = '" + frienduuid + "'");
+    public static void setFriendshipActive(UUID uuid, UUID frienduuid) {
+        MySQL.update("UPDATE friend SET accepted = '" + true + "' WHERE uuid = '" + uuid + "' AND frienduuid = '" + frienduuid + "'");
     }
 
-    public static void setFriendshipActive(String name, String friendname){
+    public static void setFriendshipActive(String name, String friendname) {
         MySQL.update("UPDATE friend SET accepted = '" + true + "' WHERE name = '" + name + "' AND friendname = '" + friendname + "'");
     }
 

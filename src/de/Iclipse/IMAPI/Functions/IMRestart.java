@@ -1,4 +1,4 @@
-package de.Iclipse.IMAPI.Functions.Commands;
+package de.Iclipse.IMAPI.Functions;
 
 import de.Iclipse.IMAPI.Util.Command.IMCommand;
 import org.bukkit.command.CommandSender;
@@ -6,13 +6,13 @@ import org.bukkit.command.CommandSender;
 import static de.Iclipse.IMAPI.Data.dsp;
 import static de.Iclipse.IMAPI.Data.restart;
 
-public class cmd_imrestart {
+public class IMRestart {
     @IMCommand(
             name = "imrestart",
             permissions = "im.cmd.restart",
             usage = "imrestart.usage",
             description = "imrestart.description",
-            maxArgs = 3,
+            maxArgs = 2,
             minArgs = 0
     )
     public void execute(CommandSender sender, Integer i, String s) {

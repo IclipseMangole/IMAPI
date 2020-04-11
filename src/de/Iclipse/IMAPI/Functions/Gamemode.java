@@ -1,6 +1,5 @@
-package de.Iclipse.IMAPI.Functions.Commands;
+package de.Iclipse.IMAPI.Functions;
 
-import de.Iclipse.IMAPI.Data;
 import de.Iclipse.IMAPI.Util.Command.IMCommand;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -8,14 +7,13 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import static de.Iclipse.IMAPI.Data.dsp;
-import static de.Iclipse.IMAPI.Data.prefix;
 
 
 /**
  * Created by Yannick who could get really angry if somebody steal his code!
  * ~Yannick on 13.06.2019 at 20:41 o´ clock
  */
-public class cmd_gamemode {
+public class Gamemode {
     @IMCommand(
             name = "gamemode",
             aliases = {"gm"},

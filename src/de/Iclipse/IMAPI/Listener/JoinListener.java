@@ -1,8 +1,8 @@
-package de.Iclipse.IMAPI.Functions.Listener;
+package de.Iclipse.IMAPI.Listener;
 
 import de.Iclipse.IMAPI.Data;
-import de.Iclipse.IMAPI.Functions.MySQL.MySQL_User;
-import de.Iclipse.IMAPI.Functions.MySQL.MySQL_UserSettings;
+import de.Iclipse.IMAPI.Database.User;
+import de.Iclipse.IMAPI.Database.UserSettings;
 import de.Iclipse.IMAPI.Util.UUIDFetcher;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -33,9 +33,9 @@ public class JoinListener implements Listener {
     public void onJoin(PlayerJoinEvent e) {
         Player p = e.getPlayer();
         Data.onlinetime.put(p, System.currentTimeMillis());
-        Data.blocks.put(p, MySQL_User.getBlocksPlaced(getUUID(p.getName())));
+        Data.blocks.put(p, User.getBlocksPlaced(getUUID(p.getName())));
         createSettings(UUIDFetcher.getUUID(p.getName()));
-        if (MySQL_UserSettings.getBoolean(UUIDFetcher.getUUID(p.getName()), "vanish")) {
+        if (UserSettings.getBoolean(UUIDFetcher.getUUID(p.getName()), "vanish")) {
             Bukkit.getOnlinePlayers().forEach(entry -> {
                 entry.hidePlayer(instance, p);
             });
@@ -45,6 +45,6 @@ public class JoinListener implements Listener {
 
 
     public void createSettings(UUID uuid) {
-        MySQL_UserSettings.createUserSetting(uuid, "vanish", false);
+        UserSettings.createUserSetting(uuid, "vanish", false);
     }
 }

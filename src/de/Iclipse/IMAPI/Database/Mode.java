@@ -1,4 +1,4 @@
-package de.Iclipse.IMAPI.Functions.MySQL;
+package de.Iclipse.IMAPI.Database;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -12,24 +12,24 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-public class MySQL_Mode {
-    public static void createModeTable(){
+public class Mode {
+    public static void createModeTable() {
         MySQL.update("CREATE TABLE IF NOT EXISTS mode(modename VARCHAR(20), servers VARCHAR(10000), xk DOUBLE, yk DOUBLE, zk DOUBLE, yaw FLOAT, pitch FLOAT, name VARCHAR(30), slot INT(3), displayname VARCHAR(30))");
     }
 
-    public static void registerMode(String modename){
+    public static void registerMode(String modename) {
         MySQL.update("INSERT INTO `mode` VALUES ('" + modename + "','NONE',-1.0,-1.0,-1.0,-1.0,-1.0,-1,-1,'" + modename + "')");
     }
 
-    public static ArrayList<String> getModes(){
+    public static ArrayList<String> getModes() {
         ArrayList<String> list = new ArrayList<>();
-        try{
+        try {
             ResultSet rs = MySQL.querry("SELECT modename FROM `mode` WHERE 1");
-            while(rs.next()){
+            while (rs.next()) {
                 String s = rs.getString("modename");
                 list.add(s);
             }
-        }catch(SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return list;

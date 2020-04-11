@@ -1,4 +1,4 @@
-package de.Iclipse.IMAPI.Functions.MySQL;
+package de.Iclipse.IMAPI.Database;
 
 import de.Iclipse.IMAPI.Util.UUIDFetcher;
 import org.bukkit.entity.Player;
@@ -18,10 +18,10 @@ import java.util.UUID;
  * Created by Yannick who could get really angry if somebody steal his code!
  * ~Yannick on 11.06.2019 at 11:17 o´ clock
  */
-public class MySQL_User {
+public class User {
 
 
-    public static void createUserTable(){
+    public static void createUserTable() {
         MySQL.update("CREATE TABLE IF NOT EXISTS user (uuid VARCHAR(60), schnitzel INT(10), onlinetime INT(15), firstJoin DATETIME, lastseen BIGINT, lang VARCHAR(10), blocks INT(10), newsread DATETIME)");
     }
 

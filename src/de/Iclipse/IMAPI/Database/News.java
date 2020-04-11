@@ -1,4 +1,4 @@
-package de.Iclipse.IMAPI.Functions.MySQL;
+package de.Iclipse.IMAPI.Database;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -9,18 +9,18 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.UUID;
 
-public class MySQL_News {
-    public static void createNewsTable(){
+public class News {
+    public static void createNewsTable() {
         MySQL.update("CREATE TABLE IF NOT EXISTS news (id MEDIUMINT NOT NULL AUTO_INCREMENT, titleDE VARCHAR(30), titleEN VARCHAR(30), textDE VARCHAR(1000), textEN VARCHAR(300), creator VARCHAR(50), created DATETIME, PRIMARY KEY (id))");
     }
 
-    public static void createNews(String titleDE, String titleEN, String messageDE, String messageEN, UUID uuid){
+    public static void createNews(String titleDE, String titleEN, String messageDE, String messageEN, UUID uuid) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date time = Date.from(Instant.now());
         MySQL.update("INSERT INTO news (titleDE, titleEN, textDE, textEN, creator, created) VALUES ('" + titleDE + "', '" + titleEN + "', '" + messageDE + "', '" + messageEN + "', '" + uuid.toString() + "', '" + sdf.format(time) + "')");
     }
 
-    public static void deleteNews(int id){
+    public static void deleteNews(int id) {
         MySQL.update("DELETE FROM news WHERE id = " + id);
     }
 

@@ -1,18 +1,14 @@
-package de.Iclipse.IMAPI.Functions.Listener;
+package de.Iclipse.IMAPI.Listener;
 
 import com.google.common.collect.Iterables;
-import com.google.common.io.ByteArrayDataInput;
-import com.google.common.io.ByteArrayDataOutput;
-import com.google.common.io.ByteStreams;
-import de.Iclipse.IMAPI.Data;
 import de.Iclipse.IMAPI.IMAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.messaging.PluginMessageListener;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 
 public class ChannelListener  {

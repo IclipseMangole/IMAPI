@@ -1,4 +1,4 @@
-package de.Iclipse.IMAPI.Functions.MySQL;
+package de.Iclipse.IMAPI.Database;
 
 import de.Iclipse.IMAPI.Data;
 import org.bukkit.ChatColor;
