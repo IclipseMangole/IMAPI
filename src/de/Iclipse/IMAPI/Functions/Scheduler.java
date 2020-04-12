@@ -17,21 +17,21 @@ public class Scheduler {
                     if (Data.restart >= 30 * 60 && Data.restart <= 90 * 60) {
                         if (Data.restart % (30 * 60) == 0) {
                             Bukkit.getOnlinePlayers().forEach(entry -> {
-                                dsp.send(entry, "imrestart.message", "" + Data.restart, dsp.get("unit.minutes", entry));
+                                dsp.send(entry, "imrestart.message", "" + Data.restart / 60, dsp.get("unit.minutes", entry));
                             });
                             dsp.send(Bukkit.getConsoleSender(), "imrestart.message", "" + Data.restart, dsp.get("unit.minutes", Bukkit.getConsoleSender()));
                         }
                     } else if (Data.restart >= 5 * 60) {
                         if (Data.restart % (5 * 60) == 0) {
                             Bukkit.getOnlinePlayers().forEach(entry -> {
-                                dsp.send(entry, "imrestart.message", "" + Data.restart, dsp.get("unit.minutes", entry));
+                                dsp.send(entry, "imrestart.message", "" + Data.restart / 60, dsp.get("unit.minutes", entry));
                             });
                             dsp.send(Bukkit.getConsoleSender(), "imrestart.message", "" + Data.restart, dsp.get("unit.minutes", Bukkit.getConsoleSender()));
                         }
                     } else if (Data.restart >= 1 * 60) {
                         if (Data.restart % (1 * 60) == 0) {
                             Bukkit.getOnlinePlayers().forEach(entry -> {
-                                dsp.send(entry, "imrestart.message", "" + Data.restart, dsp.get("unit.minutes", entry));
+                                dsp.send(entry, "imrestart.message", "" + Data.restart / 60, dsp.get("unit.minutes", entry));
                             });
                             dsp.send(Bukkit.getConsoleSender(), "imrestart.message", "" + Data.restart, dsp.get("unit.minutes", Bukkit.getConsoleSender()));
                         }
@@ -40,16 +40,16 @@ public class Scheduler {
                             Bukkit.getOnlinePlayers().forEach(entry -> {
                                 dsp.send(entry, "imrestart.message", "" + Data.restart, dsp.get("unit.seconds", entry));
                             });
-                            dsp.send(Bukkit.getConsoleSender(), "imrestart.message", "" + Data.restart, dsp.get("unit.minutes", Bukkit.getConsoleSender()));
+                            dsp.send(Bukkit.getConsoleSender(), "imrestart.message", "" + Data.restart, dsp.get("unit.seconds", Bukkit.getConsoleSender()));
                         }
                     } else if (Data.restart > 0) {
                         Bukkit.getOnlinePlayers().forEach(entry -> {
                             dsp.send(entry, "imrestart.message", "" + Data.restart, dsp.get("unit.seconds", entry));
                         });
-                        dsp.send(Bukkit.getConsoleSender(), "imrestart.message", "" + Data.restart, dsp.get("unit.minutes", Bukkit.getConsoleSender()));
+                        dsp.send(Bukkit.getConsoleSender(), "imrestart.message", "" + Data.restart, dsp.get("unit.seconds", Bukkit.getConsoleSender()));
                     } else {
                         Bukkit.getOnlinePlayers().forEach(entry -> {
-                            dsp.get("imrestart.restart", entry);
+                            entry.kickPlayer(dsp.get("imrestart.restart", entry));
                         });
                         dsp.send(Bukkit.getConsoleSender(), "imrestart.restart");
                         Bukkit.shutdown();
