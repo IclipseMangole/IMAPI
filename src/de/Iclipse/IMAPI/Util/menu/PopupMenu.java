@@ -96,7 +96,7 @@ public class PopupMenu implements InventoryHolder {
 
     public void fill(Material material) {
         for (int i = 0; i < rows * 9; i++) {
-            this.addMenuItem(new MenuItem("", new ItemStack(material)) {
+            this.addMenuItem(new MenuItem(" ", new ItemStack(material)) {
                 @Override
                 public void onClick(Player player) {
                 }
