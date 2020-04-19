@@ -78,7 +78,7 @@ public class CommandProcessor<S> {
             List<String> permParts = new ArrayList<>(Arrays.asList(command.parent()));
             permParts.add(command.name());
             String permission = permParts.stream().map(perm -> perm.equals("%") ? "any" : perm).collect(Collectors.joining("."));
-            hasPermission = masterCommand.checkPermission(sender, "aw." + permission);
+            hasPermission = masterCommand.checkPermission(sender, "im.cmd." + permission);
         }
         if (!hasPermission) {
             dsp.send((Player) sender, "cmd.noperm");
