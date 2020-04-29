@@ -363,7 +363,7 @@ public class ScoreboardSign {
         }
     }
 
-    private static void setField(Object edit, String fieldName, Object value) {
+    public static void setField(Object edit, String fieldName, Object value) {
         try {
             Field field = edit.getClass().getDeclaredField(fieldName);
             field.setAccessible(true);

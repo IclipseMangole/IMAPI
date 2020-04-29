@@ -1,5 +1,6 @@
 package de.Iclipse.IMAPI;
 
+import com.comphenix.protocol.ProtocolManager;
 import de.Iclipse.IMAPI.Util.Command.IMCommand;
 import de.Iclipse.IMAPI.Util.Dispatching.Dispatcher;
 import org.bukkit.entity.Player;
@@ -25,6 +26,7 @@ public class Data {
     public static boolean dispatching = true;
     public static int restart = -1;
     public static boolean fakerestart = false;
+    public static ProtocolManager protocolManager;
 
 
     public static Plugin instance;

@@ -27,7 +27,11 @@ public abstract class MenuItem {
     }
 
     public MenuItem(ItemStack item) {
-        this(item.getItemMeta().getDisplayName(), item);
+        this(item.getItemMeta().getDisplayName(), item, item.getAmount());
+    }
+
+    public MenuItem(ItemStack item, int amount) {
+        this(item.getItemMeta().getDisplayName(), item, amount);
     }
 
     /**

@@ -1,5 +1,6 @@
 package de.Iclipse.IMAPI;
 
+import com.comphenix.protocol.ProtocolLibrary;
 import com.google.common.base.Joiner;
 import de.Iclipse.IMAPI.Database.MySQL;
 import de.Iclipse.IMAPI.Database.User;
@@ -38,6 +39,7 @@ public class IMAPI extends JavaPlugin {
     public void onLoad() {
         Data.instance = this;
         ThreadExecutor.setExecutor(new BukkitExecutor());
+        protocolManager = ProtocolLibrary.getProtocolManager();
     }
 
     @Override
@@ -63,8 +65,6 @@ public class IMAPI extends JavaPlugin {
         registerListener();
         registerCommands();
         createTables();
-        blocks = new HashMap<>();
-        onlinetime = new HashMap<>();
         initCounters();
         startScheduler();
     }
@@ -87,6 +87,8 @@ public class IMAPI extends JavaPlugin {
     }
 
     public void initCounters() {
+        blocks = new HashMap<>();
+        onlinetime = new HashMap<>();
         if (Bukkit.getOnlinePlayers().size() > 0) {
             Bukkit.getOnlinePlayers().forEach(entry -> {
                 onlinetime.put(entry, System.currentTimeMillis());
@@ -179,6 +181,7 @@ public class IMAPI extends JavaPlugin {
         register(new Vanish(), this);
         //register(new cmd_servers(), this);
         register(new Chatclear(), this);
+        register(new Ping(), this);
     }
 
 
@@ -267,6 +270,15 @@ public class IMAPI extends JavaPlugin {
                 Files.copy(file.toPath(), n.toPath(), StandardCopyOption.REPLACE_EXISTING);
             }
         }
+    }
+
+    public static void deleteFile(File f) {
+        if (f.isDirectory()) {
+            for (int i = 0; i < f.listFiles().length; i++) {
+                deleteFile(f.listFiles()[i]);
+            }
+        }
+        f.delete();
     }
 
 

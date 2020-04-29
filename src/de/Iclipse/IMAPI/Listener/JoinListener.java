@@ -46,5 +46,6 @@ public class JoinListener implements Listener {
 
     public void createSettings(UUID uuid) {
         UserSettings.createUserSetting(uuid, "vanish", false);
+        UserSettings.createUserSetting(uuid, "baro_maxPlayerBars", 2);
     }
 }
