@@ -5,7 +5,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
-import org.bukkit.event.server.RemoteServerCommandEvent;
+import org.bukkit.event.server.ServerCommandEvent;
 
 /**
  * Created by Yannick who could get really angry if somebody steal his code!
@@ -26,8 +26,6 @@ public class ChatListener implements Listener {
         message += e.getMessage();
 
         e.setFormat(message);
-
-
     }
 
     @EventHandler
@@ -38,7 +36,7 @@ public class ChatListener implements Listener {
     }
 
     @EventHandler
-    public void onConsoleCommand(RemoteServerCommandEvent e) {
+    public void onConsoleCommand(ServerCommandEvent e) {
         if (e.getCommand().startsWith("restart")) {
             e.setCancelled(true);
         }

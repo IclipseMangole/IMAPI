@@ -18,25 +18,20 @@ public class IMRestart {
     public void execute(CommandSender sender, Integer i, String s) {
         String unit;
         if (i == null && s == null) {
-            System.out.println("Both null");
             unit = "seconds";
             restart = 60;
             i = 60;
         } else if (i != null && s == null) {
-            System.out.println("Unit null");
             restart = i * 60;
             unit = "minutes";
         } else {
             if (s.equalsIgnoreCase("s")) {
-                System.out.println("Unit s");
                 unit = "seconds";
                 restart = i;
             } else if (s.equalsIgnoreCase("m")) {
-                System.out.println("Unit m");
                 unit = "minutes";
                 restart = i * 60;
             } else if (s.equalsIgnoreCase("h")) {
-                System.out.println("Both h");
                 unit = "hours";
                 restart = i * 60 * 60;
             } else {

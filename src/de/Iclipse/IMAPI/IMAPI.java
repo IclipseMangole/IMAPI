@@ -6,6 +6,8 @@ import de.Iclipse.IMAPI.Database.MySQL;
 import de.Iclipse.IMAPI.Database.User;
 import de.Iclipse.IMAPI.Database.UserSettings;
 import de.Iclipse.IMAPI.Functions.*;
+import de.Iclipse.IMAPI.Functions.NPC.NPCCommand;
+import de.Iclipse.IMAPI.Functions.NPC.ShowNPCs;
 import de.Iclipse.IMAPI.Functions.News.News;
 import de.Iclipse.IMAPI.Listener.BlockListener;
 import de.Iclipse.IMAPI.Listener.ChatListener;
@@ -56,6 +58,7 @@ public class IMAPI extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new BlockListener(), this);
         Bukkit.getPluginManager().registerEvents(new QuitListener(), this);
         Bukkit.getPluginManager().registerEvents(new PopupMenuAPI(), this);
+        Bukkit.getPluginManager().registerEvents(new ShowNPCs(), this);
     }
 
     @Override
@@ -182,6 +185,7 @@ public class IMAPI extends JavaPlugin {
         //register(new cmd_servers(), this);
         register(new Chatclear(), this);
         register(new Ping(), this);
+        register(new NPCCommand(), this);
     }
 
 
