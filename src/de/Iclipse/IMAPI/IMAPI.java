@@ -19,8 +19,11 @@ import de.Iclipse.IMAPI.Util.Dispatching.Dispatcher;
 import de.Iclipse.IMAPI.Util.executor.ThreadExecutor;
 import de.Iclipse.IMAPI.Util.executor.types.BukkitExecutor;
 import de.Iclipse.IMAPI.Util.menu.PopupMenuAPI;
+import net.minecraft.server.v1_15_R1.PacketPlayOutScoreboardObjective;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
+import org.bukkit.craftbukkit.v1_15_R1.entity.CraftPlayer;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -34,6 +37,7 @@ import java.util.*;
 import static de.Iclipse.IMAPI.Data.*;
 import static de.Iclipse.IMAPI.Functions.Scheduler.startScheduler;
 import static de.Iclipse.IMAPI.Functions.Scheduler.stopScheduler;
+import static de.Iclipse.IMAPI.Util.ScoreboardSign.setField;
 
 public class IMAPI extends JavaPlugin {
 
@@ -50,6 +54,14 @@ public class IMAPI extends JavaPlugin {
         saveCounters();
         MySQL.close();
         stopScheduler();
+        if (Bukkit.getOnlinePlayers().size() > 0) {
+            for (Player p : Bukkit.getOnlinePlayers()) {
+                PacketPlayOutScoreboardObjective packet = new PacketPlayOutScoreboardObjective();
+                setField(packet, "a", p.getName());
+                setField(packet, "d", 1);
+                ((CraftPlayer) p).getHandle().playerConnection.sendPacket(packet);
+            }
+        }
     }
 
     public void registerListener() {

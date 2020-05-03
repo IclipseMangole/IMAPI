@@ -43,6 +43,29 @@ public class NPCCommand {
         dsp.send(p, "npc.create.message");
     }
 
+    @IMCommand(
+            name = "remove",
+            parent = "npc",
+            minArgs = 1,
+            maxArgs = 1,
+            usage = "npc.remove.usage",
+            description = "npc.remove.description",
+            noConsole = true,
+            permissions = "im.cmd.npc.*"
+    )
+    public void remove(Player p, String name) {
+        for (NPC entry : NPC.npcsForAll) {
+            if (entry.getName().equals(name)) {
+                entry.remove();
+            }
+        }
+        NPC.npcsForSome.forEach((npc, list) -> {
+            if (npc.getName().equals(name)) {
+                npc.remove();
+            }
+        });
+    }
+
     private void add(CommandSender sender, String command) {
         builder.append("\n" + Data.symbol + "§e" + dsp.get("npc." + command + ".usage", sender) + "§8: §7 " + dsp.get("npc." + command + ".description", sender) + ChatColor.RESET);
     }

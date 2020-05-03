@@ -1,10 +1,14 @@
 package de.Iclipse.IMAPI.Functions;
 
 import de.Iclipse.IMAPI.Data;
+import net.minecraft.server.v1_15_R1.PacketPlayOutScoreboardObjective;
 import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.v1_15_R1.entity.CraftPlayer;
+import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 
 import static de.Iclipse.IMAPI.Data.dsp;
+import static de.Iclipse.IMAPI.Util.ScoreboardSign.setField;
 
 public class Scheduler {
     private static BukkitTask task;
@@ -28,7 +32,7 @@ public class Scheduler {
                             });
                             dsp.send(Bukkit.getConsoleSender(), "imrestart.message", "" + Data.restart, dsp.get("unit.minutes", Bukkit.getConsoleSender()));
                         }
-                    } else if (Data.restart >= 1 * 60) {
+                    } else if (Data.restart > 1 * 60) {
                         if (Data.restart % (1 * 60) == 0) {
                             Bukkit.getOnlinePlayers().forEach(entry -> {
                                 dsp.send(entry, "imrestart.message", "" + Data.restart / 60, dsp.get("unit.minutes", entry));
@@ -36,7 +40,7 @@ public class Scheduler {
                             dsp.send(Bukkit.getConsoleSender(), "imrestart.message", "" + Data.restart, dsp.get("unit.minutes", Bukkit.getConsoleSender()));
                         }
                     } else if (Data.restart > 10) {
-                        if (Data.restart % (15 * 60) == 0) {
+                        if (Data.restart % 15 == 0) {
                             Bukkit.getOnlinePlayers().forEach(entry -> {
                                 dsp.send(entry, "imrestart.message", "" + Data.restart, dsp.get("unit.seconds", entry));
                             });
@@ -48,10 +52,17 @@ public class Scheduler {
                         });
                         dsp.send(Bukkit.getConsoleSender(), "imrestart.message", "" + Data.restart, dsp.get("unit.seconds", Bukkit.getConsoleSender()));
                     } else {
-                        Bukkit.getOnlinePlayers().forEach(entry -> {
-                            entry.kickPlayer(dsp.get("imrestart.restart", entry));
-                        });
+                        if (Bukkit.getOnlinePlayers().size() > 0) {
+                            for (Player p : Bukkit.getOnlinePlayers()) {
+                                PacketPlayOutScoreboardObjective packet = new PacketPlayOutScoreboardObjective();
+                                setField(packet, "a", p.getName());
+                                setField(packet, "d", 1);
+                                ((CraftPlayer) p).getHandle().playerConnection.sendPacket(packet);
+                                p.kickPlayer(dsp.get("imrestart.restart", p));
+                            }
+                        }
                         dsp.send(Bukkit.getConsoleSender(), "imrestart.restart");
+                        Bukkit.getWorlds().forEach(w -> w.save());
                         Bukkit.shutdown();
                     }
 

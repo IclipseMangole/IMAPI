@@ -20,7 +20,6 @@ public class TextureFetcher {
 
     public static String getTexture(UUID uuid) {
         String id = uuid.toString().replace("-", "");
-        System.out.println(id);
         try {
             HttpURLConnection connection = (HttpURLConnection) new URL(String.format(TEXTURE_URL, id)).openConnection();
             connection.setReadTimeout(5000);
@@ -40,7 +39,6 @@ public class TextureFetcher {
     public static String getSignature(UUID uuid) {
         String id = uuid.toString().replace("-", "");
         try {
-            System.out.println(String.format(TEXTURE_URL, id));
             HttpURLConnection connection = (HttpURLConnection) new URL(String.format(TEXTURE_URL, id)).openConnection();
             connection.setReadTimeout(5000);
             BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));

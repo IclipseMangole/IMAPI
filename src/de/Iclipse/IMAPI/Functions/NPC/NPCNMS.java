@@ -14,9 +14,9 @@ import java.util.*;
 
 import static de.Iclipse.IMAPI.Util.Reflections.sendPacket;
 
-public class NPC {
-    public static ArrayList<NPC> npcsForAll = new ArrayList<>();
-    public static HashMap<NPC, ArrayList<Player>> npcsForSome = new HashMap<>();
+public class NPCNMS {
+    public static ArrayList<NPCNMS> npcsForAll = new ArrayList<>();
+    public static HashMap<NPCNMS, ArrayList<Player>> npcsForSome = new HashMap<>();
 
     private Location loc;
     private UUID uuid;
@@ -26,7 +26,7 @@ public class NPC {
     private EntityPlayer entityPlayer;
     private boolean dinnerbone;
 
-    public NPC(UUID uuid, String name, String[] textures, Location loc) {
+    public NPCNMS(UUID uuid, String name, String[] textures, Location loc) {
         MinecraftServer minecraftServer = ((CraftServer) Bukkit.getServer()).getServer();
         WorldServer worldServer = ((CraftWorld) loc.getWorld()).getHandle();
         this.name = name;
@@ -41,7 +41,7 @@ public class NPC {
     }
 
 
-    public NPC(UUID uuid, String name, Location loc) {
+    public NPCNMS(UUID uuid, String name, Location loc) {
         this(uuid, name, TextureFetcher.getSkin(uuid), loc);
     }
 
@@ -137,15 +137,14 @@ public class NPC {
 
     public void remove() {
         sendPacket(getPacketPlayOutEntityDestroy());
-        for (NPC npc : npcsForAll) {
+        for (NPCNMS npc : npcsForAll) {
             npcsForAll.remove(npc);
         }
-        for (Iterator<Map.Entry<NPC, ArrayList<Player>>> iterator = npcsForSome.entrySet().iterator(); iterator.hasNext(); ) {
-            Map.Entry<NPC, ArrayList<Player>> entry = iterator.next();
-            NPC npc = entry.getKey();
+        for (Iterator<Map.Entry<NPCNMS, ArrayList<Player>>> iterator = npcsForSome.entrySet().iterator(); iterator.hasNext(); ) {
+            Map.Entry<NPCNMS, ArrayList<Player>> entry = iterator.next();
+            NPCNMS npc = entry.getKey();
             npcsForSome.remove(npc);
 
         }
     }
-
 }
