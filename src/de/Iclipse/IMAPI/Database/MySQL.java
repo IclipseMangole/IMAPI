@@ -66,7 +66,7 @@ public class MySQL {
         setStandardMySQL();
         readMySQL();
         try {
-            conn = DriverManager.getConnection("jdbc:mysql://" + HOST + ":3306/" + DATABASE + "?autoReconnect=false", USER, PASSWORD);
+            conn = DriverManager.getConnection("jdbc:mysql://" + HOST + ":3306/" + DATABASE + "?autoReconnect=true", USER, PASSWORD);
             System.out.println(prefix + "Verbunden!");
         } catch (SQLException e) {
             System.out.println(prefix + "Keine Verbindung! Fehler: " + e.getMessage());
@@ -96,15 +96,6 @@ public class MySQL {
             connect();
             System.err.println(e);
         }
-        try {
-            st = conn.createStatement();
-            st.executeUpdate(querry);
-            st.close();
-            return;
-        } catch (SQLException e) {
-            connect();
-            System.err.println(e);
-        }
     }
 
     public static ResultSet querry(String querry) {
@@ -114,20 +105,11 @@ public class MySQL {
         try {
             st = conn.createStatement();
             rs = st.executeQuery(querry);
-            return rs;
         } catch (SQLException e) {
             connect();
             System.err.println(e);
         }
-        try {
-            st = conn.createStatement();
-            rs = st.executeQuery(querry);
-            return rs;
-        } catch (SQLException e) {
-            connect();
-            System.err.println(e);
-        }
-        return null;
+        return rs;
     }
 
 }
