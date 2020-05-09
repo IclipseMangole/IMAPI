@@ -12,7 +12,7 @@ public class PlayerReset {
             if (p.getGameMode() != GameMode.CREATIVE) {
                 p.setFlying(false);
                 p.setAllowFlight(false);
-                p.setGravity(false);
+                p.setGravity(true);
             }
             p.setGlowing(false);
             p.setAbsorptionAmount(0.0);
@@ -30,7 +30,7 @@ public class PlayerReset {
             p.setCollidable(true);
             p.resetPlayerWeather();
             p.setInvulnerable(false);
-            p.setWalkSpeed(2.0f);
+            p.setWalkSpeed(0.2f);
         }
     }
 }

@@ -198,6 +198,7 @@ public class IMAPI extends JavaPlugin {
         register(new Chatclear(), this);
         register(new Ping(), this);
         register(new NPCCommand(), this);
+        register(new Serverstats(), this);
     }
 
 

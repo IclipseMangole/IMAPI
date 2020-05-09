@@ -91,6 +91,16 @@ public class MySQL {
             st = conn.createStatement();
             st.executeUpdate(querry);
             st.close();
+            return;
+        } catch (SQLException e) {
+            connect();
+            System.err.println(e);
+        }
+        try {
+            st = conn.createStatement();
+            st.executeUpdate(querry);
+            st.close();
+            return;
         } catch (SQLException e) {
             connect();
             System.err.println(e);
@@ -104,11 +114,20 @@ public class MySQL {
         try {
             st = conn.createStatement();
             rs = st.executeQuery(querry);
+            return rs;
         } catch (SQLException e) {
             connect();
             System.err.println(e);
         }
-        return rs;
+        try {
+            st = conn.createStatement();
+            rs = st.executeQuery(querry);
+            return rs;
+        } catch (SQLException e) {
+            connect();
+            System.err.println(e);
+        }
+        return null;
     }
 
 }
