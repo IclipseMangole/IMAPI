@@ -16,9 +16,9 @@ public class Mode {
     public static ArrayList<String> getModes() {
         ArrayList<String> list = new ArrayList<>();
         try {
-            ResultSet rs = MySQL.querry("SELECT name FROM `mode` WHERE 1");
+            ResultSet rs = MySQL.querry("SELECT name FROM mode WHERE 1");
             while (rs.next()) {
-                String s = rs.getString("modename");
+                String s = rs.getString("name");
                 list.add(s);
             }
         } catch (SQLException e) {

@@ -27,9 +27,10 @@ public class Mode {
         add(sender, "create");
         add(sender, "delete");
         add(sender, "list");
-        add(sender, "addServer");
-        add(sender, "removeServer");
+        add(sender, "add");
+        add(sender, "remove");
         add(sender, "servers");
+        sender.sendMessage(builder.toString());
     }
 
     @IMCommand(
@@ -61,12 +62,14 @@ public class Mode {
     )
     public void delete(CommandSender sender, String name) {
         if (isModeExists(name)) {
+            if (Server.getServers(name).size() > 0) {
+                Server.getServers().forEach(server -> {
+                    if (Server.getMode(server).equals(name)) {
+                        Server.setMode(server, null);
+                    }
+                });
+            }
             deleteMode(name);
-            Server.getServers().forEach(server -> {
-                if (Server.getMode(server).equals(name)) {
-                    Server.setMode(server, null);
-                }
-            });
             dsp.send(sender, "mode.delete.successfull");
         } else {
             dsp.send(sender, "mode.delete.notexists");
@@ -85,7 +88,7 @@ public class Mode {
         ArrayList<String> list = getModes();
         if (list.size() > 0) {
             String modes = list.get(0);
-            for (int i = 0; i < list.size(); i++) {
+            for (int i = 1; i < list.size(); i++) {
                 modes += "," + list.get(i);
             }
             dsp.send(sender, "mode.list.format", modes);
@@ -95,54 +98,60 @@ public class Mode {
     }
 
     @IMCommand(
-            name = "addServer",
+            name = "add",
             parent = "mode",
             maxArgs = 2,
             minArgs = 2,
-            usage = "mode.addServer.usage",
-            description = "mode.addServer.description",
-            permissions = "im.cmd.mode.addServer"
+            usage = "mode.add.usage",
+            description = "mode.add.description",
+            permissions = "im.cmd.mode.add"
     )
-    public void addServer(CommandSender sender, String mode, String server) {
+    public void add(CommandSender sender, String mode, String server) {
         if (isModeExists(mode)) {
             if (Server.getServers().contains(server)) {
-                if (!Server.getMode(server).equals(mode)) {
-                    Server.setMode(server, mode);
-                    dsp.send(sender, "mode.addServer.successfull");
+                if (Server.getMode(server) != null) {
+                    if (!Server.getMode(server).equals(mode)) {
+                        Server.setMode(server, mode);
+                        dsp.send(sender, "mode.add.successfull");
+                    } else {
+                        dsp.send(sender, "mode.add.already");
+                    }
                 } else {
-                    dsp.send(sender, "mode.addServer.already");
+                    Server.setMode(server, mode);
+                    dsp.send(sender, "mode.add.successfull");
                 }
             } else {
-                dsp.send(sender, "mode.addServer.servernotexists");
+                dsp.send(sender, "mode.add.servernotexists");
             }
         } else {
-            dsp.send(sender, "mode.addServer.notexists");
+            dsp.send(sender, "mode.add.notexists");
         }
     }
 
+
     @IMCommand(
-            name = "removeServer",
+            name = "remove",
             parent = "mode",
             maxArgs = 2,
             minArgs = 2,
-            usage = "mode.removeServer.usage",
-            description = "mode.removeServer.description",
-            permissions = "im.cmd.mode.removeServer"
+            usage = "mode.remove.usage",
+            description = "mode.remove.description",
+            permissions = "im.cmd.mode.remove"
     )
-    public void removeServer(CommandSender sender, String mode, String server) {
+    public void remove(CommandSender sender, String mode, String server) {
         if (isModeExists(mode)) {
             if (Server.getServers().contains(server)) {
                 if (Server.getMode(server).equals(mode)) {
                     Server.setMode(server, "NONE");
-                    dsp.send(sender, "mode.removeServer.successfull");
+                    dsp.send(sender, "mode.remove.successfull");
                 } else {
-                    dsp.send(sender, "mode.removeServer.otherMode");
+                    dsp.send(sender, "mode.remove.otherMode");
                 }
             } else {
-                dsp.send(sender, "mode.removeServer.servernotexists");
+                dsp.send(sender, "mode.remove.servernotexists");
             }
         } else {
-            dsp.send(sender, "mode.removeServer.notexists");
+            dsp.send(sender, "mode.remove.notexists");
         }
     }
 

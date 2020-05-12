@@ -87,7 +87,7 @@ public class Server {
         try {
             ResultSet resultSet = MySQL.querry("SELECT state FROM server WHERE name = '" + name + "'");
             if (resultSet.next()) {
-                return State.valueOf(resultSet.getString("status"));
+                return State.valueOf(resultSet.getString("state"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -118,9 +118,9 @@ public class Server {
 
     public static int getMaxPlayers(String name) {
         try {
-            ResultSet resultSet = MySQL.querry("SELECT port FROM server WHERE name = '" + name + "'");
+            ResultSet resultSet = MySQL.querry("SELECT maxplayers FROM server WHERE name = '" + name + "'");
             if (resultSet.next()) {
-                return resultSet.getInt("port");
+                return resultSet.getInt("maxplayers");
             }
         } catch (SQLException e) {
             e.printStackTrace();

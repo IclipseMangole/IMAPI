@@ -71,7 +71,7 @@ public class Sign {
     }
 
     public static String getMode(int id) {
-        ResultSet rs = MySQL.querry("SELECT mode FROM sign WHERE location = " + id);
+        ResultSet rs = MySQL.querry("SELECT mode FROM sign WHERE id = " + id);
         try {
             if (rs.next()) {
                 return rs.getString("mode");
@@ -93,7 +93,7 @@ public class Sign {
     }
 
     public static String getServer(int id) {
-        ResultSet rs = MySQL.querry("SELECT server FROM sign WHERE location = " + id);
+        ResultSet rs = MySQL.querry("SELECT server FROM sign WHERE id = " + id);
         try {
             if (rs.next()) {
                 String s = rs.getString("server");
@@ -110,6 +110,6 @@ public class Sign {
     }
 
     public static void setServer(int id, String server) {
-        MySQL.update("UPDATE server SET server = '" + server + "' WHERE id = " + id);
+        MySQL.update("UPDATE sign SET server = '" + server + "' WHERE id = " + id);
     }
 }

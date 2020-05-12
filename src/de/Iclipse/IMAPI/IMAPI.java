@@ -51,6 +51,7 @@ public class IMAPI extends JavaPlugin {
     public void onDisable() {
         super.onDisable();
         saveCounters();
+        Server.setState(getServerName(), State.Offline);
         MySQL.close();
         stopScheduler();
         if (Bukkit.getOnlinePlayers().size() > 0) {
