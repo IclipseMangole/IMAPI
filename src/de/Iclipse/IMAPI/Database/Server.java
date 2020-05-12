@@ -17,7 +17,8 @@ public class Server {
     }
 
     public static void createServer(String name, int port, int maxPlayer) {
-        MySQL.update("INSERT INTO server (name, port, status, players, maxplayers) VALUES ('" + name + "', " + port + ", 'NONE'', " + State.Offline.name() + ", " + (Bukkit.getOnlinePlayers().size() - Vanish.getVanishsOnServer().size()) + ", " + maxPlayer + ")");
+        System.out.println("INSERT INTO server (name, port, mode, state, players, maxplayers) VALUES ('" + name + "', " + port + ", 'NONE', '" + State.Offline.name() + "', " + (Bukkit.getOnlinePlayers().size() - Vanish.getVanishsOnServer().size()) + ", " + maxPlayer + ")");
+        MySQL.update("INSERT INTO server (name, port, mode, state, players, maxplayers) VALUES ('" + name + "', " + port + ", 'NONE', '" + State.Offline.name() + "', " + (Bukkit.getOnlinePlayers().size() - Vanish.getVanishsOnServer().size()) + ", " + maxPlayer + ")");
     }
 
     public static void deleteServer(String name) {

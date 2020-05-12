@@ -208,6 +208,7 @@ public class IMAPI extends JavaPlugin {
         register(new Ping(), this);
         register(new NPCCommand(), this);
         register(new Serverstats(), this);
+        register(new de.Iclipse.IMAPI.Functions.Servers.Mode(), this);
     }
 
 
