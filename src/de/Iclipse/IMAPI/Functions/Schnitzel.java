@@ -9,7 +9,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import static de.Iclipse.IMAPI.Data.dsp;
-import static de.Iclipse.IMAPI.Data.prefix;
 
 public class Schnitzel {
     StringBuilder builder;
@@ -23,7 +22,7 @@ public class Schnitzel {
     public void execute(CommandSender sender) {
         if (sender.hasPermission("im.cmd.schnitzel.*")) {
             builder = new StringBuilder();
-            builder.append(prefix + "§7§lHilfsübersicht:§r\n");
+            builder.append(dsp.get("schnitzel.overview", sender) + "\n");
             add(sender, "add");
             add(sender, "remove");
             add(sender, "set");

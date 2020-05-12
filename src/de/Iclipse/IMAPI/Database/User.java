@@ -22,7 +22,7 @@ public class User {
 
 
     public static void createUserTable() {
-        MySQL.update("CREATE TABLE IF NOT EXISTS user (uuid VARCHAR(60), schnitzel INT(10), onlinetime INT(15), firstJoin DATETIME, lastseen BIGINT, lang VARCHAR(10), blocks INT(10), newsread DATETIME)");
+        MySQL.update("CREATE TABLE IF NOT EXISTS user (uuid VARCHAR(60), schnitzel INT(10), onlinetime INT(15), firstJoin DATETIME, lastseen BIGINT, lang VARCHAR(10), blocks INT(10), newsread DATETIME, PRIMARY KEY(uuid))");
     }
 
     public static void createUser(UUID uuid) {

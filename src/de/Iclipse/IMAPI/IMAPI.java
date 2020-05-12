@@ -2,9 +2,7 @@ package de.Iclipse.IMAPI;
 
 import com.comphenix.protocol.ProtocolLibrary;
 import com.google.common.base.Joiner;
-import de.Iclipse.IMAPI.Database.MySQL;
-import de.Iclipse.IMAPI.Database.User;
-import de.Iclipse.IMAPI.Database.UserSettings;
+import de.Iclipse.IMAPI.Database.*;
 import de.Iclipse.IMAPI.Functions.*;
 import de.Iclipse.IMAPI.Functions.NPC.NPCCommand;
 import de.Iclipse.IMAPI.Functions.NPC.ShowNPCs;
@@ -62,6 +60,7 @@ public class IMAPI extends JavaPlugin {
                 ((CraftPlayer) p).getHandle().playerConnection.sendPacket(packet);
             }
         }
+        this.getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
     }
 
     public void registerListener() {
@@ -82,6 +81,13 @@ public class IMAPI extends JavaPlugin {
         createTables();
         initCounters();
         startScheduler();
+        if (!Server.getServers().contains(getServerName())) {
+            Server.createServer(getServerName(), Bukkit.getPort(), 100);
+        }
+    }
+
+    public static String getServerName() {
+        return Data.instance.getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getName();
     }
 
     /*
@@ -99,6 +105,9 @@ public class IMAPI extends JavaPlugin {
         User.createUserTable();
         de.Iclipse.IMAPI.Database.News.createNewsTable();
         UserSettings.createUserSettingsTable();
+        Mode.createModeTable();
+        Server.createServerTable();
+        Sign.createSignTable();
     }
 
     public void initCounters() {
