@@ -7,6 +7,7 @@ import de.Iclipse.IMAPI.Functions.*;
 import de.Iclipse.IMAPI.Functions.NPC.NPCCommand;
 import de.Iclipse.IMAPI.Functions.NPC.ShowNPCs;
 import de.Iclipse.IMAPI.Functions.News.News;
+import de.Iclipse.IMAPI.Functions.Servers.State;
 import de.Iclipse.IMAPI.Listener.BlockListener;
 import de.Iclipse.IMAPI.Listener.ChatListener;
 import de.Iclipse.IMAPI.Listener.JoinListener;
@@ -83,6 +84,8 @@ public class IMAPI extends JavaPlugin {
         startScheduler();
         if (!Server.getServers().contains(getServerName())) {
             Server.createServer(getServerName(), Bukkit.getPort(), 100);
+        } else {
+            Server.setState(getServerName(), State.Online);
         }
     }
 
