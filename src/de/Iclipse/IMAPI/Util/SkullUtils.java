@@ -24,7 +24,7 @@ public class SkullUtils {
         SkullMeta meta = (SkullMeta) item.getItemMeta();
         ((Damageable) meta).setDamage(3);
         List<String> lore = meta.getLore();
-        meta.setOwningPlayer(Bukkit.getOfflinePlayer(p.getUniqueId()));
+        meta.setOwningPlayer(p);
         if (lore == null) {
             lore = new ArrayList<>();
         }
@@ -32,6 +32,24 @@ public class SkullUtils {
         lore.add(null);
         meta.setLore(lore);
         meta.setDisplayName(p.getName());
+        item.setItemMeta(meta);
+        return item;
+    }
+
+    public static ItemStack getPlayerSkull(UUID uuid) {
+
+        ItemStack item = new ItemStack(Material.PLAYER_HEAD, 1);
+        SkullMeta meta = (SkullMeta) item.getItemMeta();
+        ((Damageable) meta).setDamage(3);
+        List<String> lore = meta.getLore();
+        meta.setOwningPlayer(Bukkit.getOfflinePlayer(uuid));
+        if (lore == null) {
+            lore = new ArrayList<>();
+        }
+        lore.clear();
+        lore.add(null);
+        meta.setLore(lore);
+        meta.setDisplayName(UUIDFetcher.getName(uuid));
         item.setItemMeta(meta);
         return item;
     }
@@ -56,6 +74,39 @@ public class SkullUtils {
         }
         head.setItemMeta(headMeta);
         return head;
+    }
+
+    public static GameProfile getProfile(ItemStack stack) {
+        System.out.println("getProfile");
+        SkullMeta headMeta = (SkullMeta) stack.getItemMeta();
+        try {
+            Field profileField = headMeta.getClass().getDeclaredField("profile");
+            profileField.setAccessible(true);
+
+            return (GameProfile) profileField.get(headMeta);
+
+        } catch (IllegalArgumentException | NoSuchFieldException | SecurityException | IllegalAccessException error) {
+            error.printStackTrace();
+        }
+        return null;
+    }
+
+    public static void setProfile(GameProfile profile, ItemStack stack) {
+        System.out.println("Playerhead");
+
+        SkullMeta headMeta = (SkullMeta) stack.getItemMeta();
+        ((Damageable) headMeta).setDamage(3);
+
+        try {
+            Field profileField = headMeta.getClass().getDeclaredField("profile");
+            profileField.setAccessible(true);
+            System.out.println("UUID: " + profile.getId());
+            profileField.set(headMeta, profile);
+
+        } catch (IllegalArgumentException | NoSuchFieldException | SecurityException | IllegalAccessException error) {
+            error.printStackTrace();
+        }
+        stack.setItemMeta(headMeta);
     }
 
 }

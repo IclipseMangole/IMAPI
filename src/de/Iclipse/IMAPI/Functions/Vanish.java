@@ -1,6 +1,9 @@
 package de.Iclipse.IMAPI.Functions;
 
+import de.Iclipse.IMAPI.Data;
+import de.Iclipse.IMAPI.Database.Server;
 import de.Iclipse.IMAPI.Database.UserSettings;
+import de.Iclipse.IMAPI.IMAPI;
 import de.Iclipse.IMAPI.Util.Command.IMCommand;
 import de.Iclipse.IMAPI.Util.UUIDFetcher;
 import org.bukkit.Bukkit;
@@ -30,6 +33,8 @@ public class Vanish {
                 Bukkit.getOnlinePlayers().forEach(entry ->{
                     entry.hidePlayer(instance, p);
                 });
+                if (Data.updatePlayers)
+                    Server.setPlayers(IMAPI.getServerName(), Server.getPlayers(IMAPI.getServerName()) - 1);
             }else {
                 setVanish(p, false);
                 dsp.send(p, "vanish.visible");
@@ -38,6 +43,8 @@ public class Vanish {
                         entry.showPlayer(instance, p);
                     }
                 });
+                if (Data.updatePlayers)
+                    Server.setPlayers(IMAPI.getServerName(), Server.getPlayers(IMAPI.getServerName()) + 1);
             }
     }
 
@@ -52,7 +59,7 @@ public class Vanish {
     public static ArrayList<Player> getVanishsOnServer() {
         ArrayList<Player> players = new ArrayList<>();
         Bukkit.getOnlinePlayers().forEach(entry -> {
-            if (isVanish(entry.getUniqueId())) {
+            if (isVanish(UUIDFetcher.getUUID(entry.getName()))) {
                 players.add(entry);
             }
         });

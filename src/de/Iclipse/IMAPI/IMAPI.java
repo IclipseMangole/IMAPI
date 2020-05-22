@@ -15,6 +15,7 @@ import de.Iclipse.IMAPI.Listener.QuitListener;
 import de.Iclipse.IMAPI.Util.Command.BukkitCommand;
 import de.Iclipse.IMAPI.Util.Command.IMCommand;
 import de.Iclipse.IMAPI.Util.Dispatching.Dispatcher;
+import de.Iclipse.IMAPI.Util.UUIDFetcher;
 import de.Iclipse.IMAPI.Util.executor.ThreadExecutor;
 import de.Iclipse.IMAPI.Util.executor.types.BukkitExecutor;
 import de.Iclipse.IMAPI.Util.menu.PopupMenuAPI;
@@ -23,7 +24,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.craftbukkit.v1_15_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -38,7 +41,7 @@ import static de.Iclipse.IMAPI.Functions.Scheduler.startScheduler;
 import static de.Iclipse.IMAPI.Functions.Scheduler.stopScheduler;
 import static de.Iclipse.IMAPI.Util.ScoreboardSign.setField;
 
-public class IMAPI extends JavaPlugin {
+public class IMAPI extends JavaPlugin implements Listener {
 
     @Override
     public void onLoad() {
@@ -72,6 +75,7 @@ public class IMAPI extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new QuitListener(), this);
         Bukkit.getPluginManager().registerEvents(new PopupMenuAPI(), this);
         Bukkit.getPluginManager().registerEvents(new ShowNPCs(), this);
+        Bukkit.getPluginManager().registerEvents(this, this);
     }
 
     @Override
@@ -87,6 +91,13 @@ public class IMAPI extends JavaPlugin {
             Server.createServer(getServerName(), Bukkit.getPort(), 100);
         } else {
             Server.setState(getServerName(), State.Online);
+        }
+    }
+
+    @EventHandler
+    public void onWorldLoad(WorldLoadEvent e) {
+        if (tablist == null) {
+            Data.tablist = new Tablist();
         }
     }
 
@@ -122,7 +133,7 @@ public class IMAPI extends JavaPlugin {
                 onlinetime.put(entry, System.currentTimeMillis());
             });
             Bukkit.getOnlinePlayers().forEach(entry -> {
-                blocks.put(entry, User.getBlocksPlaced(entry.getUniqueId()));
+                blocks.put(entry, User.getBlocksPlaced(UUIDFetcher.getUUID(entry.getName())));
             });
         }
     }
@@ -130,12 +141,12 @@ public class IMAPI extends JavaPlugin {
     public static void saveCounters() {
         if (onlinetime.size() > 0) {
             onlinetime.forEach((p, start) -> {
-                User.setOnlinetime(p.getUniqueId(), User.getOnlinetime(p.getUniqueId()) + (System.currentTimeMillis() - start));
+                User.setOnlinetime(UUIDFetcher.getUUID(p.getName()), User.getOnlinetime(UUIDFetcher.getUUID(p.getName())) + (System.currentTimeMillis() - start));
             });
         }
         if (blocks.size() > 0) {
             blocks.forEach((p, b) -> {
-                User.setBlocksPlaced(p.getUniqueId(), b);
+                User.setBlocksPlaced(UUIDFetcher.getUUID(p.getName()), b);
             });
         }
     }
@@ -207,12 +218,12 @@ public class IMAPI extends JavaPlugin {
         register(new Gamemode(), this);
         register(new Schnitzel(), this);
         register(new Vanish(), this);
-        //register(new cmd_servers(), this);
         register(new Chatclear(), this);
         register(new Ping(), this);
         register(new NPCCommand(), this);
         register(new Serverstats(), this);
         register(new de.Iclipse.IMAPI.Functions.Servers.Mode(), this);
+        //register(new Friend(), this);
     }
 
 
@@ -310,6 +321,25 @@ public class IMAPI extends JavaPlugin {
             }
         }
         f.delete();
+    }
+
+    public static ArrayList getPage(ArrayList list, int anzPerPage, int page) {
+        ArrayList pageList = new ArrayList<>();
+        for (int i = page * anzPerPage; i < (page + 1) * anzPerPage && i < list.size(); i++) {
+            pageList.add(list.get(i));
+        }
+        return pageList;
+    }
+
+    public static boolean hasPage(ArrayList list, int anzPerPage, int page) {
+        if ((double) list.size() / (double) anzPerPage > page && page >= 0) {
+            return true;
+        }
+        return false;
+    }
+
+    public static int maxPage(ArrayList list, int anzPerPage) {
+        return (int) Math.ceil((double) list.size() / (double) anzPerPage);
     }
 
 

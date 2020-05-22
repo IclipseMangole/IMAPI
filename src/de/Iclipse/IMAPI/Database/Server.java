@@ -13,11 +13,11 @@ public class Server {
     }
 
     public static void createServerTable() {
-        MySQL.update("CREATE TABLE IF NOT EXISTS server(name VARCHAR(20), port INT(10), mode VARCHAR(20), state VARCHAR(10), players INT(3), maxplayers INT(3), PRIMARY KEY (name))");
+        MySQL.update("CREATE TABLE IF NOT EXISTS server(name VARCHAR(20), port INT(10), mode VARCHAR(20), state VARCHAR(10), players INT(3), maxplayers INT(3), map VARCHAR(20), PRIMARY KEY (name))");
     }
 
     public static void createServer(String name, int port, int maxPlayer) {
-        MySQL.update("INSERT INTO server (name, port, mode, state, players, maxplayers) VALUES ('" + name + "', " + port + ", 'NONE', '" + State.Online.name() + "', " + (Bukkit.getOnlinePlayers().size() - Vanish.getVanishsOnServer().size()) + ", " + maxPlayer + ")");
+        MySQL.update("INSERT INTO server (name, port, mode, state, players, maxplayers) VALUES ('" + name + "', " + port + ", 'NONE', '" + State.Online.name() + "', " + (Bukkit.getOnlinePlayers().size() - Vanish.getVanishsOnServer().size()) + ", " + maxPlayer + ", 'NONE')");
     }
 
     public static void deleteServer(String name) {
@@ -130,6 +130,27 @@ public class Server {
 
     public static void setMaxPlayers(String name, int maxplayers) {
         MySQL.update("UPDATE server SET maxplayers = '" + maxplayers + "' WHERE name = '" + name + "'");
+    }
+
+    public static String getMap(String name) {
+        try {
+            ResultSet resultSet = MySQL.querry("SELECT map FROM server WHERE name = '" + name + "'");
+            if (resultSet.next()) {
+                String s = resultSet.getString("map");
+                if (!s.equals("NONE")) {
+                    return s;
+                } else {
+                    return null;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static void setMap(String name, String map) {
+        MySQL.update("UPDATE server SET map = '" + map + "' WHERE name = '" + name + "'");
     }
 
 }

@@ -25,8 +25,8 @@ public class Gamemode {
             description = "gamemode.description"
     )
 
-    public void execute(CommandSender sender, String[] args) {
-        if (args == null) {
+    public void execute(CommandSender sender, String arg0, String arg1) {
+        if (arg0 == null && arg1 == null) {
             if (sender instanceof Player) {
                 if (((Player) sender).getGameMode().equals(GameMode.SPECTATOR) || ((Player) sender).getGameMode().equals(GameMode.CREATIVE)) {
                     ((Player) sender).setGameMode(GameMode.SURVIVAL);
@@ -38,13 +38,10 @@ public class Gamemode {
                 dsp.send(sender, "cmd.noconsole");
             }
         } else {
-            for (int i = 0; i < args.length; i++) {
-                System.out.println(i + ": " + args[i]);
-            }
-            if (args.length == 1) {
+            if (arg1 == null) {
                 final boolean[] player = {false};
                 Bukkit.getOnlinePlayers().forEach(entry -> {
-                    if (entry.getName().equalsIgnoreCase(args[0])) {
+                    if (entry.getName().equalsIgnoreCase(arg0)) {
                         if (entry.getGameMode().equals(GameMode.SPECTATOR) || entry.getGameMode().equals(GameMode.CREATIVE)) {
                             entry.setGameMode(GameMode.SURVIVAL);
                         } else {
@@ -57,16 +54,16 @@ public class Gamemode {
                 });
                 if (player[0] == false) {
                     if (sender instanceof Player) {
-                        if (args[0].equalsIgnoreCase("0") || args[0].equalsIgnoreCase("survival")) {
+                        if (arg0.equalsIgnoreCase("0") || arg0.equalsIgnoreCase("survival")) {
                             ((Player) sender).setGameMode(GameMode.SURVIVAL);
-                        } else if (args[0].equalsIgnoreCase("1") || args[0].equalsIgnoreCase("creative")) {
+                        } else if (arg0.equalsIgnoreCase("1") || arg0.equalsIgnoreCase("creative")) {
                             ((Player) sender).setGameMode(GameMode.CREATIVE);
-                        } else if (args[0].equalsIgnoreCase("2") || args[0].equalsIgnoreCase("adventure")) {
+                        } else if (arg0.equalsIgnoreCase("2") || arg0.equalsIgnoreCase("adventure")) {
                             ((Player) sender).setGameMode(GameMode.ADVENTURE);
-                        } else if (args[0].equalsIgnoreCase("3") || args[0].equalsIgnoreCase("spectator")) {
+                        } else if (arg0.equalsIgnoreCase("3") || arg0.equalsIgnoreCase("spectator")) {
                             ((Player) sender).setGameMode(GameMode.SPECTATOR);
                         } else {
-                            dsp.send(sender, "gamemode.notexists.mode", args[0]);
+                            dsp.send(sender, "gamemode.notexists.mode", arg0);
                             return;
                         }
                         dsp.send(sender, "gamemode.changed.you", ((Player) sender).getGameMode().toString());
@@ -74,33 +71,47 @@ public class Gamemode {
                         dsp.send(sender, "cmd.noconsole");
                     }
                 }
-            } else if (args.length == 2) {
+            } else {
                 final boolean[] player = {false};
-                final Player[] p = new Player[1];
                 Bukkit.getOnlinePlayers().forEach(entry -> {
-                    if (entry.getName().equalsIgnoreCase(args[1])) {
-                        if (args[0].equalsIgnoreCase("0") || args[0].equalsIgnoreCase("survival")) {
-                            ((Player) sender).setGameMode(GameMode.SURVIVAL);
-                        } else if (args[0].equalsIgnoreCase("1") || args[0].equalsIgnoreCase("creative")) {
-                            ((Player) sender).setGameMode(GameMode.CREATIVE);
-                        } else if (args[0].equalsIgnoreCase("2") || args[0].equalsIgnoreCase("adventure")) {
-                            ((Player) sender).setGameMode(GameMode.ADVENTURE);
-                        } else if (args[0].equalsIgnoreCase("3") || args[0].equalsIgnoreCase("spectator")) {
-                            ((Player) sender).setGameMode(GameMode.SPECTATOR);
+                    if (entry.getName().equalsIgnoreCase(arg1)) {
+                        if (arg0.equalsIgnoreCase("0") || arg0.equalsIgnoreCase("survival")) {
+                            entry.setGameMode(GameMode.SURVIVAL);
+                        } else if (arg0.equalsIgnoreCase("1") || arg0.equalsIgnoreCase("creative")) {
+                            entry.setGameMode(GameMode.CREATIVE);
+                        } else if (arg0.equalsIgnoreCase("2") || arg0.equalsIgnoreCase("adventure")) {
+                            entry.setGameMode(GameMode.ADVENTURE);
+                        } else if (arg0.equalsIgnoreCase("3") || arg0.equalsIgnoreCase("spectator")) {
+                            entry.setGameMode(GameMode.SPECTATOR);
                         } else {
-                            dsp.send(sender, "gamemode.notexists.mode", args[0]);
+                            dsp.send(sender, "gamemode.notexists.mode", arg0);
                             return;
                         }
+                        dsp.send(Bukkit.getPlayer(arg1), "gamemode.changed.you", Bukkit.getPlayer(arg1).getGameMode().toString());
+                        dsp.send(sender, "gamemode.changed.other", Bukkit.getPlayer(arg1).getDisplayName(), Bukkit.getPlayer(arg1).getGameMode().toString());
+                        player[0] = true;
+                    } else if (entry.getName().equalsIgnoreCase(arg0)) {
+                        if (arg1.equalsIgnoreCase("0") || arg1.equalsIgnoreCase("survival")) {
+                            entry.setGameMode(GameMode.SURVIVAL);
+                        } else if (arg1.equalsIgnoreCase("1") || arg1.equalsIgnoreCase("creative")) {
+                            entry.setGameMode(GameMode.CREATIVE);
+                        } else if (arg1.equalsIgnoreCase("2") || arg1.equalsIgnoreCase("adventure")) {
+                            entry.setGameMode(GameMode.ADVENTURE);
+                        } else if (arg1.equalsIgnoreCase("3") || arg1.equalsIgnoreCase("spectator")) {
+                            entry.setGameMode(GameMode.SPECTATOR);
+                        } else {
+                            dsp.send(sender, "gamemode.notexists.mode", arg1);
+                            return;
+                        }
+                        dsp.send(Bukkit.getPlayer(arg0), "gamemode.changed.you", Bukkit.getPlayer(arg0).getGameMode().toString());
+                        dsp.send(sender, "gamemode.changed.other", Bukkit.getPlayer(arg0).getDisplayName(), Bukkit.getPlayer(arg0).getGameMode().toString());
+                        player[0] = true;
                     }
                 });
                 if (player[0] = false) {
-                    dsp.send(sender, "gamemode.notexists.player", args[1]);
+                    dsp.send(sender, "gamemode.notexists.player", arg0 + "/" + arg1);
                     return;
                 }
-                dsp.send(Bukkit.getPlayer(args[1]), "gamemode.changed.you", Bukkit.getPlayer(args[1]).getGameMode().toString());
-                dsp.send(sender, "gamemode.changed.other", Bukkit.getPlayer(args[1]).getDisplayName(), Bukkit.getPlayer(args[1]).getGameMode().toString());
-            } else {
-                dsp.send(sender, "gamemode.usage");
             }
         }
 

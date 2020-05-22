@@ -1,189 +1,240 @@
 package de.Iclipse.IMAPI.Util;
 
-import net.minecraft.server.v1_15_R1.NBTTagCompound;
-import net.minecraft.server.v1_15_R1.NBTTagList;
-import org.bukkit.Color;
-import org.bukkit.DyeColor;
+import com.mojang.authlib.GameProfile;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftItemStack;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.BannerMeta;
+import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.LeatherArmorMeta;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
- * Created by Yannick on 30.10.2019 with IntelliJ for PXCode.
+ * A simple builder class for the ItemStack
+ * by <i>@ExpDev</i>
+ * <p>
+ * <b>Note:</b> Colors are parsed, so you can use & and § for the name and lore
+ * <p>
+ * <i>Uses <b>Java 8</b>, so go download it if you ain't already!</i>
  */
 public class ItemStackBuilder {
 
-    private ItemStack itemstack;
+    // Fundamentals
+    private Material material = Material.AIR;
+    private int amount = 1;
+    private short durability = 0; // id -> 324:2 <- durability
 
-    public ItemStackBuilder(ItemStack itemstack) {
-        this.itemstack = removeAttributes(itemstack.clone());
-        this.antiBug();
+    // Meta
+    private String localizedName = null;
+    private String name = null;
+    private List<String> lore = null;
+
+    // Features
+    private boolean unbreakable = false;
+
+    // Enchantments and flags
+    private Map<Enchantment, Integer> enchantments = null;
+    private Set<ItemFlag> itemFlags = null;
+
+    private GameProfile profile;
+
+    // Construction of a new builder
+    public ItemStackBuilder() {
     }
 
-    public ItemStackBuilder(Material type) {
-        this.itemstack = removeAttributes(new ItemStack(type));
-        this.antiBug();
+    public ItemStackBuilder(Material material) {
+        this.material = material;
     }
 
-    public ItemStackBuilder(Material type, int amount) {
-        this.itemstack = removeAttributes(new ItemStack(type, amount));
-        this.antiBug();
-    }
-
-    public ItemStackBuilder(Material type, int amount, short damage) {
-        this.itemstack = removeAttributes(new ItemStack(type, amount, damage));
-        this.antiBug();
-    }
-
-    public ItemStackBuilder setAmount(int amount) {
-        this.itemstack.setAmount(amount);
-        return this;
-    }
-
-    private void antiBug() {
-    }
-
-    public ItemStackBuilder setData(byte data) {
-        this.itemstack.getData().setData(data);
-        return this;
-    }
-
-    public ItemStackBuilder addDisplayName(String string) {
-        ItemMeta meta = this.itemstack.getItemMeta();
-        if(meta != null) {
-            meta.setDisplayName(string);
+    public static ItemStackBuilder fromItemStack(ItemStack stack) {
+        ItemStackBuilder builder = new ItemStackBuilder(stack.getType());
+        builder.withAmount(stack.getAmount());
+        builder.withData(((Damageable) stack.getItemMeta()).getDamage());
+        builder.withLore(stack.getItemMeta().getLore());
+        builder.withEnchantments(stack.getEnchantments());
+        builder.withItemFlags(stack.getItemMeta().getItemFlags());
+        System.out.println(stack.getType());
+        if (stack.getType().equals(Material.PLAYER_HEAD)) {
+            builder.withProfile(SkullUtils.getProfile(stack));
         }
-
-        this.itemstack.setItemMeta(meta);
-        return this;
-    }
-
-    public ItemStackBuilder addLore(List<String> lore) {
-        ItemMeta meta = this.itemstack.getItemMeta();
-        if(meta != null) {
-            meta.setLore(lore);
-        }
-
-        this.itemstack.setItemMeta(meta);
-        return this;
-    }
-
-    public ItemStackBuilder addLore(String string) {
-        return this.addLore(buildLore(string));
-    }
-
-    public ItemStackBuilder addLore(List<String> addlore, int i) {
-        Object lore = this.getItemstack().getItemMeta() != null?this.getItemstack().getItemMeta().getLore():new ArrayList();
-        ((List)lore).addAll(i, addlore);
-        this.addLore((List)lore);
-        return this;
-    }
-
-    public ItemStackBuilder addEnchantment(Enchantment ench, int level) {
-        this.itemstack.addUnsafeEnchantment(ench, level);
-        return this;
-    }
-
-    public ItemStackBuilder setColor(Color color) {
-        if(this.itemstack.getItemMeta() instanceof LeatherArmorMeta) {
-            LeatherArmorMeta meta = (LeatherArmorMeta)this.itemstack.getItemMeta();
-            meta.setColor(color);
-            this.itemstack.setItemMeta(meta);
-        }
-
-        return this;
-    }
-
-    public ItemStackBuilder setColor(DyeColor baseColor) {
-        if(this.itemstack.getItemMeta() instanceof BannerMeta) {
-            BannerMeta meta = (BannerMeta)this.getItemstack().getItemMeta();
-            meta.setBaseColor(baseColor);
-            this.itemstack.setItemMeta(meta);
-        }
-
-        return this;
-    }
-
-    public ItemStackBuilder clone() {
-        ItemStackBuilder builder = new ItemStackBuilder(this.getItemstack());
         return builder;
     }
 
-    public ItemStack getItemstack() {
-        return this.itemstack;
+    // Utility methods for smooth and extensive color parsing
+    private static String parseColor(String string) {
+        string = parseColorAmp(string);
+        return ChatColor.translateAlternateColorCodes('&', string);
     }
 
-    public static ItemStack removeAttributes(ItemStack item) {
-        net.minecraft.server.v1_15_R1.ItemStack nmsStack = CraftItemStack.asNMSCopy(item);
-        if(nmsStack == null) {
-            return item;
-        } else {
-            NBTTagCompound tag;
-            if(!nmsStack.hasTag()) {
-                tag = new NBTTagCompound();
-                nmsStack.setTag(tag);
-            } else {
-                tag = nmsStack.getTag();
-            }
+    private static String parseColorAmp(String string) {
+        string = string.replaceAll("(§([a-z0-9]))", "\u00A7$2");
+        string = string.replaceAll("(&([a-z0-9]))", "\u00A7$2");
+        string = string.replace("&&", "&");
+        return string;
+    }
 
-            tag.set("AttributeModifiers", new NBTTagList());
-            nmsStack.setTag(tag);
-            return CraftItemStack.asCraftMirror(nmsStack);
+    public ItemStackBuilder asMaterial(Material material) {
+        this.material = material;
+        return this;
+    }
+
+    public ItemStackBuilder withAmount(int amount) {
+        this.amount = amount;
+        return this;
+    }
+
+    public ItemStackBuilder withData(short data) {
+        this.durability = data;
+        return this;
+    }
+
+    // In case you are too lazy to cast (if you're using int)
+    public ItemStackBuilder withData(int data) {
+        return withData((short) data);
+    }
+
+    // Meta
+    public ItemStackBuilder withLocalizedName(String localizedName) {
+        this.localizedName = localizedName;
+        return this;
+    }
+
+    public ItemStackBuilder withName(String name) {
+        this.name = name;
+        return this;
+    }
+
+    // Multiple ways you can set the lore
+    // I prefer #withLore("&1Line 1", "&2Line 2", "&3Etc...")
+    public ItemStackBuilder withLore(List<String> lines) {
+        this.lore = lines;
+        return this;
+    }
+
+    public ItemStackBuilder withLore(String... lines) {
+        return withLore(Arrays.asList(lines));
+    }
+
+    // Just calls ItemMeta#setUnbreakable(true), don't know if compatible with old versions
+    public ItemStackBuilder makeUnbreakable() {
+        this.unbreakable = true;
+        return this;
+    }
+
+    // Enchantments
+    public ItemStackBuilder withEnchantments(Map<Enchantment, Integer> enchantments) {
+        this.enchantments = enchantments;
+        return this;
+    }
+
+    public ItemStackBuilder addEnchantment(Enchantment enchantment, int level) {
+        // Make sure we have something to add the enchantment to
+        if (enchantments == null) {
+            this.enchantments = new HashMap<Enchantment, Integer>();
         }
+
+        enchantments.put(enchantment, level);
+        return this;
     }
 
-    public static List<String> buildLore(String lore) {
-        return buildLore(lore, "§7", 1, 33);
+    // Flags
+    public ItemStackBuilder withItemFlags(Set<ItemFlag> flags) {
+        this.itemFlags = flags;
+        return this;
     }
 
-    public static List<String> buildLore(String lore, String color, int emptylines, int charsperline) {
-        if(lore.equals("")) {
-            return null;
-        } else {
-            List split = Arrays.asList(lore.split(" "));
-            ArrayList list = new ArrayList();
+    // Can be used to add only 1 ItemFlag (#withItemFlags(ItemFlag.HIDE_ENCHANTMENTS))
+    public ItemStackBuilder withItemFlags(ItemFlag... flags) {
+        return withItemFlags(new HashSet<ItemFlag>(Arrays.asList(flags)));
+    }
 
-            for(int line = 0; line < emptylines; ++line) {
-                list.add("");
-            }
+    public ItemStackBuilder withProfile(GameProfile profile) {
+        this.profile = profile;
+        return this;
+    }
 
-            String var9 = color;
-            Iterator var7 = split.iterator();
+    public SkullBuilder toSkullBuilder() {
+        return new SkullBuilder(this);
+    }
 
-            while(true) {
-                String string;
-                do {
-                    if(!var7.hasNext()) {
-                        var9 = var9.substring(0, var9.length() - 1);
-                        list.add(var9);
-                        return list;
-                    }
+    /**
+     * Builds the ItemStack with durability from this instance
+     *
+     * @return ItemStack with meta
+     */
+    public ItemStack buildStack() {
+        // Creating a new ItemStack
+        ItemStack itemStack = new ItemStack(material, amount);
 
-                    string = (String)var7.next();
-                    if(var9.length() + string.length() <= charsperline && !string.equals("$a")) {
-                        break;
-                    }
+        // Getting the stack's meta
+        final ItemMeta itemMeta = itemStack.getItemMeta();
 
-                    if(var9.length() > 2) {
-                        var9 = var9.substring(0, var9.length() - 1);
-                    }
+        // Meta
 
-                    list.add(var9);
-                    var9 = color;
-                } while(string.equals("$a"));
+        ((Damageable) itemMeta).setDamage(durability);
 
-                var9 = var9.concat(string);
-                var9 = var9.concat(" ");
-            }
+        // Set localized name if not null
+        if (localizedName != null) {
+            itemMeta.setLocalizedName(ItemStackBuilder.parseColor(localizedName));
+        }
+        // Set displayname if name is not null
+        if (name != null) {
+            itemMeta.setDisplayName(ItemStackBuilder.parseColor(name));
+        }
+        // Set lore if it is not null nor empty
+        if (lore != null && !lore.isEmpty()) {
+            itemMeta.setLore(lore.stream().map(ItemStackBuilder::parseColor).collect(Collectors.toList()));
+        }
+        // Add enchantments if any
+        if (enchantments != null && !enchantments.isEmpty()) {
+            // Doing this so I don't have to keep unsafe and safe enchantments separately
+            // Ignore all stupid enchantment restrictions ;)
+            enchantments.forEach((ench, lvl) -> itemMeta.addEnchant(ench, lvl, true));
+        }
+        // Add flags if any
+        if (itemFlags != null && !itemFlags.isEmpty()) {
+            itemMeta.addItemFlags(itemFlags.toArray(new ItemFlag[itemFlags.size()]));
+        }
+        // Deprecated in newer versions, but newer method does not exist in older
+        // Only call when unbreakable is true, to refrain from calling as much as possible
+        // You could of course always implement your own unbreakable method here
+        if (unbreakable) itemMeta.setUnbreakable(true);
+
+        // Set the new ItemMeta
+        itemStack.setItemMeta(itemMeta);
+
+        if (profile != null) {
+            SkullUtils.setProfile(profile, itemStack);
+        }
+
+        // Lastly, return the stack
+        return itemStack;
+    }
+
+    /**
+     * A simple builder for a skull with owner
+     * <p>
+     * <b>Note:</b> Uses the ItemStackBuilder builder ;)
+     */
+    public class SkullBuilder {
+
+        // Fundamentals
+        private ItemStackBuilder stackBuilder;
+
+        // Meta
+        private String owner;
+
+        private SkullBuilder(ItemStackBuilder stackBuilder) {
+            this.stackBuilder = stackBuilder;
+        }
+
+        // Meta
+        public SkullBuilder withOwner(String ownerName) {
+            this.owner = ownerName;
+            return this;
         }
     }
 

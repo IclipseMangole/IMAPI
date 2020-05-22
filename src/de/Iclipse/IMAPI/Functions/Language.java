@@ -1,5 +1,6 @@
 package de.Iclipse.IMAPI.Functions;
 
+import de.Iclipse.IMAPI.Data;
 import de.Iclipse.IMAPI.Database.User;
 import de.Iclipse.IMAPI.Util.Command.IMCommand;
 import de.Iclipse.IMAPI.Util.UUIDFetcher;
@@ -42,6 +43,7 @@ public class Language {
             if (dsp.getLanguages().containsKey(s)) {
                 if (!s.equals(User.getLanguage(UUIDFetcher.getUUID(p.getName())))) {
                     User.setLanguage(UUIDFetcher.getUUID(p.getName()), s);
+                    Data.tablist.setTablist(p);
                     dsp.send(p, "lang.changed");
                 } else {
                     dsp.send(p, "lang.same");

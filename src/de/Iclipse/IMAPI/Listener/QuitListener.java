@@ -1,7 +1,9 @@
 package de.Iclipse.IMAPI.Listener;
 
 import de.Iclipse.IMAPI.Data;
+import de.Iclipse.IMAPI.Database.Server;
 import de.Iclipse.IMAPI.Database.User;
+import de.Iclipse.IMAPI.IMAPI;
 import de.Iclipse.IMAPI.Util.UUIDFetcher;
 import net.minecraft.server.v1_15_R1.PacketPlayOutScoreboardObjective;
 import org.bukkit.craftbukkit.v1_15_R1.entity.CraftPlayer;
@@ -24,5 +26,7 @@ public class QuitListener implements Listener {
         setField(packet, "a", e.getPlayer().getName());
         setField(packet, "d", 1);
         ((CraftPlayer) e.getPlayer()).getHandle().playerConnection.sendPacket(packet);
+        User.setServer(UUIDFetcher.getUUID(p.getName()), null);
+        if (Data.updatePlayers) Server.setPlayers(IMAPI.getServerName(), Server.getPlayers(IMAPI.getServerName()) - 1);
     }
 }

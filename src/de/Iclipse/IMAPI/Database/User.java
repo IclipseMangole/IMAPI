@@ -1,5 +1,6 @@
 package de.Iclipse.IMAPI.Database;
 
+import de.Iclipse.IMAPI.IMAPI;
 import de.Iclipse.IMAPI.Util.UUIDFetcher;
 import org.bukkit.entity.Player;
 
@@ -22,13 +23,13 @@ public class User {
 
 
     public static void createUserTable() {
-        MySQL.update("CREATE TABLE IF NOT EXISTS user (uuid VARCHAR(60), schnitzel INT(10), onlinetime INT(15), firstJoin DATETIME, lastseen BIGINT, lang VARCHAR(10), blocks INT(10), newsread DATETIME, PRIMARY KEY(uuid))");
+        MySQL.update("CREATE TABLE IF NOT EXISTS user (uuid VARCHAR(60), schnitzel INT(10), onlinetime INT(15), firstJoin DATETIME, lastseen BIGINT, server VARCHAR(20), lang VARCHAR(10), blocks INT(10), newsread DATETIME, PRIMARY KEY(uuid))");
     }
 
     public static void createUser(UUID uuid) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date time = Date.from(Instant.now());
-        MySQL.update("INSERT INTO `user` VALUES ('" + uuid.toString() + "', 0, 0, '" + sdf.format(time) + "', -1, 'EN', 0, '" + sdf.format(time) + "')");
+        MySQL.update("INSERT INTO `user` VALUES ('" + uuid.toString() + "', 0, 0, '" + sdf.format(time) + "', -1, '" + IMAPI.getServerName() + "', 'EN', 0, '" + sdf.format(time) + "')");
     }
 
     public static void deleteUser(UUID uuid) {
@@ -158,6 +159,10 @@ public class User {
         MySQL.update("UPDATE `user` SET lastseen = " + time + " WHERE uuid = '" + uuid + "'");
     }
 
+    public static boolean isOnline(UUID uuid) {
+        return getLastTime(uuid) == -1;
+    }
+
     public static HashMap<String, Integer> getTop5() {
         HashMap<String, Integer> map = new HashMap<>();
         try {
@@ -171,13 +176,36 @@ public class User {
         return null;
     }
 
-    public static String getLanguage(UUID uuid){
-        try{
+    public static void setServer(UUID uuid, String server) {
+        if (server == null) {
+            server = "NONE";
+        }
+        MySQL.update("UPDATE `user` SET server = '" + server + "' WHERE uuid = '" + uuid + "'");
+    }
+
+    public static String getServer(UUID uuid) {
+        try {
+            ResultSet rs = MySQL.querry("SELECT server FROM `user` WHERE uuid = '" + uuid + "'");
+            while (rs.next()) {
+                String s = rs.getString("server");
+                if (s.equalsIgnoreCase("NONE")) {
+                    s = null;
+                }
+                return s;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static String getLanguage(UUID uuid) {
+        try {
             ResultSet rs = MySQL.querry("SELECT lang FROM user WHERE uuid = '" + uuid + "'");
-            while(rs.next()) {
+            while (rs.next()) {
                 return rs.getString("lang");
             }
-        }catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return null;

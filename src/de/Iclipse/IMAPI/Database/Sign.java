@@ -110,6 +110,9 @@ public class Sign {
     }
 
     public static void setServer(int id, String server) {
+        if (server == null) {
+            server = "NONE";
+        }
         MySQL.update("UPDATE sign SET server = '" + server + "' WHERE id = " + id);
     }
 }

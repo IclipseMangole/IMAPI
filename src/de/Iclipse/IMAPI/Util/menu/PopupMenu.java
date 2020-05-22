@@ -93,7 +93,6 @@ public class PopupMenu implements InventoryHolder {
         return true;
     }
 
-
     public void fill(Material material) {
         for (int i = 0; i < rows * 9; i++) {
             this.addMenuItem(new MenuItem(" ", new ItemStack(material)) {
@@ -137,7 +136,7 @@ public class PopupMenu implements InventoryHolder {
      */
     public boolean removeMenuItem(int index) {
         ItemStack slot = getInventory().getItem(index);
-        if (slot == null || slot.getType().getId() == 0) {
+        if (slot == null || slot.getType().equals(Material.AIR)) {
             return false;
         }
         getInventory().clear(index);

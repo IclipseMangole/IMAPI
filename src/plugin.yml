@@ -1,5 +1,5 @@
 name: IMAPI
-version: Alpha
+version: ${proj
 main: de.Iclipse.IMAPI.IMAPI
 author: Iclipse
 api-version: 1.15
