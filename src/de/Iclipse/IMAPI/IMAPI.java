@@ -2,6 +2,7 @@ package de.Iclipse.IMAPI;
 
 import com.comphenix.protocol.ProtocolLibrary;
 import com.google.common.base.Joiner;
+import de.Iclipse.IMAPI.Database.Friend;
 import de.Iclipse.IMAPI.Database.*;
 import de.Iclipse.IMAPI.Functions.*;
 import de.Iclipse.IMAPI.Functions.NPC.NPCCommand;
@@ -55,6 +56,7 @@ public class IMAPI extends JavaPlugin implements Listener {
         super.onDisable();
         saveCounters();
         Server.setState(getServerName(), State.Offline);
+        Server.setPlayers(getServerName(), 0);
         MySQL.close();
         stopScheduler();
         if (Bukkit.getOnlinePlayers().size() > 0) {
@@ -123,6 +125,7 @@ public class IMAPI extends JavaPlugin implements Listener {
         Mode.createModeTable();
         Server.createServerTable();
         Sign.createSignTable();
+        Friend.createFriendTable();
     }
 
     public void initCounters() {

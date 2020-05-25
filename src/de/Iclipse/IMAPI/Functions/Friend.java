@@ -6,7 +6,6 @@ import de.Iclipse.IMAPI.Database.UserSettings;
 import de.Iclipse.IMAPI.IMAPI;
 import de.Iclipse.IMAPI.Util.Command.IMCommand;
 import de.Iclipse.IMAPI.Util.UUIDFetcher;
-import net.alpenblock.bungeeperms.BungeePermsAPI;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -28,8 +27,6 @@ public class Friend {
             name = "friend",
             usage = "friend.usage",
             description = "friend.description",
-            minArgs = 0,
-            maxArgs = 0,
             noConsole = true,
             permissions = "im.cmd.friend"
     )
@@ -76,7 +73,7 @@ public class Friend {
             dsp.send(p, "friend.list.header", page + 1 + "", friends.size() / 8 + "");
             shown.forEach(user -> {
                 if (User.isOnline(user)) {
-                    dsp.send(p, "friend.list.format.online", BungeePermsAPI.userPrefix(user.toString(), IMAPI.getServerName(), null) + UUIDFetcher.getName(user), User.getServer(user));
+                    dsp.send(p, "friend.list.format.online", Data.tablist.getPrefix(UUIDFetcher.getUUID(p.getName())) + UUIDFetcher.getName(user), User.getServer(user));
                 } else {
                     int days = (int) (System.currentTimeMillis() - User.getLastTime(user)) / (1000 * 60 * 60 * 24);
                     dsp.send(p, "friend.list.format.offline", UUIDFetcher.getName(user) + ": §cOffline", days + "");
@@ -125,7 +122,7 @@ public class Friend {
                     } else {
                         de.Iclipse.IMAPI.Database.Friend.accept(uuid, frienduuid);
                         if (User.isOnline(frienduuid)) {
-                            dsp.send(p, "friend.add.accepted", BungeePermsAPI.userPrefix(frienduuid.toString(), IMAPI.getServerName(), null) + UUIDFetcher.getName(frienduuid));
+                            dsp.send(p, "friend.add.accepted", Data.tablist.getPrefix(UUIDFetcher.getUUID(p.getName())) + UUIDFetcher.getName(frienduuid));
                             dsp.get("friend.add.accepted", dsp.getLanguages().get(User.getLanguage(frienduuid)), true, p.getDisplayName());
                         } else {
                             dsp.send(p, "friend.add.accepted", "§e" + UUIDFetcher.getName(frienduuid));

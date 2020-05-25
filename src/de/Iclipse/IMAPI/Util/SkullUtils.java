@@ -4,6 +4,7 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
@@ -42,7 +43,8 @@ public class SkullUtils {
         SkullMeta meta = (SkullMeta) item.getItemMeta();
         ((Damageable) meta).setDamage(3);
         List<String> lore = meta.getLore();
-        meta.setOwningPlayer(Bukkit.getOfflinePlayer(uuid));
+        OfflinePlayer player = Bukkit.getOfflinePlayer(UUIDFetcher.getName(uuid));
+        meta.setOwningPlayer(player);
         if (lore == null) {
             lore = new ArrayList<>();
         }
@@ -52,6 +54,26 @@ public class SkullUtils {
         meta.setDisplayName(UUIDFetcher.getName(uuid));
         item.setItemMeta(meta);
         return item;
+
+
+        /*
+        ItemStack head = new ItemStack(Material.PLAYER_HEAD, 1);
+
+        SkullMeta headMeta = (SkullMeta) head.getItemMeta();
+        ((Damageable) headMeta).setDamage(3);
+        GameProfile profile = new GameProfile(uuid, UUIDFetcher.getName(uuid));
+
+        try {
+            Field profileField = headMeta.getClass().getDeclaredField("profile");
+            profileField.setAccessible(true);
+            profileField.set(headMeta, profile);
+
+        } catch (IllegalArgumentException | NoSuchFieldException | SecurityException | IllegalAccessException error) {
+            error.printStackTrace();
+        }
+        head.setItemMeta(headMeta);
+        return head;
+         */
     }
 
     public static ItemStack getSkull(String url) {
@@ -77,7 +99,6 @@ public class SkullUtils {
     }
 
     public static GameProfile getProfile(ItemStack stack) {
-        System.out.println("getProfile");
         SkullMeta headMeta = (SkullMeta) stack.getItemMeta();
         try {
             Field profileField = headMeta.getClass().getDeclaredField("profile");
@@ -92,7 +113,6 @@ public class SkullUtils {
     }
 
     public static void setProfile(GameProfile profile, ItemStack stack) {
-        System.out.println("Playerhead");
 
         SkullMeta headMeta = (SkullMeta) stack.getItemMeta();
         ((Damageable) headMeta).setDamage(3);
@@ -100,7 +120,6 @@ public class SkullUtils {
         try {
             Field profileField = headMeta.getClass().getDeclaredField("profile");
             profileField.setAccessible(true);
-            System.out.println("UUID: " + profile.getId());
             profileField.set(headMeta, profile);
 
         } catch (IllegalArgumentException | NoSuchFieldException | SecurityException | IllegalAccessException error) {

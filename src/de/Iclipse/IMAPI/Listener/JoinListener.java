@@ -55,6 +55,14 @@ public class JoinListener implements Listener {
         }
         User.setLastTime(p, -1);
         User.setServer(UUIDFetcher.getUUID(p.getName()), IMAPI.getServerName());
+
+        /*
+        System.out.println("BungeePerms UserPrefix: " + BungeePermsAPI.userPrefix(p.getName(), IMAPI.getServerName() + p.getName(), null).replace(ChatColor.RESET.toString(), "") + p.getName());
+        System.out.println("BungeePerms GroupPrefix: " + BungeePermsAPI.groupPrefix(BungeePermsAPI.userMainGroup(p.getName()), IMAPI.getServerName(), null).replace(ChatColor.RESET.toString(), "") + p.getName());
+        System.out.println("BungeePerms GroupDisplay: " + BungeePermsAPI.groupDisplay(BungeePermsAPI.userMainGroup(p.getName()), IMAPI.getServerName(), null).replace(ChatColor.RESET.toString(), "") + p.getName());
+        System.out.println("getPrefix of Permission (UUID)" + Data.tablist.getPrefix(UUIDFetcher.getUUID(p.getName())).replace(ChatColor.RESET.toString(), "") + p.getName());
+        System.out.println("getPrefix of Permission (Player)" + Data.tablist.getPrefix(p).replace(ChatColor.RESET.toString(), "") + p.getName());
+        */
     }
 
 

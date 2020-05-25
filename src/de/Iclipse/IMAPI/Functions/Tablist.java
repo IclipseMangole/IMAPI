@@ -2,6 +2,8 @@ package de.Iclipse.IMAPI.Functions;
 
 import de.Iclipse.IMAPI.Data;
 import de.Iclipse.IMAPI.IMAPI;
+import de.Iclipse.IMAPI.Util.UUIDFetcher;
+import net.alpenblock.bungeeperms.BungeePermsAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -9,6 +11,7 @@ import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
 import java.util.HashMap;
+import java.util.UUID;
 
 import static de.Iclipse.IMAPI.Data.dsp;
 
@@ -90,20 +93,27 @@ public class Tablist {
     }
 
     public String getPrefix(Player p) {
-        if (rankColor.containsKey(p)) {
-            return rankColor.get(p);
-        } else {
-            String team;
-            if (p.hasPermission("im.color.admin")) {
-                team = "1a";
-            } else if (p.hasPermission("im.color.mod")) {
-                team = "2b";
-            } else {
-                team = "3c";
+        if (p != null) {
+            if (rankColor.containsKey(p)) {
+                return rankColor.get(p);
             }
-            return scoreboard.getTeam(team).getPrefix();
         }
+
+        String team;
+        if (p.hasPermission("im.color.admin")) {
+            team = "1a";
+        } else if (p.hasPermission("im.color.mod")) {
+            team = "2b";
+        } else {
+            team = "3c";
+        }
+        return scoreboard.getTeam(team).getPrefix();
     }
+
+    public String getPrefix(UUID uuid) {
+        return BungeePermsAPI.groupDisplay(BungeePermsAPI.userMainGroup(UUIDFetcher.getName(uuid)), IMAPI.getServerName(), null).replace(ChatColor.RESET.toString(), "");
+    }
+
 
     public String centered(String upperString, String toCenter) {
         String empty = "";

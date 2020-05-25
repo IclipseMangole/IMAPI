@@ -56,7 +56,6 @@ public class ItemStackBuilder {
         builder.withLore(stack.getItemMeta().getLore());
         builder.withEnchantments(stack.getEnchantments());
         builder.withItemFlags(stack.getItemMeta().getItemFlags());
-        System.out.println(stack.getType());
         if (stack.getType().equals(Material.PLAYER_HEAD)) {
             builder.withProfile(SkullUtils.getProfile(stack));
         }
