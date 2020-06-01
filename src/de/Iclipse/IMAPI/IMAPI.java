@@ -35,6 +35,7 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static de.Iclipse.IMAPI.Data.*;
@@ -67,7 +68,7 @@ public class IMAPI extends JavaPlugin implements Listener {
                 ((CraftPlayer) p).getHandle().playerConnection.sendPacket(packet);
             }
         }
-        this.getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
+        this.getServer().getMessenger().unregisterOutgoingPluginChannel(this, "BungeeCord");
     }
 
     public void registerListener() {
@@ -94,6 +95,7 @@ public class IMAPI extends JavaPlugin implements Listener {
         } else {
             Server.setState(getServerName(), State.Online);
         }
+        this.getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
     }
 
     @EventHandler
@@ -343,6 +345,11 @@ public class IMAPI extends JavaPlugin implements Listener {
 
     public static int maxPage(ArrayList list, int anzPerPage) {
         return (int) Math.ceil((double) list.size() / (double) anzPerPage);
+    }
+
+    public static String monthBefore() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return sdf.format(new Date(System.currentTimeMillis() - (30 * 24 * 60 * 60 * 1000)));
     }
 
 
