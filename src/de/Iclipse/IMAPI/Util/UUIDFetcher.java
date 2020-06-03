@@ -3,6 +3,7 @@ package de.Iclipse.IMAPI.Util;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mojang.util.UUIDTypeAdapter;
+import org.bukkit.entity.Player;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -56,6 +57,16 @@ public class UUIDFetcher {
      */
     public static UUID getUUID(String name) {
         return getUUIDAt(name, System.currentTimeMillis());
+    }
+
+    /**
+     * Fetches the uuid synchronously and returns it
+     *
+     * @param p The Player
+     * @return The uuid
+     */
+    public static UUID getUUID(Player p) {
+        return getUUIDAt(p.getName(), System.currentTimeMillis());
     }
 
     /**

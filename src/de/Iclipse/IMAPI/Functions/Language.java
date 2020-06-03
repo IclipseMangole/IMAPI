@@ -32,9 +32,9 @@ public class Language {
         if(s == null){
             TextComponent base = new TextComponent(prefix + dsp.get("lang.lang", p) + ": ");
             dsp.getLanguages().forEach((name, bundle)->{
-                TextComponent component = new TextComponent("§5" + name + dsp.get("color.text", dsp.getDefaultLang()) +  ", ");
-                component.setClickEvent( new ClickEvent( ClickEvent.Action.RUN_COMMAND, "/lang " + name));
-                component.setHoverEvent( new HoverEvent( HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Switch to " + name).create() ) );
+                TextComponent component = new TextComponent("§5" + name + dsp.get("color.text", dsp.getDefaultLang()) + ", ");
+                component.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/lang " + name));
+                component.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Switch to " + name).create()));
                 base.addExtra(component);
             });
             p.spigot().sendMessage(base);

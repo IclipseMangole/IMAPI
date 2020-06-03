@@ -75,9 +75,11 @@ public class MySQL {
 
     public static void close() {
         try {
-            if (conn != null) {
-                conn.close();
-                System.out.println(prefix + "erfolgreich getrennt!");
+            if (!conn.isClosed()) {
+                if (conn != null) {
+                    conn.close();
+                    System.out.println(prefix + "erfolgreich getrennt!");
+                }
             }
 
         } catch (SQLException e) {
@@ -88,6 +90,7 @@ public class MySQL {
     public static void update(String querry) {
         Statement st;
         try {
+            checkConnection();
             st = conn.createStatement();
             st.executeUpdate(querry);
             st.close();
@@ -103,6 +106,7 @@ public class MySQL {
 
         Statement st;
         try {
+            checkConnection();
             st = conn.createStatement();
             rs = st.executeQuery(querry);
         } catch (SQLException e) {
@@ -110,6 +114,12 @@ public class MySQL {
             System.err.println(e);
         }
         return rs;
+    }
+
+    public static void checkConnection() throws SQLException {
+        if (conn == null || conn.isClosed()) {
+            connect();
+        }
     }
 
 }

@@ -23,7 +23,7 @@ public class User {
 
 
     public static void createUserTable() {
-        MySQL.update("CREATE TABLE IF NOT EXISTS user (uuid VARCHAR(60), schnitzel INT(10), onlinetime INT(15), firstJoin DATETIME, lastseen BIGINT, server VARCHAR(20), lang VARCHAR(10), blocks INT(10), newsread DATETIME, PRIMARY KEY(uuid))");
+        MySQL.update("CREATE TABLE IF NOT EXISTS user (uuid VARCHAR(60), schnitzel INT(10), onlinetime BIGINT, firstJoin DATETIME, lastseen BIGINT, server VARCHAR(20), lang VARCHAR(10), blocks INT(10), newsread DATETIME, PRIMARY KEY(uuid))");
     }
 
     public static void createUser(UUID uuid) {
@@ -89,11 +89,11 @@ public class User {
         MySQL.update("UPDATE user SET onlinetime = " + onlinetime + " WHERE uuid = '" + uuid + "'");
     }
 
-    public static int getOnlinetime(UUID uuid) {
+    public static long getOnlinetime(UUID uuid) {
         try {
             ResultSet rs = MySQL.querry("SELECT onlinetime FROM user WHERE uuid = '" + uuid + "'");
             while (rs.next()) {
-                return rs.getInt("onlinetime");
+                return rs.getLong("onlinetime");
             }
 
         } catch (SQLException e) {

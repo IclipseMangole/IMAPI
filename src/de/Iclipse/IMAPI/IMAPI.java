@@ -83,7 +83,7 @@ public class IMAPI extends JavaPlugin implements Listener {
 
     @Override
     public void onEnable() {
-        MySQL.connect();
+        //MySQL.connect();
         loadResourceBundles();
         registerListener();
         registerCommands();

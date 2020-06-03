@@ -12,6 +12,7 @@ import static de.Iclipse.IMAPI.Util.ScoreboardSign.setField;
 
 public class Scheduler {
     private static BukkitTask task;
+    private static BukkitTask mysqlTask;
 
     public static void startScheduler() {
         task = Bukkit.getScheduler().runTaskTimer(Data.instance, new Runnable() {
@@ -68,6 +69,8 @@ public class Scheduler {
 
                     Data.restart--;
                 }
+
+
             }
         }, 20, 20);
     }
@@ -75,4 +78,6 @@ public class Scheduler {
     public static void stopScheduler() {
         task.cancel();
     }
+
+
 }
