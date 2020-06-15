@@ -165,13 +165,14 @@ public class User {
         return getLastTime(uuid) == -1;
     }
 
-    public static HashMap<String, Integer> getTop5() {
-        HashMap<String, Integer> map = new HashMap<>();
+    public static HashMap<UUID, Long> getOnlineTop(int max) {
+        HashMap<UUID, Long> map = new HashMap<>();
         try {
-            ResultSet rs = MySQL.querry("SELECT  name, onlinetime FROM user ORDER BY onlinetime DESC LIMIT 5");
+            ResultSet rs = MySQL.querry("SELECT uuid, onlinetime FROM user ORDER BY onlinetime DESC LIMIT " + max);
             while (rs.next()) {
-                map.put(rs.getString("name"), rs.getInt("onlinetime"));
+                map.put(UUID.fromString(rs.getString("uuid")), rs.getLong("onlinetime"));
             }
+            return map;
         } catch (SQLException e) {
             e.printStackTrace();
         }

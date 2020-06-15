@@ -36,6 +36,7 @@ import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.*;
 
 import static de.Iclipse.IMAPI.Data.*;
@@ -56,6 +57,7 @@ public class IMAPI extends JavaPlugin implements Listener {
     public void onDisable() {
         super.onDisable();
         saveCounters();
+        Server.setMap(getServerName(), null);
         Server.setState(getServerName(), State.Offline);
         Server.setPlayers(getServerName(), 0);
         MySQL.close();
@@ -96,6 +98,9 @@ public class IMAPI extends JavaPlugin implements Listener {
             Server.setState(getServerName(), State.Online);
         }
         this.getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
+        if (Bukkit.getWorlds().size() > 0) {
+            Data.tablist = new Tablist();
+        }
     }
 
     @EventHandler
@@ -156,23 +161,21 @@ public class IMAPI extends JavaPlugin implements Listener {
         }
     }
 
-    public void loadResourceBundles(){
+    public void loadResourceBundles() {
+        HashMap<String, ResourceBundle> langs = new HashMap<>();
         try {
-            HashMap<String, ResourceBundle> langs = new HashMap<>();
             langDE = ResourceBundle.getBundle("i18n.langDE");
             langEN = ResourceBundle.getBundle("i18n.langEN");
-            langs.put("DE", langDE);
-            langs.put("EN", langEN);
-            dsp = new Dispatcher(this,
-                    langs);
-        } catch(MissingResourceException e){
-            e.printStackTrace();
+        } catch (MissingResourceException e) {
             dispatching = false;
-        } catch(NullPointerException e){
-            e.printStackTrace();
+        } catch (Exception e) {
             System.out.println("Reload oder Bundle not found!");
             dispatching = false;
         }
+        langs.put("DE", langDE);
+        langs.put("EN", langEN);
+        dsp = new Dispatcher(this,
+                langs);
     }
 
     /*
@@ -214,7 +217,6 @@ public class IMAPI extends JavaPlugin implements Listener {
 
     public void registerCommands() {
         commands = new HashMap<>();
-        completions = new HashMap<>();
         register(new Language(), this);
         register(new Help(), this);
         register(new IMRestart(), this);
@@ -228,6 +230,8 @@ public class IMAPI extends JavaPlugin implements Listener {
         register(new NPCCommand(), this);
         register(new Serverstats(), this);
         register(new de.Iclipse.IMAPI.Functions.Servers.Mode(), this);
+        register(new Playerinfo(), this);
+        register(new Onlinetop(), this);
         //register(new Friend(), this);
     }
 
@@ -349,7 +353,7 @@ public class IMAPI extends JavaPlugin implements Listener {
 
     public static String monthBefore() {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        return sdf.format(new Date(System.currentTimeMillis() - (30 * 24 * 60 * 60 * 1000)));
+        return sdf.format(Date.from(Instant.now().minusSeconds(30 * 24 * 60 * 60)));
     }
 
 

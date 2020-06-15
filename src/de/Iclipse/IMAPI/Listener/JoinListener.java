@@ -26,7 +26,7 @@ import static de.Iclipse.IMAPI.Util.UUIDFetcher.getUUID;
 public class JoinListener implements Listener {
     @EventHandler
     public void onLogin(PlayerLoginEvent e) {
-        if (!e.getHostname().equalsIgnoreCase("134.255.235.155:25565")) {
+        if (!e.getHostname().equalsIgnoreCase("207.180.241.195:25565")) {
             e.setResult(PlayerLoginEvent.Result.KICK_OTHER);
             e.setKickMessage(dsp.get("proxyjoin.blocked", e.getPlayer()));
         }

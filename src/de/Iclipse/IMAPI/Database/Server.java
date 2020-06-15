@@ -150,6 +150,9 @@ public class Server {
     }
 
     public static void setMap(String name, String map) {
+        if (map == null) {
+            map = "NONE";
+        }
         MySQL.update("UPDATE server SET map = '" + map + "' WHERE name = '" + name + "'");
     }
 

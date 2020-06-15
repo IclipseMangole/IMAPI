@@ -1,6 +1,7 @@
 package de.Iclipse.IMAPI.Functions;
 
 import de.Iclipse.IMAPI.Data;
+import de.Iclipse.IMAPI.Database.MySQL;
 import net.minecraft.server.v1_15_R1.PacketPlayOutScoreboardObjective;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_15_R1.entity.CraftPlayer;
@@ -69,7 +70,9 @@ public class Scheduler {
 
                     Data.restart--;
                 }
-
+                if (Bukkit.getOnlinePlayers().size() == 0) {
+                    MySQL.close();
+                }
 
             }
         }, 20, 20);

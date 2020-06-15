@@ -9,7 +9,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.ResourceBundle;
 
@@ -20,7 +19,6 @@ public class Data {
     public static ResourceBundle langEN;
     public static Dispatcher dsp;
     public static HashMap<IMCommand, String> commands;
-    public static HashMap<IMCommand, HashMap<Integer, ArrayList<String>>> completions;
     public static String textcolor;
     public static String highlight;
     public static String warning;
