@@ -3,11 +3,11 @@ package de.Iclipse.IMAPI.Functions.NPC;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import de.Iclipse.IMAPI.Data;
-import net.minecraft.server.v1_15_R1.*;
+import net.minecraft.server.v1_16_R1.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_15_R1.CraftServer;
-import org.bukkit.craftbukkit.v1_15_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_16_R1.CraftServer;
+import org.bukkit.craftbukkit.v1_16_R1.CraftWorld;
 import org.bukkit.entity.Player;
 
 import java.util.*;
