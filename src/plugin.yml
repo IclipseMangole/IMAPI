@@ -2,6 +2,6 @@ name: IMAPI
 version: ${proj
 main: de.Iclipse.IMAPI.IMAPI
 author: Iclipse
-api-version: 1.15
+api-version: 1.16
 load: STARTUP
 depend: [ProtocolLib, BungeePerms]

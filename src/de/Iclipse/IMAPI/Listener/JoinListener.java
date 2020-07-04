@@ -6,10 +6,8 @@ import de.Iclipse.IMAPI.Database.User;
 import de.Iclipse.IMAPI.Database.UserSettings;
 import de.Iclipse.IMAPI.IMAPI;
 import de.Iclipse.IMAPI.Util.UUIDFetcher;
-import net.minecraft.server.v1_16_R1.PacketPlayOutScoreboardObjective;
 import org.bukkit.Bukkit;
 import org.bukkit.Particle;
-import org.bukkit.craftbukkit.v1_16_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -20,7 +18,6 @@ import java.util.UUID;
 
 import static de.Iclipse.IMAPI.Data.dsp;
 import static de.Iclipse.IMAPI.Data.instance;
-import static de.Iclipse.IMAPI.Util.ScoreboardSign.setField;
 import static de.Iclipse.IMAPI.Util.UUIDFetcher.getUUID;
 
 public class JoinListener implements Listener {
@@ -35,10 +32,12 @@ public class JoinListener implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
         Player p = e.getPlayer();
+        /*
         PacketPlayOutScoreboardObjective packet = new PacketPlayOutScoreboardObjective();
         setField(packet, "a", e.getPlayer().getName());
         setField(packet, "d", 1);
         ((CraftPlayer) e.getPlayer()).getHandle().playerConnection.sendPacket(packet);
+         */
         Data.onlinetime.put(p, System.currentTimeMillis());
         Data.blocks.put(p, User.getBlocksPlaced(getUUID(p.getName())));
         createSettings(UUIDFetcher.getUUID(p.getName()));

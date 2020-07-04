@@ -64,7 +64,6 @@ public class Scheduler {
                             }
                         }
                         dsp.send(Bukkit.getConsoleSender(), "imrestart.restart");
-                        Bukkit.getWorlds().forEach(w -> w.save());
                         Bukkit.shutdown();
                     }
 
