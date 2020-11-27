@@ -3,6 +3,7 @@ package de.Iclipse.IMAPI.Util;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mojang.util.UUIDTypeAdapter;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.io.BufferedReader;
@@ -56,7 +57,12 @@ public class UUIDFetcher {
      * @return The uuid
      */
     public static UUID getUUID(String name) {
-        return getUUIDAt(name, System.currentTimeMillis());
+        if(Bukkit.getPlayer(name) != null) {
+            return Bukkit.getPlayer(name).getUniqueId();
+        }else{
+            return UUID.randomUUID();
+        }
+        //return getUUIDAt(name, System.currentTimeMillis());
     }
 
     /**
@@ -66,7 +72,8 @@ public class UUIDFetcher {
      * @return The uuid
      */
     public static UUID getUUID(Player p) {
-        return getUUIDAt(p.getName(), System.currentTimeMillis());
+        return p.getUniqueId();
+        //return getUUIDAt(p.getName(), System.currentTimeMillis());
     }
 
     /**
@@ -128,6 +135,12 @@ public class UUIDFetcher {
         if (nameCache.containsKey(uuid)) {
             return nameCache.get(uuid);
         }
+        if(Bukkit.getPlayer(uuid) != null){
+            return Bukkit.getPlayer(uuid).getName();
+        }else{
+            return "Pepega";
+        }
+        /*
         try {
             HttpURLConnection connection = (HttpURLConnection) new URL(String.format(NAME_URL, UUIDTypeAdapter.fromUUID(uuid))).openConnection();
             connection.setReadTimeout(5000);
@@ -143,5 +156,6 @@ public class UUIDFetcher {
         }
 
         return null;
+         */
     }
 }

@@ -1,7 +1,7 @@
 package de.Iclipse.IMAPI.Listener;
 
 import de.Iclipse.IMAPI.Data;
-import de.Iclipse.IMAPI.Database.Server;
+import de.Iclipse.IMAPI.Database.ServerManager;
 import de.Iclipse.IMAPI.Database.User;
 import de.Iclipse.IMAPI.Database.UserSettings;
 import de.Iclipse.IMAPI.IMAPI;
@@ -23,10 +23,12 @@ import static de.Iclipse.IMAPI.Util.UUIDFetcher.getUUID;
 public class JoinListener implements Listener {
     @EventHandler
     public void onLogin(PlayerLoginEvent e) {
+        /*
         if (!e.getHostname().equalsIgnoreCase("207.180.241.195:25565")) {
             e.setResult(PlayerLoginEvent.Result.KICK_OTHER);
             e.setKickMessage(dsp.get("proxyjoin.blocked", e.getPlayer()));
         }
+         */
     }
 
     @EventHandler
@@ -50,7 +52,7 @@ public class JoinListener implements Listener {
             dsp.send(p, "vanish.join");
         } else {
             if (Data.updatePlayers)
-                Server.setPlayers(IMAPI.getServerName(), Server.getPlayers(IMAPI.getServerName()) + 1);
+                ServerManager.setPlayers(IMAPI.getServerName(), ServerManager.getPlayers(IMAPI.getServerName()) + 1);
         }
         User.setLastTime(p, -1);
         User.setServer(UUIDFetcher.getUUID(p.getName()), IMAPI.getServerName());

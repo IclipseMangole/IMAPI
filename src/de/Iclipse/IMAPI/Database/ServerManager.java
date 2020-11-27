@@ -8,8 +8,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-public class Server {
-    private Server() {
+public class ServerManager {
+    private ServerManager() {
     }
 
     public static void createServerTable() {

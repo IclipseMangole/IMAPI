@@ -1,7 +1,7 @@
 package de.Iclipse.IMAPI.Functions.Servers;
 
 import de.Iclipse.IMAPI.Data;
-import de.Iclipse.IMAPI.Database.Server;
+import de.Iclipse.IMAPI.Database.ServerManager;
 import de.Iclipse.IMAPI.Util.Command.IMCommand;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -62,10 +62,10 @@ public class Mode {
     )
     public void delete(CommandSender sender, String name) {
         if (isModeExists(name)) {
-            if (Server.getServers(name).size() > 0) {
-                Server.getServers().forEach(server -> {
-                    if (Server.getMode(server).equals(name)) {
-                        Server.setMode(server, null);
+            if (ServerManager.getServers(name).size() > 0) {
+                ServerManager.getServers().forEach(server -> {
+                    if (ServerManager.getMode(server).equals(name)) {
+                        ServerManager.setMode(server, null);
                     }
                 });
             }
@@ -108,16 +108,16 @@ public class Mode {
     )
     public void add(CommandSender sender, String mode, String server) {
         if (isModeExists(mode)) {
-            if (Server.getServers().contains(server)) {
-                if (Server.getMode(server) != null) {
-                    if (!Server.getMode(server).equals(mode)) {
-                        Server.setMode(server, mode);
+            if (ServerManager.getServers().contains(server)) {
+                if (ServerManager.getMode(server) != null) {
+                    if (!ServerManager.getMode(server).equals(mode)) {
+                        ServerManager.setMode(server, mode);
                         dsp.send(sender, "mode.add.successfull");
                     } else {
                         dsp.send(sender, "mode.add.already");
                     }
                 } else {
-                    Server.setMode(server, mode);
+                    ServerManager.setMode(server, mode);
                     dsp.send(sender, "mode.add.successfull");
                 }
             } else {
@@ -140,9 +140,9 @@ public class Mode {
     )
     public void remove(CommandSender sender, String mode, String server) {
         if (isModeExists(mode)) {
-            if (Server.getServers().contains(server)) {
-                if (Server.getMode(server).equals(mode)) {
-                    Server.setMode(server, "NONE");
+            if (ServerManager.getServers().contains(server)) {
+                if (ServerManager.getMode(server).equals(mode)) {
+                    ServerManager.setMode(server, "NONE");
                     dsp.send(sender, "mode.remove.successfull");
                 } else {
                     dsp.send(sender, "mode.remove.otherMode");
@@ -166,7 +166,7 @@ public class Mode {
     )
     public void servers(CommandSender sender, String mode) {
         if (isModeExists(mode)) {
-            ArrayList<String> list = Server.getServers(mode);
+            ArrayList<String> list = ServerManager.getServers(mode);
             if (list.size() > 0) {
                 String servers = list.get(0);
                 for (int i = 1; i < list.size(); i++) {

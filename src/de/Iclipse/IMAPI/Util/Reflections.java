@@ -1,8 +1,8 @@
 package de.Iclipse.IMAPI.Util;
 
-import net.minecraft.server.v1_16_R1.Packet;
+import net.minecraft.server.v1_16_R3.Packet;
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_16_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.Field;

@@ -1,7 +1,7 @@
 package de.Iclipse.IMAPI.Functions;
 
 import de.Iclipse.IMAPI.Data;
-import de.Iclipse.IMAPI.Database.Server;
+import de.Iclipse.IMAPI.Database.ServerManager;
 import de.Iclipse.IMAPI.Database.UserSettings;
 import de.Iclipse.IMAPI.IMAPI;
 import de.Iclipse.IMAPI.Util.Command.IMCommand;
@@ -34,7 +34,7 @@ public class Vanish {
                     entry.hidePlayer(instance, p);
                 });
                 if (Data.updatePlayers)
-                    Server.setPlayers(IMAPI.getServerName(), Server.getPlayers(IMAPI.getServerName()) - 1);
+                    ServerManager.setPlayers(IMAPI.getServerName(), ServerManager.getPlayers(IMAPI.getServerName()) - 1);
             }else {
                 setVanish(p, false);
                 dsp.send(p, "vanish.visible");
@@ -44,7 +44,7 @@ public class Vanish {
                     }
                 });
                 if (Data.updatePlayers)
-                    Server.setPlayers(IMAPI.getServerName(), Server.getPlayers(IMAPI.getServerName()) + 1);
+                    ServerManager.setPlayers(IMAPI.getServerName(), ServerManager.getPlayers(IMAPI.getServerName()) + 1);
             }
     }
 

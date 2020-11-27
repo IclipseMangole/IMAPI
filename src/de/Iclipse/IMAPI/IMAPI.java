@@ -1,6 +1,5 @@
 package de.Iclipse.IMAPI;
 
-import com.comphenix.protocol.ProtocolLibrary;
 import com.google.common.base.Joiner;
 import de.Iclipse.IMAPI.Database.Friend;
 import de.Iclipse.IMAPI.Database.*;
@@ -20,10 +19,10 @@ import de.Iclipse.IMAPI.Util.UUIDFetcher;
 import de.Iclipse.IMAPI.Util.executor.ThreadExecutor;
 import de.Iclipse.IMAPI.Util.executor.types.BukkitExecutor;
 import de.Iclipse.IMAPI.Util.menu.PopupMenuAPI;
-import net.minecraft.server.v1_16_R1.PacketPlayOutScoreboardObjective;
+import net.minecraft.server.v1_16_R3.PacketPlayOutScoreboardObjective;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
-import org.bukkit.craftbukkit.v1_16_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -48,18 +47,16 @@ public class IMAPI extends JavaPlugin implements Listener {
 
     @Override
     public void onLoad() {
-        Data.instance = this;
         ThreadExecutor.setExecutor(new BukkitExecutor());
-        protocolManager = ProtocolLibrary.getProtocolManager();
     }
 
     @Override
     public void onDisable() {
         super.onDisable();
         saveCounters();
-        Server.setMap(getServerName(), null);
-        Server.setState(getServerName(), State.Offline);
-        Server.setPlayers(getServerName(), 0);
+        ServerManager.setMap(getServerName(), null);
+        ServerManager.setState(getServerName(), State.Offline);
+        ServerManager.setPlayers(getServerName(), 0);
         MySQL.close();
         stopScheduler();
         if (Bukkit.getOnlinePlayers().size() > 0) {
@@ -92,21 +89,21 @@ public class IMAPI extends JavaPlugin implements Listener {
         createTables();
         initCounters();
         startScheduler();
-        if (!Server.getServers().contains(getServerName())) {
-            Server.createServer(getServerName(), Bukkit.getPort(), 100);
+        if (!ServerManager.getServers().contains(getServerName())) {
+            ServerManager.createServer(getServerName(), Bukkit.getPort(), 100);
         } else {
-            Server.setState(getServerName(), State.Online);
+            ServerManager.setState(getServerName(), State.Online);
         }
         this.getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
         if (Bukkit.getWorlds().size() > 0) {
-            Data.tablist = new Tablist();
+            tablist = new Tablist();
         }
     }
 
     @EventHandler
     public void onWorldLoad(WorldLoadEvent e) {
         if (tablist == null) {
-            Data.tablist = new Tablist();
+            tablist = new Tablist();
         }
     }
 
@@ -130,7 +127,7 @@ public class IMAPI extends JavaPlugin implements Listener {
         de.Iclipse.IMAPI.Database.News.createNewsTable();
         UserSettings.createUserSettingsTable();
         Mode.createModeTable();
-        Server.createServerTable();
+        ServerManager.createServerTable();
         Sign.createSignTable();
         Friend.createFriendTable();
     }
