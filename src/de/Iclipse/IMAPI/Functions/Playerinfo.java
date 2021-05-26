@@ -1,7 +1,7 @@
 package de.Iclipse.IMAPI.Functions;
 
 import de.Iclipse.IMAPI.Data;
-import de.Iclipse.IMAPI.Database.User;
+import de.Iclipse.IMAPI.IMAPI;
 import de.Iclipse.IMAPI.Util.Command.IMCommand;
 import de.Iclipse.IMAPI.Util.UUIDFetcher;
 import net.alpenblock.bungeeperms.BungeePermsAPI;
@@ -13,9 +13,15 @@ import java.time.format.SignStyle;
 import java.time.temporal.ChronoField;
 import java.util.UUID;
 
-import static de.Iclipse.IMAPI.Data.dsp;
 
 public class Playerinfo {
+
+    private final IMAPI imapi;
+
+    public Playerinfo(IMAPI imapi) {
+        this.imapi = imapi;
+    }
+
     @IMCommand(
             name = "playerinfo",
             maxArgs = 1,
@@ -28,47 +34,47 @@ public class Playerinfo {
         try {
             uuid = UUIDFetcher.getUUID(name);
         } catch (Exception e) {
-            dsp.send(sender, "playerinfo.notExists");
+            imapi.getData().getDispatcher().send(sender, "playerinfo.notExists");
             return;
         }
-        if (User.isUserExists(uuid)) {
-            dsp.send(sender, "playerinfo.title");
-            dsp.send(sender, "playerinfo.name", name);
-            dsp.send(sender, "playerinfo.rank", Data.tablist.getPrefix(uuid) + BungeePermsAPI.userMainGroup(name));
-            dsp.send(sender, "playerinfo.onlinetime", (User.getOnlinetime(uuid) / (1000 * 60 * 60)) + " " + dsp.get("unit.hours", sender));
-            dsp.send(sender, "playerinfo.lastseen", getLastSeen(sender, uuid));
-            dsp.send(sender, "playerinfo.firstjoin", User.getFirstTime(uuid).format(getFormatter()) + "");
+        if (imapi.getData().getUserTable().isUserExists(uuid)) {
+            imapi.getData().getDispatcher().send(sender, "playerinfo.title");
+            imapi.getData().getDispatcher().send(sender, "playerinfo.name", name);
+            imapi.getData().getDispatcher().send(sender, "playerinfo.rank", imapi.getData().getTablist().getPrefix(uuid) + BungeePermsAPI.userMainGroup(name));
+            imapi.getData().getDispatcher().send(sender, "playerinfo.onlinetime", (imapi.getData().getUserTable().getOnlinetime(uuid) / (1000 * 60 * 60)) + " " + imapi.getData().getDispatcher().get("unit.hours", sender));
+            imapi.getData().getDispatcher().send(sender, "playerinfo.lastseen", getLastSeen(sender, uuid));
+            imapi.getData().getDispatcher().send(sender, "playerinfo.firstjoin", imapi.getData().getUserTable().getFirstTime(uuid).format(getFormatter()) + "");
         } else {
-            dsp.send(sender, "playerinfo.notExists");
+            imapi.getData().getDispatcher().send(sender, "playerinfo.notExists");
         }
     }
 
 
-    public static String getLastSeen(CommandSender p, UUID uuid) {
+    public String getLastSeen(CommandSender p, UUID uuid) {
         String s = "";
-        if (!User.isOnline(uuid)) {
-            long seconds = (System.currentTimeMillis() - User.getLastTime(uuid)) / 1000;
+        if (!imapi.getData().getUserTable().isOnline(uuid)) {
+            long seconds = (System.currentTimeMillis() - imapi.getData().getUserTable().getLastTime(uuid)) / 1000;
             if (seconds / 60.0 > 1) {
                 if ((seconds / (60.0 * 60.0)) > 1) {
                     if (seconds / (60.0 * 60.0 * 24) > 1) {
                         if (seconds / (60.0 * 60.0 * 24 * 7) > 1) {
                             if (seconds / (60.0 * 60.0 * 24 * 30) > 1) {
                                 if (seconds / (60.0 * 60.0 * 24 * 365) > 1) {
-                                    return (int) (seconds / (60.0 * 60.0 * 24 * 365)) + " " + dsp.get("unit.years", p);
+                                    return (int) (seconds / (60.0 * 60.0 * 24 * 365)) + " " + imapi.getData().getDispatcher().get("unit.years", p);
                                 }
-                                return (int) (seconds / (60.0 * 60.0 * 24 * 30)) + " " + dsp.get("unit.months", p);
+                                return (int) (seconds / (60.0 * 60.0 * 24 * 30)) + " " + imapi.getData().getDispatcher().get("unit.months", p);
                             }
-                            return (int) (seconds / (60.0 * 60.0 * 24 * 7)) + " " + dsp.get("unit.weeks", p);
+                            return (int) (seconds / (60.0 * 60.0 * 24 * 7)) + " " + imapi.getData().getDispatcher().get("unit.weeks", p);
                         }
-                        return (int) (seconds / (60.0 * 60.0 * 24)) + " " + dsp.get("unit.days", p);
+                        return (int) (seconds / (60.0 * 60.0 * 24)) + " " + imapi.getData().getDispatcher().get("unit.days", p);
                     }
-                    return (int) (seconds / (60.0 * 60.0)) + " " + dsp.get("unit.hours", p);
+                    return (int) (seconds / (60.0 * 60.0)) + " " + imapi.getData().getDispatcher().get("unit.hours", p);
                 }
-                return (int) (seconds / 60.0) + " " + dsp.get("unit.minutes", p);
+                return (int) (seconds / 60.0) + " " + imapi.getData().getDispatcher().get("unit.minutes", p);
             }
-            return seconds + " " + dsp.get("unit.seconds", p);
+            return seconds + " " + imapi.getData().getDispatcher().get("unit.seconds", p);
         } else {
-            return dsp.get("playerinfo.online", p);
+            return imapi.getData().getDispatcher().get("playerinfo.online", p);
         }
     }
 

@@ -11,14 +11,15 @@ import org.bukkit.scoreboard.Team;
 
 import java.util.UUID;
 
-import static de.Iclipse.IMAPI.Data.dsp;
 
 /* ~Yannick on 09.06.2019 at 11:47 o´ clock
  */
 public class Tablist {
 
+    private final IMAPI imapi;
 
-    public Tablist() {
+    public Tablist(IMAPI imapi) {
+        this.imapi = imapi;
     }
 
 
@@ -30,17 +31,17 @@ public class Tablist {
 
     private String getHeader(Player p) {
         String line0 = "§8----------«§5 §lIM§8-§f§lNETWORK§r§8 »----------";
-        String line1 = dsp.get("tablist.header1", p, p.getName());
-        String line2 = dsp.get("tablist.header2", p, IMAPI.getServerName());
+        String line1 = imapi.getData().getDispatcher().get("tablist.header1", p, p.getName());
+        String line2 = imapi.getData().getDispatcher().get("tablist.header2", p, imapi.getServerName());
 
         return line0 + "\n" + line1 + "\n" + line2 + "\n ";
     }
 
     private String getFooter(Player p) {
         String line3 = "§8--------------------------------";
-        String line0 = dsp.get("tablist.footer1", p);
-        String line1 = dsp.get("tablist.footer2", p);
-        String line2 = dsp.get("tablist.footer3", p);
+        String line0 = imapi.getData().getDispatcher().get("tablist.footer1", p);
+        String line1 = imapi.getData().getDispatcher().get("tablist.footer2", p);
+        String line2 = imapi.getData().getDispatcher().get("tablist.footer3", p);
         return "\n" + line0 + "\n" + line1 + "\n" + line2 + "\n" + line3;
     }
 
@@ -66,7 +67,7 @@ public class Tablist {
             }
         }
 
-        String name = "";
+        String name;
         name = scoreboard.getTeam(team).getPrefix() + p.getName();
         ChatColor.translateAlternateColorCodes('§', name);
 
@@ -93,7 +94,7 @@ public class Tablist {
     }
 
     public String getPrefix(UUID uuid) {
-        return BungeePermsAPI.groupDisplay(BungeePermsAPI.userMainGroup(UUIDFetcher.getName(uuid)), IMAPI.getServerName(), null).replace(ChatColor.RESET.toString(), "");
+        return BungeePermsAPI.groupDisplay(BungeePermsAPI.userMainGroup(UUIDFetcher.getName(uuid)), imapi.getServerName(), null).replace(ChatColor.RESET.toString(), "");
     }
 
 

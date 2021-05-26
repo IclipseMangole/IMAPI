@@ -1,12 +1,18 @@
 package de.Iclipse.IMAPI.Functions;
 
+import de.Iclipse.IMAPI.IMAPI;
 import de.Iclipse.IMAPI.Util.Command.IMCommand;
 import org.bukkit.command.CommandSender;
 
-import static de.Iclipse.IMAPI.Data.dsp;
-import static de.Iclipse.IMAPI.Data.restart;
 
 public class IMRestart {
+
+    private final IMAPI imapi;
+
+    public IMRestart(IMAPI imapi) {
+        this.imapi = imapi;
+    }
+
     @IMCommand(
             name = "imrestart",
             permissions = "im.cmd.restart",
@@ -17,6 +23,7 @@ public class IMRestart {
     )
     public void execute(CommandSender sender, Integer i, String s) {
         String unit;
+        int restart = -1;
         if (i == null && s == null) {
             unit = "seconds";
             restart = 60;
@@ -35,11 +42,12 @@ public class IMRestart {
                 unit = "hours";
                 restart = i * 60 * 60;
             } else {
-                dsp.send(sender, "imrestart.wrongunit");
+                imapi.getData().getDispatcher().send(sender, "imrestart.wrongunit");
                 return;
             }
 
         }
-        dsp.send(sender, "imrestart.planned", "" + i, dsp.get("unit." + unit, sender));
+        if(restart != -1) imapi.getData().getScheduler().setRestart(restart);
+        imapi.getData().getDispatcher().send(sender, "imrestart.planned", "" + i, imapi.getData().getDispatcher().get("unit." + unit, sender));
     }
 }

@@ -1,9 +1,5 @@
 package de.Iclipse.IMAPI.Listener;
 
-import de.Iclipse.IMAPI.Data;
-import de.Iclipse.IMAPI.Database.ServerManager;
-import de.Iclipse.IMAPI.Database.User;
-import de.Iclipse.IMAPI.Database.UserSettings;
 import de.Iclipse.IMAPI.IMAPI;
 import de.Iclipse.IMAPI.Util.UUIDFetcher;
 import org.bukkit.Bukkit;
@@ -16,19 +12,24 @@ import org.bukkit.event.player.PlayerLoginEvent;
 
 import java.util.UUID;
 
-import static de.Iclipse.IMAPI.Data.dsp;
-import static de.Iclipse.IMAPI.Data.instance;
 import static de.Iclipse.IMAPI.Util.UUIDFetcher.getUUID;
 
 public class JoinListener implements Listener {
+    
+    private final IMAPI imapi;
+
+    public JoinListener(IMAPI imapi) {
+        this.imapi = imapi;
+    }
+
     @EventHandler
     public void onLogin(PlayerLoginEvent e) {
-        /*
-        if (!e.getHostname().equalsIgnoreCase("207.180.241.195:25565")) {
+
+        if (!e.getHostname().equalsIgnoreCase("75.119.142.165:25565")) {
             e.setResult(PlayerLoginEvent.Result.KICK_OTHER);
-            e.setKickMessage(dsp.get("proxyjoin.blocked", e.getPlayer()));
+            e.setKickMessage(imapi.getData().getDispatcher().get("proxyjoin.blocked", e.getPlayer()));
         }
-         */
+
     }
 
     @EventHandler
@@ -40,22 +41,20 @@ public class JoinListener implements Listener {
         setField(packet, "d", 1);
         ((CraftPlayer) e.getPlayer()).getHandle().playerConnection.sendPacket(packet);
          */
-        Data.onlinetime.put(p, System.currentTimeMillis());
-        Data.blocks.put(p, User.getBlocksPlaced(getUUID(p.getName())));
+        imapi.getData().getOnlinetime().put(p, System.currentTimeMillis());
+        imapi.getData().getBlocks().put(p, imapi.getData().getUserTable().getBlocksPlaced(getUUID(p.getName())));
         createSettings(UUIDFetcher.getUUID(p.getName()));
-        Data.tablist.setTablist(p);
-        Data.tablist.setPlayer(p);
-        if (UserSettings.getBoolean(UUIDFetcher.getUUID(p.getName()), "vanish")) {
-            Bukkit.getOnlinePlayers().forEach(entry -> {
-                entry.hidePlayer(instance, p);
-            });
-            dsp.send(p, "vanish.join");
+        imapi.getData().getTablist().setTablist(p);
+        imapi.getData().getTablist().setPlayer(p);
+        if (imapi.getData().getUserSettingsTable().getBoolean(UUIDFetcher.getUUID(p.getName()), "vanish")) {
+            Bukkit.getOnlinePlayers().forEach(entry -> entry.hidePlayer(imapi, p));
+            imapi.getData().getDispatcher().send(p, "vanish.join");
         } else {
-            if (Data.updatePlayers)
-                ServerManager.setPlayers(IMAPI.getServerName(), ServerManager.getPlayers(IMAPI.getServerName()) + 1);
+            if (imapi.getData().isUpdatePlayers())
+                imapi.getData().getServerTable().setPlayers(imapi.getServerName(), imapi.getData().getServerTable().getPlayers(imapi.getServerName()) + 1);
         }
-        User.setLastTime(p, -1);
-        User.setServer(UUIDFetcher.getUUID(p.getName()), IMAPI.getServerName());
+        imapi.getData().getUserTable().setLastTime(p, -1);
+        imapi.getData().getUserTable().setServer(UUIDFetcher.getUUID(p.getName()), imapi.getServerName());
 
         /*
         System.out.println("BungeePerms UserPrefix: " + BungeePermsAPI.userPrefix(p.getName(), IMAPI.getServerName() + p.getName(), null).replace(ChatColor.RESET.toString(), "") + p.getName());
@@ -68,58 +67,58 @@ public class JoinListener implements Listener {
 
 
     public void createSettings(UUID uuid) {
-        UserSettings.createUserSetting(uuid, "profile_page", 0); //0: Friend, 1: Settings, 2: Lobbyinventory 3: News
+        imapi.getData().getUserSettingsTable().createUserSetting(uuid, "profile_page", 0); //0: Friend, 1: Settings, 2: Lobbyinventory 3: News
 
         //BARO
-        UserSettings.createUserSetting(uuid, "baro_maxPlayerBars", 2);
-        UserSettings.createUserSetting(uuid, "baro_barSettingZone", false); //true = zone, false = events
-        UserSettings.createUserSetting(uuid, "baro_borderParticle", Particle.SPELL_WITCH.name());
+        imapi.getData().getUserSettingsTable().createUserSetting(uuid, "baro_maxPlayerBars", 2);
+        imapi.getData().getUserSettingsTable().createUserSetting(uuid, "baro_barSettingZone", false); //true = zone, false = events
+        imapi.getData().getUserSettingsTable().createUserSetting(uuid, "baro_borderParticle", Particle.SPELL_WITCH.name());
         //Sound
-        //UserSettings.createUserSetting(uuid, "baro_sound_");
+        //imapi.getData().getUserSettingsTable().createUserSetting(uuid, "baro_sound_");
 
         //Bedwars
 
         //Bingo
 
         //Friend
-        UserSettings.createUserSetting(uuid, "friend_sort", 3);
+        imapi.getData().getUserSettingsTable().createUserSetting(uuid, "friend_sort", 3);
 
-        UserSettings.createUserSetting(uuid, "friend_message", 0);
-        UserSettings.createUserSetting(uuid, "friend_message_users", true);
-        UserSettings.createUserSetting(uuid, "friend_message_teammembers", true);
-        UserSettings.createUserSetting(uuid, "friend_message_partymembers", true);
-        UserSettings.createUserSetting(uuid, "friend_message_friends", true);
-        UserSettings.createUserSetting(uuid, "friend_message_favorites", true);
+        imapi.getData().getUserSettingsTable().createUserSetting(uuid, "friend_message", 0);
+        imapi.getData().getUserSettingsTable().createUserSetting(uuid, "friend_message_users", true);
+        imapi.getData().getUserSettingsTable().createUserSetting(uuid, "friend_message_teammembers", true);
+        imapi.getData().getUserSettingsTable().createUserSetting(uuid, "friend_message_partymembers", true);
+        imapi.getData().getUserSettingsTable().createUserSetting(uuid, "friend_message_friends", true);
+        imapi.getData().getUserSettingsTable().createUserSetting(uuid, "friend_message_favorites", true);
 
-        UserSettings.createUserSetting(uuid, "friend_request_users", true);
-        UserSettings.createUserSetting(uuid, "friend_request_teammembers", true);
-        UserSettings.createUserSetting(uuid, "friend_request_partymembers", true);
+        imapi.getData().getUserSettingsTable().createUserSetting(uuid, "friend_request_users", true);
+        imapi.getData().getUserSettingsTable().createUserSetting(uuid, "friend_request_teammembers", true);
+        imapi.getData().getUserSettingsTable().createUserSetting(uuid, "friend_request_partymembers", true);
 
-        UserSettings.createUserSetting(uuid, "friend_jump", 0);
+        imapi.getData().getUserSettingsTable().createUserSetting(uuid, "friend_jump", 0);
 
 
         //Party
-        UserSettings.createUserSetting(uuid, "party_invite_users", true);
-        UserSettings.createUserSetting(uuid, "party_invite_teammembers", true);
-        UserSettings.createUserSetting(uuid, "party_invite_friends", true);
-        UserSettings.createUserSetting(uuid, "party_invite_favorites", true);
+        imapi.getData().getUserSettingsTable().createUserSetting(uuid, "party_invite_users", true);
+        imapi.getData().getUserSettingsTable().createUserSetting(uuid, "party_invite_teammembers", true);
+        imapi.getData().getUserSettingsTable().createUserSetting(uuid, "party_invite_friends", true);
+        imapi.getData().getUserSettingsTable().createUserSetting(uuid, "party_invite_favorites", true);
 
         //Visibility
-        UserSettings.createUserSetting(uuid, "visibility", 0);
-        UserSettings.createUserSetting(uuid, "visibility_message_users", true);
-        UserSettings.createUserSetting(uuid, "visibility_message_teammembers", true);
-        UserSettings.createUserSetting(uuid, "visibility_message_partymembers", true);
-        UserSettings.createUserSetting(uuid, "visibility_message_friends", true);
-        UserSettings.createUserSetting(uuid, "visibility_message_favorites", true);
+        imapi.getData().getUserSettingsTable().createUserSetting(uuid, "visibility", 0);
+        imapi.getData().getUserSettingsTable().createUserSetting(uuid, "visibility_message_users", true);
+        imapi.getData().getUserSettingsTable().createUserSetting(uuid, "visibility_message_teammembers", true);
+        imapi.getData().getUserSettingsTable().createUserSetting(uuid, "visibility_message_partymembers", true);
+        imapi.getData().getUserSettingsTable().createUserSetting(uuid, "visibility_message_friends", true);
+        imapi.getData().getUserSettingsTable().createUserSetting(uuid, "visibility_message_favorites", true);
         //Status
-        UserSettings.createUserSetting(uuid, "status_line1", "");
-        UserSettings.createUserSetting(uuid, "status_line2", "");
+        imapi.getData().getUserSettingsTable().createUserSetting(uuid, "status_line1", "");
+        imapi.getData().getUserSettingsTable().createUserSetting(uuid, "status_line2", "");
         //Language
-        UserSettings.createUserSetting(uuid, "language", "DE");
+        imapi.getData().getUserSettingsTable().createUserSetting(uuid, "language", "DE");
         //Design
-        UserSettings.createUserSetting(uuid, "design_primary", "BLACK");
-        UserSettings.createUserSetting(uuid, "design_secondary", "YELLOW");
+        imapi.getData().getUserSettingsTable().createUserSetting(uuid, "design_primary", "BLACK");
+        imapi.getData().getUserSettingsTable().createUserSetting(uuid, "design_secondary", "YELLOW");
 
-        UserSettings.createUserSetting(uuid, "vanish", false);
+        imapi.getData().getUserSettingsTable().createUserSetting(uuid, "vanish", false);
     }
 }

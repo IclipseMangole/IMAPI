@@ -1,6 +1,7 @@
 package de.Iclipse.IMAPI.Listener;
 
 import de.Iclipse.IMAPI.Data;
+import de.Iclipse.IMAPI.IMAPI;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -9,16 +10,23 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
 public class BlockListener implements Listener {
+
+    private final IMAPI imapi;
+
+    public BlockListener(IMAPI imapi) {
+        this.imapi = imapi;
+    }
+
     @EventHandler
     public void onPlace(BlockPlaceEvent e) {
         Player p = e.getPlayer();
-        Data.blocks.replace(p, Data.blocks.get(p) + 1);
+        imapi.getData().getBlocks().replace(p, imapi.getData().getBlocks().get(p) + 1);
     }
 
     @EventHandler
     public void onBreak(BlockBreakEvent e) {
         Player p = e.getPlayer();
-        Data.blocks.replace(p, Data.blocks.get(p) + 1);
+        imapi.getData().getBlocks().replace(p, imapi.getData().getBlocks().get(p) + 1);
     }
 
     @EventHandler

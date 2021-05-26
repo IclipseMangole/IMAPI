@@ -1,13 +1,21 @@
 package de.Iclipse.IMAPI.Functions;
 
 import de.Iclipse.IMAPI.Data;
+import de.Iclipse.IMAPI.IMAPI;
 import de.Iclipse.IMAPI.Util.UUIDFetcher;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 
 public class PlayerReset {
-    public static void resetPlayer(Player p) {
+
+    private final IMAPI imapi;
+
+    public PlayerReset(IMAPI imapi) {
+        this.imapi = imapi;
+    }
+
+    public void resetPlayer(Player p) {
         if (!Vanish.isVanish(UUIDFetcher.getUUID(p.getName()))) {
             if (p.getGameMode() != GameMode.CREATIVE) {
                 p.setFlying(false);
@@ -23,7 +31,7 @@ public class PlayerReset {
             p.getInventory().clear();
             p.setExp(0);
             p.setLevel(0);
-            Bukkit.getOnlinePlayers().forEach(o -> o.showPlayer(Data.instance, p));
+            Bukkit.getOnlinePlayers().forEach(o -> o.showPlayer(imapi, p));
             p.setSneaking(false);
             p.setGliding(false);
             p.setSwimming(false);

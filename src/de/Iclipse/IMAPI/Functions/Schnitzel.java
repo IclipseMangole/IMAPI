@@ -1,17 +1,21 @@
 package de.Iclipse.IMAPI.Functions;
 
 import de.Iclipse.IMAPI.Data;
-import de.Iclipse.IMAPI.Database.User;
+import de.Iclipse.IMAPI.IMAPI;
 import de.Iclipse.IMAPI.Util.Command.IMCommand;
 import de.Iclipse.IMAPI.Util.UUIDFetcher;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import static de.Iclipse.IMAPI.Data.dsp;
 
 public class Schnitzel {
-    StringBuilder builder;
+    private final IMAPI imapi;
+    private StringBuilder builder;
+
+    public Schnitzel(IMAPI imapi) {
+        this.imapi = imapi;
+    }
 
     @IMCommand(
             name = "schnitzel",
@@ -22,7 +26,7 @@ public class Schnitzel {
     public void execute(CommandSender sender) {
         if (sender.hasPermission("im.cmd.schnitzel.*")) {
             builder = new StringBuilder();
-            builder.append(dsp.get("schnitzel.overview", sender) + "\n");
+            builder.append(imapi.getData().getDispatcher().get("schnitzel.overview", sender) + "\n");
             add(sender, "add");
             add(sender, "remove");
             add(sender, "set");
@@ -30,9 +34,9 @@ public class Schnitzel {
             sender.sendMessage(builder.toString());
         } else {
             if (sender instanceof Player) {
-                dsp.send(sender, "schnitzel.get", "" + User.getSchnitzel(UUIDFetcher.getUUID(sender.getName())));
+                imapi.getData().getDispatcher().send(sender, "schnitzel.get", "" + imapi.getData().getUserTable().getSchnitzel(UUIDFetcher.getUUID(sender.getName())));
             }else{
-                dsp.send(sender, "cmd.noconsole");
+                imapi.getData().getDispatcher().send(sender, "cmd.noconsole");
             }
         }
     }
@@ -48,11 +52,11 @@ public class Schnitzel {
             permissions = "im.cmd.schnitzel.add"
     )
     public void add(CommandSender sender, String name, int schnitzel) {
-        if (User.isUserExists(UUIDFetcher.getUUID(name))) {
-            User.addSchnitzel(UUIDFetcher.getUUID(name), schnitzel);
-            dsp.send(sender, "schnitzel.add.success", name, "" + schnitzel);
+        if (imapi.getData().getUserTable().isUserExists(UUIDFetcher.getUUID(name))) {
+            imapi.getData().getUserTable().addSchnitzel(UUIDFetcher.getUUID(name), schnitzel);
+            imapi.getData().getDispatcher().send(sender, "schnitzel.add.success", name, "" + schnitzel);
         } else {
-            dsp.send(sender, "schnitzel.notexist");
+            imapi.getData().getDispatcher().send(sender, "schnitzel.notexist");
         }
     }
 
@@ -67,11 +71,11 @@ public class Schnitzel {
             permissions = "im.cmd.schnitzel.remove"
     )
     public void remove(CommandSender sender, String name, int schnitzel) {
-        if (User.isUserExists(UUIDFetcher.getUUID(name))) {
-            User.removeSchnitzel(UUIDFetcher.getUUID(name), schnitzel);
-            dsp.send(sender, "schnitzel.remove.success", name, "" + schnitzel);
+        if (imapi.getData().getUserTable().isUserExists(UUIDFetcher.getUUID(name))) {
+            imapi.getData().getUserTable().removeSchnitzel(UUIDFetcher.getUUID(name), schnitzel);
+            imapi.getData().getDispatcher().send(sender, "schnitzel.remove.success", name, "" + schnitzel);
         } else {
-            dsp.send(sender, "schnitzel.notexist");
+            imapi.getData().getDispatcher().send(sender, "schnitzel.notexist");
         }
     }
 
@@ -86,11 +90,11 @@ public class Schnitzel {
             permissions = "im.cmd.schnitzel.set"
     )
     public void set(CommandSender sender, String name, int schnitzel) {
-        if (User.isUserExists(UUIDFetcher.getUUID(name))) {
-            User.setSchnitzel(UUIDFetcher.getUUID(name), schnitzel);
-            dsp.send(sender, "schnitzel.set.success", name, "" + schnitzel);
+        if (imapi.getData().getUserTable().isUserExists(UUIDFetcher.getUUID(name))) {
+            imapi.getData().getUserTable().setSchnitzel(UUIDFetcher.getUUID(name), schnitzel);
+            imapi.getData().getDispatcher().send(sender, "schnitzel.set.success", name, "" + schnitzel);
         } else {
-            dsp.send(sender, "schnitzel.notexist");
+            imapi.getData().getDispatcher().send(sender, "schnitzel.notexist");
         }
     }
 
@@ -105,15 +109,15 @@ public class Schnitzel {
             permissions = "im.cmd.schnitzel.get"
     )
     public void get(CommandSender sender, String name) {
-        if (User.isUserExists(UUIDFetcher.getUUID(name))) {
-            dsp.send(sender, "schnitzel.get.player", name, "" + User.getSchnitzel(UUIDFetcher.getUUID(name)));
+        if (imapi.getData().getUserTable().isUserExists(UUIDFetcher.getUUID(name))) {
+            imapi.getData().getDispatcher().send(sender, "schnitzel.get.player", name, "" + imapi.getData().getUserTable().getSchnitzel(UUIDFetcher.getUUID(name)));
         } else {
-            dsp.send(sender, "schnitzel.notexist");
+            imapi.getData().getDispatcher().send(sender, "schnitzel.notexist");
         }
     }
 
 
     private void add(CommandSender sender, String command) {
-        builder.append("\n" + Data.symbol + "§e" + dsp.get("schnitzel." + command + ".usage", sender) + "§8: §7 " + dsp.get("schnitzel." + command + ".description", sender) + ChatColor.RESET);
+        builder.append("\n" + imapi.getData().getSymbol() + "§e" + imapi.getData().getDispatcher().get("schnitzel." + command + ".usage", sender) + "§8: §7 " + imapi.getData().getDispatcher().get("schnitzel." + command + ".description", sender) + ChatColor.RESET);
     }
 }

@@ -1,64 +1,76 @@
 package de.Iclipse.IMAPI;
 
-import com.google.common.base.Joiner;
-import de.Iclipse.IMAPI.Database.Friend;
-import de.Iclipse.IMAPI.Database.*;
+//  ╔══════════════════════════════════════╗
+//  ║      ___       ___                   ║
+//  ║     /  /___   /  /(_)____ ____  __   ║
+//  ║    /  // __/ /  // // ) // ___// )\  ║                                  
+//  ║   /  // /__ /  // //  _/(__  )/ __/  ║                                                                         
+//  ║  /__/ \___//__//_//_/  /____/ \___/  ║                                              
+//  ╚══════════════════════════════════════╝
+
 import de.Iclipse.IMAPI.Functions.*;
-import de.Iclipse.IMAPI.Functions.NPC.NPCCommand;
-import de.Iclipse.IMAPI.Functions.NPC.ShowNPCs;
 import de.Iclipse.IMAPI.Functions.News.News;
+import de.Iclipse.IMAPI.Functions.Servers.Mode;
 import de.Iclipse.IMAPI.Functions.Servers.State;
 import de.Iclipse.IMAPI.Listener.BlockListener;
 import de.Iclipse.IMAPI.Listener.ChatListener;
 import de.Iclipse.IMAPI.Listener.JoinListener;
 import de.Iclipse.IMAPI.Listener.QuitListener;
-import de.Iclipse.IMAPI.Util.Command.BukkitCommand;
-import de.Iclipse.IMAPI.Util.Command.IMCommand;
-import de.Iclipse.IMAPI.Util.Dispatching.Dispatcher;
-import de.Iclipse.IMAPI.Util.UUIDFetcher;
 import de.Iclipse.IMAPI.Util.executor.ThreadExecutor;
 import de.Iclipse.IMAPI.Util.executor.types.BukkitExecutor;
 import de.Iclipse.IMAPI.Util.menu.PopupMenuAPI;
 import net.minecraft.server.v1_16_R3.PacketPlayOutScoreboardObjective;
 import org.bukkit.Bukkit;
-import org.bukkit.command.Command;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
-import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.util.*;
-
-import static de.Iclipse.IMAPI.Data.*;
-import static de.Iclipse.IMAPI.Functions.Scheduler.startScheduler;
-import static de.Iclipse.IMAPI.Functions.Scheduler.stopScheduler;
 import static de.Iclipse.IMAPI.Util.ScoreboardSign.setField;
 
-public class IMAPI extends JavaPlugin implements Listener {
+/**
+ * Created by Iclipse on 27.11.2020
+ */
+public class IMAPI extends JavaPlugin {
+
+    private static IMAPI instance;
+
+    public static IMAPI getInstance(){
+        return instance;
+    }
+
+    private Data data;
+
 
     @Override
     public void onLoad() {
-        ThreadExecutor.setExecutor(new BukkitExecutor());
+        ThreadExecutor.setExecutor(new BukkitExecutor(this));
+    }
+
+    @Override
+    public void onEnable() {
+        instance = this;
+        data = new Data(this);
+        data.createTables();
+        data.loadResourceBundles();
+        data.initCounters();
+        registerCommands();
+        registerListener();
+        if (!data.getServerTable().getServers().contains(getServerName())) {
+            data.getServerTable().createServer(getServerName(), Bukkit.getPort(), 100);
+        } else {
+            data.getServerTable().setState(getServerName(), State.Online);
+        }
+        this.getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
     }
 
     @Override
     public void onDisable() {
-        super.onDisable();
-        saveCounters();
-        ServerManager.setMap(getServerName(), null);
-        ServerManager.setState(getServerName(), State.Offline);
-        ServerManager.setPlayers(getServerName(), 0);
-        MySQL.close();
-        stopScheduler();
+        data.getServerTable().setMap(getServerName(), null);
+        data.getServerTable().setState(getServerName(), State.Offline);
+        data.getServerTable().setPlayers(getServerName(), 0);
+        data.saveCounters();
+        data.getMySQL().close();
+        data.getScheduler().stop();
         if (Bukkit.getOnlinePlayers().size() > 0) {
             for (Player p : Bukkit.getOnlinePlayers()) {
                 PacketPlayOutScoreboardObjective packet = new PacketPlayOutScoreboardObjective();
@@ -70,288 +82,37 @@ public class IMAPI extends JavaPlugin implements Listener {
         this.getServer().getMessenger().unregisterOutgoingPluginChannel(this, "BungeeCord");
     }
 
-    public void registerListener() {
-        Bukkit.getPluginManager().registerEvents(new JoinListener(), this);
+    public Data getData() {
+        return data;
+    }
+
+    public String getServerName() {
+        return getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getName();
+    }
+
+    private void registerListener(){
+        Bukkit.getPluginManager().registerEvents(new JoinListener(this), this);
         Bukkit.getPluginManager().registerEvents(new ChatListener(), this);
-        Bukkit.getPluginManager().registerEvents(new BlockListener(), this);
-        Bukkit.getPluginManager().registerEvents(new QuitListener(), this);
+        Bukkit.getPluginManager().registerEvents(new BlockListener(this), this);
+        Bukkit.getPluginManager().registerEvents(new QuitListener(this), this);
         Bukkit.getPluginManager().registerEvents(new PopupMenuAPI(), this);
-        Bukkit.getPluginManager().registerEvents(new ShowNPCs(), this);
-        Bukkit.getPluginManager().registerEvents(this, this);
     }
 
-    @Override
-    public void onEnable() {
-        //MySQL.connect();
-        loadResourceBundles();
-        registerListener();
-        registerCommands();
-        createTables();
-        initCounters();
-        startScheduler();
-        if (!ServerManager.getServers().contains(getServerName())) {
-            ServerManager.createServer(getServerName(), Bukkit.getPort(), 100);
-        } else {
-            ServerManager.setState(getServerName(), State.Online);
-        }
-        this.getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
-        if (Bukkit.getWorlds().size() > 0) {
-            tablist = new Tablist();
-        }
+    private void registerCommands(){
+        data.getCommandRegistration().register(new Language(this), this);
+        data.getCommandRegistration().register(new Help(this), this);
+        data.getCommandRegistration().register(new IMRestart(this), this);
+        data.getCommandRegistration().register(new Color(this), this);
+        data.getCommandRegistration().register(new News(this), this);
+        data.getCommandRegistration().register(new Gamemode(this), this);
+        data.getCommandRegistration().register(new Schnitzel(this), this);
+        data.getCommandRegistration().register(new Vanish(this), this);
+        data.getCommandRegistration().register(new Chatclear(), this);
+        data.getCommandRegistration().register(new Ping(this), this);
+        data.getCommandRegistration().register(new Serverstats(this), this);
+        data.getCommandRegistration().register(new Mode(this), this);
+        data.getCommandRegistration().register(new Playerinfo(this), this);
+        data.getCommandRegistration().register(new Onlinetop(this), this);
     }
-
-    @EventHandler
-    public void onWorldLoad(WorldLoadEvent e) {
-        if (tablist == null) {
-            tablist = new Tablist();
-        }
-    }
-
-    public static String getServerName() {
-        return Data.instance.getDataFolder().getAbsoluteFile().getParentFile().getParentFile().getName();
-    }
-
-    /*
-    public void registerCompleter(){
-            TabCompleter completer = new Completer();
-            System.out.println(completer.toString());
-            PluginCommand command = this.getCommand(cmd.name());
-            System.out.println(command.toString());
-            this.getCommand(cmd.name())
-                    .setTabCompleter(completer);
-    }
-    */
-
-    public void createTables() {
-        User.createUserTable();
-        de.Iclipse.IMAPI.Database.News.createNewsTable();
-        UserSettings.createUserSettingsTable();
-        Mode.createModeTable();
-        ServerManager.createServerTable();
-        Sign.createSignTable();
-        Friend.createFriendTable();
-    }
-
-    public void initCounters() {
-        blocks = new HashMap<>();
-        onlinetime = new HashMap<>();
-        if (Bukkit.getOnlinePlayers().size() > 0) {
-            Bukkit.getOnlinePlayers().forEach(entry -> {
-                onlinetime.put(entry, System.currentTimeMillis());
-            });
-            Bukkit.getOnlinePlayers().forEach(entry -> {
-                blocks.put(entry, User.getBlocksPlaced(UUIDFetcher.getUUID(entry.getName())));
-            });
-        }
-    }
-
-    public static void saveCounters() {
-        if (onlinetime.size() > 0) {
-            onlinetime.forEach((p, start) -> {
-                User.setOnlinetime(UUIDFetcher.getUUID(p.getName()), User.getOnlinetime(UUIDFetcher.getUUID(p.getName())) + (System.currentTimeMillis() - start));
-            });
-        }
-        if (blocks.size() > 0) {
-            blocks.forEach((p, b) -> {
-                User.setBlocksPlaced(UUIDFetcher.getUUID(p.getName()), b);
-            });
-        }
-    }
-
-    public void loadResourceBundles() {
-        HashMap<String, ResourceBundle> langs = new HashMap<>();
-        try {
-            langDE = ResourceBundle.getBundle("i18n.langDE");
-            langEN = ResourceBundle.getBundle("i18n.langEN");
-        } catch (MissingResourceException e) {
-            dispatching = false;
-        } catch (Exception e) {
-            System.out.println("Reload oder Bundle not found!");
-            dispatching = false;
-        }
-        langs.put("DE", langDE);
-        langs.put("EN", langEN);
-        dsp = new Dispatcher(this,
-                langs);
-    }
-
-    /*
-    public void registerChannels(){
-        this.getServer().getMessenger().registerOutgoingPluginChannel(this, "im:main");
-        pml = new ChannelListener(this);
-        this.getServer().getMessenger().registerIncomingPluginChannel(this, "im:main",  this);
-        this.getServer().getMessenger().getIncomingChannelRegistrations(this).forEach(entry ->{
-            System.out.println(entry.getChannel());
-            System.out.println(entry.getListener().getClass());
-        });
-    }
-
-
-    @Override
-    public synchronized void onPluginMessageReceived(String channel, Player player, byte[] message) {
-        System.out.println("Nachricht angekommen!");
-        DataInputStream in = new DataInputStream(new ByteArrayInputStream(message));
-        try {
-            String subchannel = in.readUTF();
-            System.out.println(subchannel);
-
-
-            if (subchannel.equals("GetServers")) {
-                String input = in.readUTF();
-                System.out.println(input);
-                ChannelListener.servers = (ArrayList<String>) Arrays.asList(input.split(", "));
-
-                notifyAll();
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-
-    }
-     */
-
-    public void registerCommands() {
-        commands = new HashMap<>();
-        register(new Language(), this);
-        register(new Help(), this);
-        register(new IMRestart(), this);
-        register(new Color(), this);
-        register(new News(), this);
-        register(new Gamemode(), this);
-        register(new Schnitzel(), this);
-        register(new Vanish(), this);
-        register(new Chatclear(), this);
-        register(new Ping(), this);
-        register(new NPCCommand(), this);
-        register(new Serverstats(), this);
-        register(new de.Iclipse.IMAPI.Functions.Servers.Mode(), this);
-        register(new Playerinfo(), this);
-        register(new Onlinetop(), this);
-        //register(new Friend(), this);
-    }
-
-
-    public static void register(Class functionClass, JavaPlugin plugin) {
-        try {
-            register(functionClass, functionClass.newInstance(), plugin);
-        } catch (InstantiationException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
-    }
-
-
-    /**
-     * Registriert Listener und Commands aus einer Klasse für ein Plugin
-     *
-     * @param function Object der Klasse welche registriert werden soll
-     * @param plugin   Plugin für welches die Klasse registriert wird
-     */
-    public static void register(Object function, JavaPlugin plugin) {
-        register(function.getClass(), function, plugin);
-    }
-
-    /**
-     * Registriert Listener und Commands aus einer Klasse für ein Plugin
-     *
-     * @param functionClass Klasse welche registriert werden soll
-     * @param function      Object der Klasse welche registriert werden soll
-     * @param plugin        Plugin für welches die Klasse registriert wird
-     */
-    public static void register(Class functionClass, Object function, JavaPlugin plugin) {
-        Method[] methods = functionClass.getDeclaredMethods();
-        for (Method method : methods) {
-            if (method.isAnnotationPresent(IMCommand.class))
-                registerCommand(function, method, plugin);
-        }
-
-        if (function instanceof Listener) {
-            Bukkit.getPluginManager().registerEvents((Listener) function, plugin);
-        }
-    }
-
-    private static Map<String, Command> commandMap = new HashMap<>();
-    private static List<Object[]> unavailableSubcommands = new ArrayList<>();
-
-    private static void registerCommand(Object function, Method method, JavaPlugin plugin) {
-        IMCommand cmd = method.getAnnotation(IMCommand.class);
-
-        if (cmd.parent().length == 0) {
-            commands.put(cmd, plugin.getName());
-            BukkitCommand tBukkitCommand = new BukkitCommand(plugin, function, method, cmd);
-            tBukkitCommand.register();
-            commandMap.put(tBukkitCommand.getName(), tBukkitCommand);
-
-
-            for (Object[] unavailableSubcommand : unavailableSubcommands) {
-                Method oldMethod = (Method) unavailableSubcommand[1];
-                IMCommand old = oldMethod.getAnnotation(IMCommand.class);
-                if (old.parent()[0].equalsIgnoreCase(cmd.name()))
-                    registerCommand(unavailableSubcommand[0], oldMethod, plugin);
-            }
-
-        } else {
-            Command pluginCommand = commandMap.get(cmd.parent()[0]);
-            if (pluginCommand == null) {
-                unavailableSubcommands.add(new Object[]{function, method});
-                Joiner.on(" ").join(cmd.parent() + " " + cmd.name(), cmd.parent()[0]);
-            } else {
-                if (pluginCommand instanceof BukkitCommand) {
-                    ((BukkitCommand) pluginCommand).getProcessor().addSubCommand(cmd, function, method);
-                } else {
-                    Joiner.on(" ").join(cmd.parent() + " " + cmd.name(), cmd.parent()[0]);
-                }
-            }
-        }
-    }
-
-    public static void copyFilesInDirectory(File from, File to) throws IOException {
-        if (!to.exists()) {
-            to.mkdirs();
-        }
-        for (File file : from.listFiles()) {
-            if (file.isDirectory()) {
-                copyFilesInDirectory(file, new File(to.getAbsolutePath() + "/" + file.getName()));
-            } else {
-                File n = new File(to.getAbsolutePath() + "/" + file.getName());
-                Files.copy(file.toPath(), n.toPath(), StandardCopyOption.REPLACE_EXISTING);
-            }
-        }
-    }
-
-    public static void deleteFile(File f) {
-        if (f.isDirectory()) {
-            for (int i = 0; i < f.listFiles().length; i++) {
-                deleteFile(f.listFiles()[i]);
-            }
-        }
-        f.delete();
-    }
-
-    public static ArrayList getPage(ArrayList list, int anzPerPage, int page) {
-        ArrayList pageList = new ArrayList<>();
-        for (int i = page * anzPerPage; i < (page + 1) * anzPerPage && i < list.size(); i++) {
-            pageList.add(list.get(i));
-        }
-        return pageList;
-    }
-
-    public static boolean hasPage(ArrayList list, int anzPerPage, int page) {
-        if ((double) list.size() / (double) anzPerPage > page && page >= 0) {
-            return true;
-        }
-        return false;
-    }
-
-    public static int maxPage(ArrayList list, int anzPerPage) {
-        return (int) Math.ceil((double) list.size() / (double) anzPerPage);
-    }
-
-    public static String monthBefore() {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        return sdf.format(Date.from(Instant.now().minusSeconds(30 * 24 * 60 * 60)));
-    }
-
 
 }

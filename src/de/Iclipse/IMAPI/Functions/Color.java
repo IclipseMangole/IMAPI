@@ -2,6 +2,7 @@ package de.Iclipse.IMAPI.Functions;
 
 
 import de.Iclipse.IMAPI.Data;
+import de.Iclipse.IMAPI.IMAPI;
 import de.Iclipse.IMAPI.Util.Command.IMCommand;
 import org.bukkit.command.CommandSender;
 
@@ -10,6 +11,12 @@ import org.bukkit.command.CommandSender;
  * ~Yannick on 08.06.2019 at 21:17 o´ clock
  */
 public class Color {
+
+    private final IMAPI imapi;
+
+    public Color(IMAPI imapi){
+        this.imapi = imapi;
+    }
 
     @IMCommand(
             name = "Color",
@@ -22,7 +29,7 @@ public class Color {
 
     public void execute(CommandSender sender) {
         StringBuilder builder = new StringBuilder();
-        builder.append(Data.prefix + "Colors/Farben:\n");
+        builder.append(imapi.getData().getPrefix()).append("Colors/Farben:\n");
         builder.append("0 -> §0Black§7           1 -> §1Dark Blue§7\n");
         builder.append("2 -> §2Dark Green§7      3 -> §3Dark Aqua§7\n");
         builder.append("4 -> §4Dark Red§7        5 -> §5Dark Purple§7\n");

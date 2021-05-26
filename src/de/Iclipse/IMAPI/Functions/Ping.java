@@ -1,12 +1,18 @@
 package de.Iclipse.IMAPI.Functions;
 
+import de.Iclipse.IMAPI.IMAPI;
 import de.Iclipse.IMAPI.Util.Command.IMCommand;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
-import static de.Iclipse.IMAPI.Data.dsp;
-
 public class Ping {
+
+    private final IMAPI imapi;
+
+    public Ping(IMAPI imapi) {
+        this.imapi = imapi;
+    }
+
     @IMCommand(
             name = "ping",
             maxArgs = 0,
@@ -16,6 +22,6 @@ public class Ping {
             permissions = "im.cmd.ping"
     )
     public void ping(Player p) {
-        dsp.send(p, "ping.message", ((CraftPlayer) p).getHandle().ping + "");
+        imapi.getData().getDispatcher().send(p, "ping.message", ((CraftPlayer) p).getHandle().ping + "");
     }
 }

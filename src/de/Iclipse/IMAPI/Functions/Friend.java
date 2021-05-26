@@ -1,11 +1,8 @@
 package de.Iclipse.IMAPI.Functions;
 
-import de.Iclipse.IMAPI.Data;
-import de.Iclipse.IMAPI.Database.User;
-import de.Iclipse.IMAPI.Database.UserSettings;
 import de.Iclipse.IMAPI.IMAPI;
 import de.Iclipse.IMAPI.Util.Command.IMCommand;
-import de.Iclipse.IMAPI.Util.UUIDFetcher;
+import de.Iclipse.IMAPI.Util.PageUtils;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -18,10 +15,16 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.UUID;
 
-import static de.Iclipse.IMAPI.Data.dsp;
+import static de.Iclipse.IMAPI.Util.UUIDFetcher.*;
+
 
 public class Friend {
     private StringBuilder builder;
+    private final IMAPI imapi;
+    
+    public Friend(IMAPI imapi){
+        this.imapi = imapi;
+    }
 
     @IMCommand(
             name = "friend",
@@ -32,7 +35,7 @@ public class Friend {
     )
     public void execute(Player p) {
         builder = new StringBuilder();
-        builder.append(Data.prefix + "§7§lHilfsübersicht:§r\n");
+        builder.append(imapi.getData().getPrefix()).append("§7§lHilfsübersicht:§r\n");
         addToOverview(p, "list");
         addToOverview(p, "add");
         addToOverview(p, "remove");
@@ -58,29 +61,29 @@ public class Friend {
             try {
                 page = Integer.parseInt(pageString);
             } catch (NumberFormatException e) {
-                dsp.send(p, "friend.list.usage");
+                imapi.getData().getDispatcher().send(p, "friend.list.usage");
                 return;
             }
             if (page > 0) {
                 page--;
             } else {
-                dsp.send(p, "friend.list.usage");
+                imapi.getData().getDispatcher().send(p, "friend.list.usage");
             }
         }
-        ArrayList<UUID> friends = de.Iclipse.IMAPI.Database.Friend.getFriendsSorted(UUIDFetcher.getUUID(p.getName()), UserSettings.getInt(UUIDFetcher.getUUID(p.getName()), "friend_sort"));
-        ArrayList<UUID> shown = IMAPI.getPage(friends, 8, page);
+        ArrayList<UUID> friends = imapi.getData().getFriendTable().getFriendsSorted(getUUID(p.getName()), imapi.getData().getUserSettingsTable().getInt(getUUID(p.getName()), "friend_sort"));
+        ArrayList<UUID> shown = PageUtils.getPage(friends, 8, page);
         if (shown.size() > 0) {
-            dsp.send(p, "friend.list.header", page + 1 + "", friends.size() / 8 + "");
+            imapi.getData().getDispatcher().send(p, "friend.list.header", page + 1 + "", friends.size() / 8 + "");
             shown.forEach(user -> {
-                if (User.isOnline(user)) {
-                    dsp.send(p, "friend.list.format.online", Data.tablist.getPrefix(UUIDFetcher.getUUID(p.getName())) + UUIDFetcher.getName(user), User.getServer(user));
+                if (imapi.getData().getUserTable().isOnline(user)) {
+                    imapi.getData().getDispatcher().send(p, "friend.list.format.online", imapi.getData().getTablist().getPrefix(getUUID(p.getName())) + getName(user), imapi.getData().getUserTable().getServer(user));
                 } else {
-                    int days = (int) (System.currentTimeMillis() - User.getLastTime(user)) / (1000 * 60 * 60 * 24);
-                    dsp.send(p, "friend.list.format.offline", UUIDFetcher.getName(user) + ": §cOffline", days + "");
+                    int days = (int) (System.currentTimeMillis() - imapi.getData().getUserTable().getLastTime(user)) / (1000 * 60 * 60 * 24);
+                    imapi.getData().getDispatcher().send(p, "friend.list.format.offline", getName(user) + ": §cOffline", days + "");
                 }
             });
         } else {
-            dsp.send(p, "friend.list.empty");
+            imapi.getData().getDispatcher().send(p, "friend.list.empty");
         }
     }
 
@@ -95,47 +98,47 @@ public class Friend {
             permissions = "im.cmd.friend.add"
     )
     public void add(Player p, String friend) {
-        UUID uuid = UUIDFetcher.getUUID(p.getName());
+        UUID uuid = getUUID(p.getName());
         UUID frienduuid;
         try {
-            frienduuid = UUIDFetcher.getUUID(friend);
+            frienduuid = getUUID(friend);
         } catch (Exception e) {
-            dsp.send(p, "friend.add.notExisting");
+            imapi.getData().getDispatcher().send(p, "friend.add.notExisting");
             return;
         }
-        if (User.isUserExists(frienduuid)) {
-            if (!de.Iclipse.IMAPI.Database.Friend.isRequestedBy(frienduuid, uuid)) {
-                if (!de.Iclipse.IMAPI.Database.Friend.areFriends(uuid, frienduuid)) {
-                    if (!de.Iclipse.IMAPI.Database.Friend.isRequestedBy(uuid, frienduuid)) {
-                        de.Iclipse.IMAPI.Database.Friend.createRequest(uuid, frienduuid);
-                        if (User.isOnline(frienduuid)) {
-                            sendBungeeMessage(p, UUIDFetcher.getName(frienduuid), dsp.get("friend.add.request", dsp.getLanguages().get(User.getLanguage(frienduuid)), true, p.getDisplayName()));
-                            TextComponent base = new TextComponent(dsp.get("friend.add.request.click", dsp.getLanguages().get(User.getLanguage(frienduuid)), true));
-                            TextComponent accept = new TextComponent(dsp.get("friend.add.request.click.accept", dsp.getLanguages().get(User.getLanguage(frienduuid))));
+        if (imapi.getData().getUserTable().isUserExists(frienduuid)) {
+            if (!imapi.getData().getFriendTable().isRequestedBy(frienduuid, uuid)) {
+                if (!imapi.getData().getFriendTable().areFriends(uuid, frienduuid)) {
+                    if (!imapi.getData().getFriendTable().isRequestedBy(uuid, frienduuid)) {
+                        imapi.getData().getFriendTable().createRequest(uuid, frienduuid);
+                        if (imapi.getData().getUserTable().isOnline(frienduuid)) {
+                            sendBungeeMessage(p, getName(frienduuid), imapi.getData().getDispatcher().get("friend.add.request", imapi.getData().getDispatcher().getLanguages().get(imapi.getData().getUserTable().getLanguage(frienduuid)), true, p.getDisplayName()));
+                            TextComponent base = new TextComponent(imapi.getData().getDispatcher().get("friend.add.request.click", imapi.getData().getDispatcher().getLanguages().get(imapi.getData().getUserTable().getLanguage(frienduuid)), true));
+                            TextComponent accept = new TextComponent(imapi.getData().getDispatcher().get("friend.add.request.click.accept", imapi.getData().getDispatcher().getLanguages().get(imapi.getData().getUserTable().getLanguage(frienduuid))));
                             accept.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/friend add " + p.getName()));
                             base.addExtra(accept);
-                            TextComponent deny = new TextComponent(dsp.get("friend.add.request.click.deny", dsp.getLanguages().get(User.getLanguage(frienduuid))));
+                            TextComponent deny = new TextComponent(imapi.getData().getDispatcher().get("friend.add.request.click.deny", imapi.getData().getDispatcher().getLanguages().get(imapi.getData().getUserTable().getLanguage(frienduuid))));
                             deny.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/friend remove " + p.getName()));
                             base.addExtra(deny);
-                            sendBungeeMessage(p, UUIDFetcher.getName(frienduuid), base.getText());
+                            sendBungeeMessage(p, getName(frienduuid), base.getText());
                         }
                     } else {
-                        de.Iclipse.IMAPI.Database.Friend.accept(uuid, frienduuid);
-                        if (User.isOnline(frienduuid)) {
-                            dsp.send(p, "friend.add.accepted", Data.tablist.getPrefix(UUIDFetcher.getUUID(p.getName())) + UUIDFetcher.getName(frienduuid));
-                            dsp.get("friend.add.accepted", dsp.getLanguages().get(User.getLanguage(frienduuid)), true, p.getDisplayName());
+                        imapi.getData().getFriendTable().accept(uuid, frienduuid);
+                        if (imapi.getData().getUserTable().isOnline(frienduuid)) {
+                            imapi.getData().getDispatcher().send(p, "friend.add.accepted", imapi.getData().getTablist().getPrefix(getUUID(p.getName())) + getName(frienduuid));
+                            imapi.getData().getDispatcher().get("friend.add.accepted", imapi.getData().getDispatcher().getLanguages().get(imapi.getData().getUserTable().getLanguage(frienduuid)), true, p.getDisplayName());
                         } else {
-                            dsp.send(p, "friend.add.accepted", "§e" + UUIDFetcher.getName(frienduuid));
+                            imapi.getData().getDispatcher().send(p, "friend.add.accepted", "§e" + getName(frienduuid));
                         }
                     }
                 } else {
-                    p.sendMessage(dsp.get("friend.add.alreadyFriends", p));
+                    p.sendMessage(imapi.getData().getDispatcher().get("friend.add.alreadyFriends", p));
                 }
             } else {
-                p.sendMessage(dsp.get("friend.add.alreadyRequested", p));
+                p.sendMessage(imapi.getData().getDispatcher().get("friend.add.alreadyRequested", p));
             }
         } else {
-            p.sendMessage(dsp.get("friend.add.notExisting", p));
+            p.sendMessage(imapi.getData().getDispatcher().get("friend.add.notExisting", p));
         }
     }
 
@@ -150,20 +153,20 @@ public class Friend {
             permissions = "im.cmd.friend.remove"
     )
     public void remove(Player p, String friend) {
-        UUID uuid = UUIDFetcher.getUUID(p.getName());
+        UUID uuid = getUUID(p.getName());
         UUID frienduuid;
         try {
-            frienduuid = UUIDFetcher.getUUID(friend);
+            frienduuid = getUUID(friend);
         } catch (Exception e) {
-            dsp.send(p, "friend.remove.notExisting");
+            imapi.getData().getDispatcher().send(p, "friend.remove.notExisting");
             return;
         }
 
-        if (de.Iclipse.IMAPI.Database.Friend.areFriends(uuid, frienduuid)) {
-            de.Iclipse.IMAPI.Database.Friend.deleteFriend(uuid, frienduuid);
-            dsp.send(p, "friend.remove.successfull");
+        if (imapi.getData().getFriendTable().areFriends(uuid, frienduuid)) {
+            imapi.getData().getFriendTable().deleteFriend(uuid, frienduuid);
+            imapi.getData().getDispatcher().send(p, "friend.remove.successfull");
         } else {
-            dsp.send(p, "friend.remove.noFriend");
+            imapi.getData().getDispatcher().send(p, "friend.remove.noFriend");
         }
     }
 
@@ -180,51 +183,51 @@ public class Friend {
     public void jump(Player p, String name) {
         UUID friend;
         try {
-            friend = UUIDFetcher.getUUID(name);
+            friend = getUUID(name);
         } catch (Exception e) {
-            dsp.send(p, "friend.jump.noFriend");
+            imapi.getData().getDispatcher().send(p, "friend.jump.noFriend");
             return;
         }
         if (friend != null) {
-            if (de.Iclipse.IMAPI.Database.Friend.areFriends(UUIDFetcher.getUUID(p.getName()), friend)) {
-                if (!User.getServer(friend).equals(IMAPI.getServerName())) {
+            if (imapi.getData().getFriendTable().areFriends(getUUID(p.getName()), friend)) {
+                if (!imapi.getData().getUserTable().getServer(friend).equals(imapi.getServerName())) {
                     ByteArrayOutputStream b = new ByteArrayOutputStream();
                     DataOutputStream out = new DataOutputStream(b);
 
 
                     try {
                         out.writeUTF("Connect");
-                        out.writeUTF(User.getServer(friend));
+                        out.writeUTF(imapi.getData().getUserTable().getServer(friend));
                     } catch (IOException ioException) {
                         ioException.printStackTrace();
                     }
 
 
-                    p.sendPluginMessage(Data.instance, "BungeeCord", b.toByteArray());
-                    dsp.send(p, "friend.jump.successfull");
+                    p.sendPluginMessage(imapi, "BungeeCord", b.toByteArray());
+                    imapi.getData().getDispatcher().send(p, "friend.jump.successfull");
                 } else {
-                    dsp.send(p, "friend.jump.already");
+                    imapi.getData().getDispatcher().send(p, "friend.jump.already");
                 }
             } else {
-                dsp.send(p, "friend.jump.noFriend");
+                imapi.getData().getDispatcher().send(p, "friend.jump.noFriend");
             }
         } else {
             try {
-                UUID uuid = UUIDFetcher.getUUID(name);
-                if (de.Iclipse.IMAPI.Database.Friend.areFriends(UUIDFetcher.getUUID(p.getName()), uuid)) {
-                    dsp.send(p, "friend.jump.notOnline");
+                UUID uuid = getUUID(name);
+                if (imapi.getData().getFriendTable().areFriends(getUUID(p.getName()), uuid)) {
+                    imapi.getData().getDispatcher().send(p, "friend.jump.notOnline");
                 } else {
-                    dsp.send(p, "friend.jump.noFriend");
+                    imapi.getData().getDispatcher().send(p, "friend.jump.noFriend");
                 }
             } catch (Exception e) {
-                dsp.send(p, "friend.jump.notExisting");
+                imapi.getData().getDispatcher().send(p, "friend.jump.notExisting");
             }
         }
     }
 
 
     private void addToOverview(CommandSender sender, String command) {
-        builder.append("\n" + Data.symbol + "§e" + dsp.get("friend." + command + ".usage", sender) + "§8: §7 " + dsp.get("friend." + command + ".description", sender) + ChatColor.RESET);
+        builder.append("\n").append(imapi.getData().getSymbol()).append("§e").append(imapi.getData().getDispatcher().get("friend." + command + ".usage", sender)).append("§8: §7 ").append(imapi.getData().getDispatcher().get("friend." + command + ".description", sender)).append(ChatColor.RESET);
     }
 
     private void sendBungeeMessage(Player p, String receiver, String message) {
@@ -234,7 +237,7 @@ public class Friend {
             out.writeUTF("Message");
             out.writeUTF(receiver);
             out.writeUTF(message);
-            p.sendPluginMessage(Data.instance, "BungeeCord", b.toByteArray());
+            p.sendPluginMessage(imapi, "BungeeCord", b.toByteArray());
         } catch (IOException e) {
             e.printStackTrace();
         }

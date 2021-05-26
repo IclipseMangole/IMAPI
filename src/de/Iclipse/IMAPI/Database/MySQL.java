@@ -1,6 +1,7 @@
 package de.Iclipse.IMAPI.Database;
 
 import de.Iclipse.IMAPI.Data;
+import de.Iclipse.IMAPI.IMAPI;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -15,23 +16,38 @@ import java.sql.*;
  */
 public class MySQL {
 
-    public static File getMySQLFile() {
-        return new File("plugins/" + Data.instance.getDescription().getName(), "mysql.yml");
+    private IMAPI imapi;
+
+    private String HOST;
+    private String DATABASE;
+    private String USER;
+    private String PASSWORD;
+    private String prefix;
+
+    private Connection conn;
+
+    public MySQL(IMAPI imapi) {
+        this.imapi = imapi;
+        connect();
     }
 
-    public static FileConfiguration getMySQLFileConfiguration() {
+    public File getMySQLFile() {
+        return new File("plugins/" + imapi.getDescription().getName(), "mysql.yml");
+    }
+
+    public FileConfiguration getMySQLFileConfiguration() {
         return YamlConfiguration.loadConfiguration(getMySQLFile());
     }
 
-    public static void setStandardMySQL() {
+    public void setStandardMySQL() {
         FileConfiguration cfg = getMySQLFileConfiguration();
         cfg.options().copyDefaults(true);
         cfg.addDefault("host", "localhost");
         cfg.addDefault("database", "IclipseMangole");
-        cfg.addDefault("user", "root");
+        cfg.addDefault("user", "mysql");
         cfg.addDefault("password", "dshchangE762");
 
-        cfg.addDefault("prefix", "&5" + Data.instance.getDescription().getName() + " &3MySQL &8&7");
+        cfg.addDefault("prefix", "&5" + imapi.getDescription().getName() + " &3MySQL &8&7");
         try {
             cfg.save(getMySQLFile());
         } catch (IOException e) {
@@ -39,7 +55,7 @@ public class MySQL {
         }
     }
 
-    public static void readMySQL() {
+    public void readMySQL() {
         FileConfiguration cfg = getMySQLFileConfiguration();
         HOST = cfg.getString("host");
         DATABASE = cfg.getString("database");
@@ -49,20 +65,7 @@ public class MySQL {
     }
 
 
-    private static String HOST;
-    private static String DATABASE;
-    private static String USER;
-    private static String PASSWORD;
-    private static String prefix;
-
-    public static Connection conn;
-
-    public MySQL(String database) {
-        this.DATABASE = database;
-        connect();
-    }
-
-    public static void connect() {
+    public void connect() {
         setStandardMySQL();
         readMySQL();
         try {
@@ -73,7 +76,7 @@ public class MySQL {
         }
     }
 
-    public static void close() {
+    public void close() {
         try {
             if (!conn.isClosed()) {
                 if (conn != null) {
@@ -87,7 +90,7 @@ public class MySQL {
         }
     }
 
-    public static void update(String querry) {
+    public void update(String querry) {
         Statement st;
         try {
             checkConnection();
@@ -101,7 +104,7 @@ public class MySQL {
         }
     }
 
-    public static ResultSet querry(String querry) {
+    public ResultSet querry(String querry) {
         ResultSet rs = null;
 
         Statement st;
@@ -116,7 +119,7 @@ public class MySQL {
         return rs;
     }
 
-    public static void checkConnection() throws SQLException {
+    public void checkConnection() throws SQLException {
         if (conn == null || conn.isClosed()) {
             connect();
         }

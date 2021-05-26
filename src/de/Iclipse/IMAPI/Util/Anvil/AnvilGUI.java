@@ -84,7 +84,7 @@ public class AnvilGUI {
      * @param insert     What to have the text already set to
      * @param biFunction A {@link BiFunction} that is called when the player clicks the {@link Slot#OUTPUT} slot
      * @throws NullPointerException If the server version isn't supported
-     * @deprecated As of version 1.2.3, use {@link AnvilGUI.Builder}
+     * @deprecated As of version 1.2.3, use {@link Builder}
      */
     @Deprecated
     public AnvilGUI(Plugin plugin, Player holder, String insert, BiFunction<Player, String, String> biFunction) {

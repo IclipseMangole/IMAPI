@@ -1,6 +1,7 @@
 package de.Iclipse.IMAPI.Functions;
 
 import de.Iclipse.IMAPI.Data;
+import de.Iclipse.IMAPI.IMAPI;
 import de.Iclipse.IMAPI.Util.Command.IMCommand;
 import org.bukkit.command.CommandSender;
 
@@ -10,6 +11,13 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
 public class Serverstats {
+
+    private final IMAPI imapi;
+
+    public Serverstats(IMAPI imapi) {
+        this.imapi = imapi;
+    }
+
     @IMCommand(
             name = "serverstats",
             minArgs = 0,
@@ -18,7 +26,7 @@ public class Serverstats {
             usage = "serverstats.usage",
             permissions = "im.cmd.serverstats"
     )
-    public void serversetats(CommandSender sender) {
+    public void serverstats(CommandSender sender) {
         OperatingSystemMXBean operatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean();
         for (Method method : operatingSystemMXBean.getClass().getDeclaredMethods()) {
             method.setAccessible(true);
@@ -30,7 +38,7 @@ public class Serverstats {
                 } catch (Exception e) {
                     value = e;
                 } // try
-                sender.sendMessage(Data.prefix + method.getName() + " = " + value);
+                sender.sendMessage(imapi.getData().getPrefix() + method.getName() + " = " + value);
             } // if
         } // for
     }

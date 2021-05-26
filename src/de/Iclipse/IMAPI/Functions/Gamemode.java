@@ -1,12 +1,12 @@
 package de.Iclipse.IMAPI.Functions;
 
+import de.Iclipse.IMAPI.IMAPI;
 import de.Iclipse.IMAPI.Util.Command.IMCommand;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import static de.Iclipse.IMAPI.Data.dsp;
 
 
 /**
@@ -14,6 +14,13 @@ import static de.Iclipse.IMAPI.Data.dsp;
  * ~Yannick on 13.06.2019 at 20:41 o´ clock
  */
 public class Gamemode {
+    
+    private final IMAPI imapi;
+
+    public Gamemode(IMAPI imapi) {
+        this.imapi = imapi;
+    }
+
     @IMCommand(
             name = "gamemode",
             aliases = {"gm"},
@@ -33,9 +40,9 @@ public class Gamemode {
                 } else {
                     ((Player) sender).setGameMode(GameMode.CREATIVE);
                 }
-                dsp.send(sender, "gamemode.changed.you", ((Player) sender).getGameMode().toString());
+                imapi.getData().getDispatcher().send(sender, "gamemode.changed.you", ((Player) sender).getGameMode().toString());
             } else {
-                dsp.send(sender, "cmd.noconsole");
+                imapi.getData().getDispatcher().send(sender, "cmd.noconsole");
             }
         } else {
             if (arg1 == null) {
@@ -47,8 +54,8 @@ public class Gamemode {
                         } else {
                             entry.setGameMode(GameMode.CREATIVE);
                         }
-                        dsp.send(entry, "gamemode.changed.you", entry.getGameMode().toString());
-                        dsp.send(sender, "gamemode.changed.other", entry.getDisplayName(), entry.getGameMode().toString());
+                        imapi.getData().getDispatcher().send(entry, "gamemode.changed.you", entry.getGameMode().toString());
+                        imapi.getData().getDispatcher().send(sender, "gamemode.changed.other", entry.getDisplayName(), entry.getGameMode().toString());
                         player[0] = true;
                     }
                 });
@@ -63,12 +70,12 @@ public class Gamemode {
                         } else if (arg0.equalsIgnoreCase("3") || arg0.equalsIgnoreCase("spectator")) {
                             ((Player) sender).setGameMode(GameMode.SPECTATOR);
                         } else {
-                            dsp.send(sender, "gamemode.notexists.mode", arg0);
+                            imapi.getData().getDispatcher().send(sender, "gamemode.notexists.mode", arg0);
                             return;
                         }
-                        dsp.send(sender, "gamemode.changed.you", ((Player) sender).getGameMode().toString());
+                        imapi.getData().getDispatcher().send(sender, "gamemode.changed.you", ((Player) sender).getGameMode().toString());
                     } else {
-                        dsp.send(sender, "cmd.noconsole");
+                        imapi.getData().getDispatcher().send(sender, "cmd.noconsole");
                     }
                 }
             } else {
@@ -84,11 +91,11 @@ public class Gamemode {
                         } else if (arg0.equalsIgnoreCase("3") || arg0.equalsIgnoreCase("spectator")) {
                             entry.setGameMode(GameMode.SPECTATOR);
                         } else {
-                            dsp.send(sender, "gamemode.notexists.mode", arg0);
+                            imapi.getData().getDispatcher().send(sender, "gamemode.notexists.mode", arg0);
                             return;
                         }
-                        dsp.send(Bukkit.getPlayer(arg1), "gamemode.changed.you", Bukkit.getPlayer(arg1).getGameMode().toString());
-                        dsp.send(sender, "gamemode.changed.other", Bukkit.getPlayer(arg1).getDisplayName(), Bukkit.getPlayer(arg1).getGameMode().toString());
+                        imapi.getData().getDispatcher().send(Bukkit.getPlayer(arg1), "gamemode.changed.you", Bukkit.getPlayer(arg1).getGameMode().toString());
+                        imapi.getData().getDispatcher().send(sender, "gamemode.changed.other", Bukkit.getPlayer(arg1).getDisplayName(), Bukkit.getPlayer(arg1).getGameMode().toString());
                         player[0] = true;
                     } else if (entry.getName().equalsIgnoreCase(arg0)) {
                         if (arg1.equalsIgnoreCase("0") || arg1.equalsIgnoreCase("survival")) {
@@ -100,16 +107,16 @@ public class Gamemode {
                         } else if (arg1.equalsIgnoreCase("3") || arg1.equalsIgnoreCase("spectator")) {
                             entry.setGameMode(GameMode.SPECTATOR);
                         } else {
-                            dsp.send(sender, "gamemode.notexists.mode", arg1);
+                            imapi.getData().getDispatcher().send(sender, "gamemode.notexists.mode", arg1);
                             return;
                         }
-                        dsp.send(Bukkit.getPlayer(arg0), "gamemode.changed.you", Bukkit.getPlayer(arg0).getGameMode().toString());
-                        dsp.send(sender, "gamemode.changed.other", Bukkit.getPlayer(arg0).getDisplayName(), Bukkit.getPlayer(arg0).getGameMode().toString());
+                        imapi.getData().getDispatcher().send(Bukkit.getPlayer(arg0), "gamemode.changed.you", Bukkit.getPlayer(arg0).getGameMode().toString());
+                        imapi.getData().getDispatcher().send(sender, "gamemode.changed.other", Bukkit.getPlayer(arg0).getDisplayName(), Bukkit.getPlayer(arg0).getGameMode().toString());
                         player[0] = true;
                     }
                 });
                 if (player[0] = false) {
-                    dsp.send(sender, "gamemode.notexists.player", arg0 + "/" + arg1);
+                    imapi.getData().getDispatcher().send(sender, "gamemode.notexists.player", arg0 + "/" + arg1);
                     return;
                 }
             }

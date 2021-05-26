@@ -1,5 +1,6 @@
 package de.Iclipse.IMAPI.Functions.News;
 
+import de.Iclipse.IMAPI.IMAPI;
 import de.Iclipse.IMAPI.Util.Command.IMCommand;
 import de.Iclipse.IMAPI.Util.UUIDFetcher;
 import io.netty.buffer.ByteBuf;
@@ -20,11 +21,14 @@ import org.bukkit.inventory.meta.BookMeta;
 import java.util.Arrays;
 import java.util.HashMap;
 
-import static de.Iclipse.IMAPI.Data.dsp;
-
 public class News implements Listener {
 
-    private HashMap<Player, ItemStack> writers = new HashMap<>();
+    private final HashMap<Player, ItemStack> writers = new HashMap<>();
+    private final IMAPI imapi;
+    
+    public News(IMAPI imapi){
+        this.imapi = imapi;
+    }
 
     @IMCommand(
             name = "news",
@@ -36,7 +40,7 @@ public class News implements Listener {
             noConsole = true
     )
     public void news(Player p) {
-        new NewsMenu(p);
+        new NewsMenu(p, imapi);
     }
 
 
@@ -55,7 +59,7 @@ public class News implements Listener {
             writers.put(p, p.getInventory().getItemInMainHand());
             p.getInventory().setItemInMainHand(book(p));
         }else{
-            dsp.send(p, "news.alreadywriting");
+            imapi.getData().getDispatcher().send(p, "news.alreadywriting");
         }
     }
 
@@ -71,11 +75,11 @@ public class News implements Listener {
 
     )
     public void delete(Player p, String title) {
-        if (de.Iclipse.IMAPI.Database.News.isTitleExists(title)) {
-            de.Iclipse.IMAPI.Database.News.deleteNews(de.Iclipse.IMAPI.Database.News.getID(title));
-            dsp.send(p, "news.delete.successfull");
+        if (imapi.getData().getNewsTable().isTitleExists(title)) {
+            imapi.getData().getNewsTable().deleteNews(imapi.getData().getNewsTable().getID(title));
+            imapi.getData().getDispatcher().send(p, "news.delete.successfull");
         } else {
-            dsp.send(p, "news.delete.notfound");
+            imapi.getData().getDispatcher().send(p, "news.delete.notfound");
         }
     }
 
@@ -87,15 +91,15 @@ public class News implements Listener {
             BookMeta meta = e.getNewBookMeta();
             if(meta.getTitle().contains("/")) {
                 if(meta.getPageCount() == 2) {
-                    de.Iclipse.IMAPI.Database.News.createNews(meta.getTitle().split("/")[0], meta.getTitle().split("/")[1], meta.getPage(1), meta.getPage(2), UUIDFetcher.getUUID(p.getName()));
+                    imapi.getData().getNewsTable().createNews(meta.getTitle().split("/")[0], meta.getTitle().split("/")[1], meta.getPage(1), meta.getPage(2), UUIDFetcher.getUUID(p.getName()));
                     p.getInventory().setItemInMainHand(writers.get(p));
                     writers.remove(p);
-                    dsp.send(p, "news.write.successfull");
+                    imapi.getData().getDispatcher().send(p, "news.write.successfull");
                 }else{
-                    dsp.send(p, "news.textwrong");
+                    imapi.getData().getDispatcher().send(p, "news.textwrong");
                 }
             }else{
-                dsp.send(p, "news.titlewrong");
+                imapi.getData().getDispatcher().send(p, "news.titlewrong");
             }
         }
         e.setCancelled(true);
@@ -106,7 +110,7 @@ public class News implements Listener {
         if(e.getEntity().getItemStack().getType().equals(Material.WRITABLE_BOOK)){
             writers.forEach((p, item)->{
                 if(e.getEntity().getItemStack().equals(book(p))){
-                    dsp.send(p, "news.cancelled");
+                    imapi.getData().getDispatcher().send(p, "news.cancelled");
                     p.getInventory().setItemInMainHand(writers.get(p));
                     e.setCancelled(true);
                     writers.remove(p);

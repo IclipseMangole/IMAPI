@@ -1,8 +1,6 @@
 package de.Iclipse.IMAPI.Functions;
 
 import de.Iclipse.IMAPI.Data;
-import de.Iclipse.IMAPI.Database.ServerManager;
-import de.Iclipse.IMAPI.Database.UserSettings;
 import de.Iclipse.IMAPI.IMAPI;
 import de.Iclipse.IMAPI.Util.Command.IMCommand;
 import de.Iclipse.IMAPI.Util.UUIDFetcher;
@@ -12,10 +10,15 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.UUID;
 
-import static de.Iclipse.IMAPI.Data.dsp;
-import static de.Iclipse.IMAPI.Data.instance;
 
 public class Vanish {
+    
+    private final IMAPI imapi;
+
+    public Vanish(IMAPI imapi) {
+        this.imapi = imapi;
+    }
+
     @IMCommand(
             name = "vanish",
             aliases = {"vv"},
@@ -29,31 +32,31 @@ public class Vanish {
     public void execute(Player p){
             if(!isVanish(UUIDFetcher.getUUID(p.getName()))){
                 setVanish(p, true);
-                dsp.send(p, "vanish.vanish");
+                imapi.getData().getDispatcher().send(p, "vanish.vanish");
                 Bukkit.getOnlinePlayers().forEach(entry ->{
-                    entry.hidePlayer(instance, p);
+                    entry.hidePlayer(imapi, p);
                 });
-                if (Data.updatePlayers)
-                    ServerManager.setPlayers(IMAPI.getServerName(), ServerManager.getPlayers(IMAPI.getServerName()) - 1);
+                if (imapi.getData().isUpdatePlayers())
+                    imapi.getData().getServerTable().setPlayers(imapi.getServerName(), imapi.getData().getServerTable().getPlayers(imapi.getServerName()) - 1);
             }else {
                 setVanish(p, false);
-                dsp.send(p, "vanish.visible");
+                imapi.getData().getDispatcher().send(p, "vanish.visible");
                 Bukkit.getOnlinePlayers().forEach(entry -> {
-                    if (!UserSettings.getString(UUIDFetcher.getUUID(entry.getName()), "visibility").equals("NOBODY")) {
-                        entry.showPlayer(instance, p);
+                    if (!imapi.getData().getUserSettingsTable().getString(UUIDFetcher.getUUID(entry.getName()), "visibility").equals("NOBODY")) {
+                        entry.showPlayer(imapi, p);
                     }
                 });
-                if (Data.updatePlayers)
-                    ServerManager.setPlayers(IMAPI.getServerName(), ServerManager.getPlayers(IMAPI.getServerName()) + 1);
+                if (imapi.getData().isUpdatePlayers())
+                    imapi.getData().getServerTable().setPlayers(imapi.getServerName(), imapi.getData().getServerTable().getPlayers(imapi.getServerName()) + 1);
             }
     }
 
     public static void setVanish(Player p, boolean vanish) {
-        UserSettings.setBoolean(UUIDFetcher.getUUID(p.getName()), "vanish", vanish);
+        IMAPI.getInstance().getData().getUserSettingsTable().setBoolean(UUIDFetcher.getUUID(p.getName()), "vanish", vanish);
     }
 
     public static boolean isVanish(UUID uuid) {
-        return UserSettings.getBoolean(uuid, "vanish");
+        return IMAPI.getInstance().getData().getUserSettingsTable().getBoolean(uuid, "vanish");
     }
 
     public static ArrayList<Player> getVanishsOnServer() {

@@ -1,18 +1,20 @@
 package de.Iclipse.IMAPI.Functions.Servers;
 
 import de.Iclipse.IMAPI.Data;
-import de.Iclipse.IMAPI.Database.ServerManager;
+import de.Iclipse.IMAPI.IMAPI;
 import de.Iclipse.IMAPI.Util.Command.IMCommand;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
 import java.util.ArrayList;
 
-import static de.Iclipse.IMAPI.Data.dsp;
-import static de.Iclipse.IMAPI.Database.Mode.*;
-
 public class Mode {
-    StringBuilder builder;
+    private StringBuilder builder;
+    private final IMAPI imapi;
+
+    public Mode(IMAPI imapi){
+        this.imapi = imapi;
+    }
 
     @IMCommand(
             name = "mode",
@@ -23,7 +25,7 @@ public class Mode {
     )
     public void mode(CommandSender sender) {
         builder = new StringBuilder();
-        builder.append(dsp.get("mode.overview", sender) + "\n");
+        builder.append(imapi.getData().getDispatcher().get("mode.overview", sender) + "\n");
         add(sender, "create");
         add(sender, "delete");
         add(sender, "list");
@@ -43,11 +45,11 @@ public class Mode {
             permissions = "im.cmd.mode.create"
     )
     public void create(CommandSender sender, String name) {
-        if (!isModeExists(name)) {
-            registerMode(name);
-            dsp.send(sender, "mode.create.successfull");
+        if (!imapi.getData().getModeTable().isModeExists(name)) {
+            imapi.getData().getModeTable().registerMode(name);
+            imapi.getData().getDispatcher().send(sender, "mode.create.successfull");
         } else {
-            dsp.send(sender, "mode.create.already");
+            imapi.getData().getDispatcher().send(sender, "mode.create.already");
         }
     }
 
@@ -61,18 +63,18 @@ public class Mode {
             permissions = "im.cmd.mode.delete"
     )
     public void delete(CommandSender sender, String name) {
-        if (isModeExists(name)) {
-            if (ServerManager.getServers(name).size() > 0) {
-                ServerManager.getServers().forEach(server -> {
-                    if (ServerManager.getMode(server).equals(name)) {
-                        ServerManager.setMode(server, null);
+        if (imapi.getData().getModeTable().isModeExists(name)) {
+            if (imapi.getData().getServerTable().getServers(name).size() > 0) {
+                imapi.getData().getServerTable().getServers().forEach(server -> {
+                    if (imapi.getData().getServerTable().getMode(server).equals(name)) {
+                        imapi.getData().getServerTable().setMode(server, null);
                     }
                 });
             }
-            deleteMode(name);
-            dsp.send(sender, "mode.delete.successfull");
+            imapi.getData().getModeTable().deleteMode(name);
+            imapi.getData().getDispatcher().send(sender, "mode.delete.successfull");
         } else {
-            dsp.send(sender, "mode.delete.notexists");
+            imapi.getData().getDispatcher().send(sender, "mode.delete.notexists");
         }
     }
 
@@ -85,15 +87,15 @@ public class Mode {
             permissions = "im.cmd.mode.list"
     )
     public void list(CommandSender sender) {
-        ArrayList<String> list = getModes();
+        ArrayList<String> list = imapi.getData().getModeTable().getModes();
         if (list.size() > 0) {
-            String modes = list.get(0);
+            StringBuilder modes = new StringBuilder(list.get(0));
             for (int i = 1; i < list.size(); i++) {
-                modes += "," + list.get(i);
+                modes.append(",").append(list.get(i));
             }
-            dsp.send(sender, "mode.list.format", modes);
+            imapi.getData().getDispatcher().send(sender, "mode.list.format", modes.toString());
         } else {
-            dsp.send(sender, "mode.list.empty");
+            imapi.getData().getDispatcher().send(sender, "mode.list.empty");
         }
     }
 
@@ -107,24 +109,24 @@ public class Mode {
             permissions = "im.cmd.mode.add"
     )
     public void add(CommandSender sender, String mode, String server) {
-        if (isModeExists(mode)) {
-            if (ServerManager.getServers().contains(server)) {
-                if (ServerManager.getMode(server) != null) {
-                    if (!ServerManager.getMode(server).equals(mode)) {
-                        ServerManager.setMode(server, mode);
-                        dsp.send(sender, "mode.add.successfull");
+        if (imapi.getData().getModeTable().isModeExists(mode)) {
+            if (imapi.getData().getServerTable().getServers().contains(server)) {
+                if (imapi.getData().getServerTable().getMode(server) != null) {
+                    if (!imapi.getData().getServerTable().getMode(server).equals(mode)) {
+                        imapi.getData().getServerTable().setMode(server, mode);
+                        imapi.getData().getDispatcher().send(sender, "mode.add.successfull");
                     } else {
-                        dsp.send(sender, "mode.add.already");
+                        imapi.getData().getDispatcher().send(sender, "mode.add.already");
                     }
                 } else {
-                    ServerManager.setMode(server, mode);
-                    dsp.send(sender, "mode.add.successfull");
+                    imapi.getData().getServerTable().setMode(server, mode);
+                    imapi.getData().getDispatcher().send(sender, "mode.add.successfull");
                 }
             } else {
-                dsp.send(sender, "mode.add.servernotexists");
+                imapi.getData().getDispatcher().send(sender, "mode.add.servernotexists");
             }
         } else {
-            dsp.send(sender, "mode.add.notexists");
+            imapi.getData().getDispatcher().send(sender, "mode.add.notexists");
         }
     }
 
@@ -139,19 +141,19 @@ public class Mode {
             permissions = "im.cmd.mode.remove"
     )
     public void remove(CommandSender sender, String mode, String server) {
-        if (isModeExists(mode)) {
-            if (ServerManager.getServers().contains(server)) {
-                if (ServerManager.getMode(server).equals(mode)) {
-                    ServerManager.setMode(server, "NONE");
-                    dsp.send(sender, "mode.remove.successfull");
+        if (imapi.getData().getModeTable().isModeExists(mode)) {
+            if (imapi.getData().getServerTable().getServers().contains(server)) {
+                if (imapi.getData().getServerTable().getMode(server).equals(mode)) {
+                    imapi.getData().getServerTable().setMode(server, "NONE");
+                    imapi.getData().getDispatcher().send(sender, "mode.remove.successfull");
                 } else {
-                    dsp.send(sender, "mode.remove.otherMode");
+                    imapi.getData().getDispatcher().send(sender, "mode.remove.otherMode");
                 }
             } else {
-                dsp.send(sender, "mode.remove.servernotexists");
+                imapi.getData().getDispatcher().send(sender, "mode.remove.servernotexists");
             }
         } else {
-            dsp.send(sender, "mode.remove.notexists");
+            imapi.getData().getDispatcher().send(sender, "mode.remove.notexists");
         }
     }
 
@@ -165,24 +167,24 @@ public class Mode {
             permissions = "im.cmd.mode.servers"
     )
     public void servers(CommandSender sender, String mode) {
-        if (isModeExists(mode)) {
-            ArrayList<String> list = ServerManager.getServers(mode);
+        if (imapi.getData().getModeTable().isModeExists(mode)) {
+            ArrayList<String> list = imapi.getData().getServerTable().getServers(mode);
             if (list.size() > 0) {
-                String servers = list.get(0);
+                StringBuilder servers = new StringBuilder(list.get(0));
                 for (int i = 1; i < list.size(); i++) {
-                    servers += ", " + list.get(i);
+                    servers.append(", ").append(list.get(i));
                 }
-                dsp.send(sender, "mode.servers.format", servers);
+                imapi.getData().getDispatcher().send(sender, "mode.servers.format", servers.toString());
             } else {
-                dsp.send(sender, "mode.servers.empty");
+                imapi.getData().getDispatcher().send(sender, "mode.servers.empty");
             }
         } else {
-            dsp.send(sender, "mode.servers.notexists");
+            imapi.getData().getDispatcher().send(sender, "mode.servers.notexists");
         }
     }
 
 
     private void add(CommandSender sender, String command) {
-        builder.append("\n" + Data.symbol + "§e" + dsp.get("mode." + command + ".usage", sender) + "§8: §7 " + dsp.get("mode." + command + ".description", sender) + ChatColor.RESET);
+        builder.append("\n").append(imapi.getData().getSymbol()).append("§e").append(imapi.getData().getDispatcher().get("mode." + command + ".usage", sender)).append("§8: §7 ").append(imapi.getData().getDispatcher().get("mode." + command + ".description", sender)).append(ChatColor.RESET);
     }
 }
